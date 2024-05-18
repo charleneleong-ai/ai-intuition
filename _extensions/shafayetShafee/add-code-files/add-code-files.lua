@@ -12,14 +12,14 @@ local function ensureHtmlDeps()
 end
 
 
--- remove the nth line 
+-- remove the nth line
 local function dedent (line, n)
   return line:sub(1,n):gsub(" ","") .. line:sub(n+1)
 end
 
--- function for reading the content of included file and including the 
+-- function for reading the content of included file and including the
 -- content
-local function source_include(filepath, startLine, endLine, dedentLine, lang, filename, 
+local function source_include(filepath, startLine, endLine, dedentLine, lang, filename,
   line_number, code_filename)
   local add_source = {
     CodeBlock = function(cb)
@@ -44,7 +44,7 @@ local function source_include(filepath, startLine, endLine, dedentLine, lang, fi
             end
           end
           number = number + 1
-        end 
+        end
         fh:close()
         if lang then
           cb.classes = {lang, "cell-code"}
@@ -57,7 +57,7 @@ local function source_include(filepath, startLine, endLine, dedentLine, lang, fi
         if line_number then
           cb.classes:insert('number-lines')
         end
-      end     
+      end
       return pandoc.CodeBlock(content, cb.attr)
     end
   }
@@ -88,7 +88,7 @@ function Div(el)
         code_filename = nil
       end
     end
-    local div = el:walk(source_include(filepath, startLine, endLine, 
+    local div = el:walk(source_include(filepath, startLine, endLine,
       dedent_line, lang, filename, line_number, code_filename))
     return div
   end

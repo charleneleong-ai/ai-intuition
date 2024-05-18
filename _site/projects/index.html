@@ -18,7 +18,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -74,12 +74,12 @@ ul.task-list li input[type="checkbox"] {
     const listingTargetEl = window.document.querySelector('#listing-listing .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
-      return;
+      return; 
     }
 
     const options = {
       valueNames: ['listing-image','listing-date','listing-title','listing-reading-time','listing-description','listing-file-modified',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-
+      
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
 
@@ -150,29 +150,29 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page">
+    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
 <span class="menu-text">Projects</span></a>
-  </li>
+  </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html">
+    <a class="nav-link" href="../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
-  </li>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../about/index.html">
+    <a class="nav-link" href="../about/index.html"> 
 <span class="menu-text">Charlene Leong</span></a>
-  </li>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/charleneleong-ai/"> <i class="bi bi-github" role="img">
-</i>
+</i> 
 <span class="menu-text"></span></a>
-  </li>
+  </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://www.linkedin.com/in/charleneleong/"> <i class="bi bi-linkedin" role="img">
-</i>
+</i> 
 <span class="menu-text"></span></a>
-  </li>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
@@ -188,21 +188,21 @@ window.Quarto = {
             <p class="subtitle lead">Tidbits over the years</p>
                       </div>
   </div>
-
-
+    
+  
   <div class="quarto-title-meta column-page-left">
 
-
-
-
+      
+    
+      
     </div>
-
-
+    
+  
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-
+        
     <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="control">control <span class="quarto-category-count">(2)</span></div><div class="category" data-category="motion planning">motion planning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="navigation">navigation <span class="quarto-category-count">(1)</span></div><div class="category" data-category="optimisation">optimisation <span class="quarto-category-count">(1)</span></div><div class="category" data-category="robotics">robotics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ros">ros <span class="quarto-category-count">(2)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
@@ -242,7 +242,7 @@ window.Quarto = {
     </div>
 </div>
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="robotics,control,motion planning,ros,optimisation" data-listing-date-sort="1715558400000" data-listing-file-modified-sort="1716019998652" data-listing-date-modified-sort="1716019998000" data-listing-reading-time-sort="1" data-listing-word-count-sort="104">
+<div class="g-col-1" data-index="0" data-categories="robotics,control,motion planning,ros,optimisation" data-listing-date-sort="1715558400000" data-listing-file-modified-sort="1716028528003" data-listing-date-modified-sort="1716028528000" data-listing-reading-time-sort="2" data-listing-word-count-sort="254">
 <a href="../projects/crane_plus_motion_planning/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="crane_plus_motion_planning/feature.gif" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -251,7 +251,7 @@ window.Quarto = {
 Crane+ V2 Motion Planning Optimisation
 </h5>
 <div class="listing-reading-time card-text text-muted">
-1 min
+2 min
 </div>
 <div class="card-text listing-description">
 Blackbox Optimisation for Motion Planning Algorithms
@@ -270,7 +270,7 @@ May 13, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="robotics,control,navigation,ros" data-listing-date-sort="1715558400000" data-listing-file-modified-sort="1716021653673" data-listing-date-modified-sort="1716021653000" data-listing-reading-time-sort="10" data-listing-word-count-sort="1841">
+<div class="g-col-1" data-index="1" data-categories="robotics,control,navigation,ros" data-listing-date-sort="1715558400000" data-listing-file-modified-sort="1716026384047" data-listing-date-modified-sort="1716026384000" data-listing-reading-time-sort="10" data-listing-word-count-sort="1858">
 <a href="../projects/bigT_ros_control/index.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top"><img src="bigT_ros_control/feature.gif" style="height: 150px;"  class="thumbnail-image card-img"/></p>
@@ -322,7 +322,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       toggleBodyColorMode(bsSheetEl);
     }
   }
-  toggleBodyColorPrimary();
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -332,7 +332,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {
+      if (clz.startsWith('code-annotation-')) {                     
         return true;
       }
     }
@@ -363,11 +363,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
       button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button,
-        { trigger: "manual",
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
           customClass: "code-copy-button-tooltip",
           offset: [0, -8]});
-      tooltip.show();
+      tooltip.show();    
     }
     setTimeout(function() {
       if (tooltip) {
@@ -430,7 +430,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     if (onUntriggerFn) {
       config.onUntrigger = onUntriggerFn;
     }
-    window.tippy(el, config);
+    window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
@@ -506,7 +506,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     tippyHover(xref, undefined, function(instance) {
       instance.disable();
       let url = xref.getAttribute('href');
-      let hash = undefined;
+      let hash = undefined; 
       if (url.startsWith('#')) {
         hash = url;
       } else {
@@ -534,7 +534,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             if (note !== null) {
               const html = processXRef(id, note);
               instance.setContent(html);
-            }
+            } 
           }).finally(() => {
             instance.enable();
             instance.show();
@@ -558,7 +558,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             const html = processXRef(null, note);
             instance.setContent(html);
-          }
+          } 
         }).finally(() => {
           instance.enable();
           instance.show();
@@ -598,7 +598,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             height = bottom - top;
           }
           if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it
+            // cook up a div (if necessary) and position it 
             let div = window.document.getElementById("code-annotation-line-highlight");
             if (div === null) {
               div = window.document.createElement("div");
@@ -714,10 +714,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
                 altAxis: false
               }
             }
-            ]
-          }
+            ]        
+          }      
         };
-        window.tippy(annoteTarget, config);
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
