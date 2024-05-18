@@ -1,0 +1,47 @@
+project:
+  type: website
+
+website:
+  title: "AI Intuition"
+  site-url: https://www.ai-intuition.com
+  search: 
+    location: navbar
+    type: textbox
+  page-navigation: true
+  navbar:
+    left: 
+      - text: Projects
+        href: projects/index.qmd
+      - text: Blog
+        href: blog/index.qmd
+    right:
+      - about/index.qmd 
+      - icon: github
+        href: https://github.com/charleneleong-ai/
+      - icon: linkedin
+        href: https://www.linkedin.com/in/charleneleong/
+
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-link: true
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    highlight-style: gruvbox
+    df-print: kable
+    comments:
+      giscus:
+        repo: charleneleong-ai/ai-intuition
+        category: "Comments"
+        mapping: "pathname"
+        reactions-enabled: true
+        loading: lazy
+        input-position: "bottom"
+        theme:
+          light: light_high_contrast
+          dark: dark_dimmed
+
+editor: visual

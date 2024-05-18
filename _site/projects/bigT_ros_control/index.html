@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Charlene Leong">
+<meta name="dcterms.date" content="2024-05-13">
+<meta name="description" content="Autonomous SLAM and control">
+
+<title>AI Intuition - Big T ROS Navigation and Control</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">AI Intuition</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about/index.html"> 
+<span class="menu-text">Charlene Leong</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/charleneleong-ai/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/charleneleong/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Big T ROS Navigation and Control</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">robotics</div>
+    <div class="quarto-category">control</div>
+    <div class="quarto-category">navigation</div>
+    <div class="quarto-category">ros</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Autonomous SLAM and control
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Charlene Leong </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 13, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">May 18, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="https://github.com/charleneleong-ai/big_T_ROS_navigation">Open in Github</a></p>
+<section id="build" class="level2">
+<h2 class="anchored" data-anchor-id="build">Build</h2>
+<p>Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities.</p>
+<p align="center">
+<img height="300" src="./big_T.png">
+</p>
+<p>Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm. This project focuses on the control node to update the robot’s motor direction and speed from incoming motor and sensor inputs.</p>
+<p align="center">
+<img height="300" src="./blockdiagram.png">
+</p>
+</section>
+<section id="mapping-modes" class="level2">
+<h2 class="anchored" data-anchor-id="mapping-modes">Mapping Modes</h2>
+<p>There are two main mapping modes we can operate in with Big T.</p>
+<ol type="1">
+<li>The map of the environment is first created using Hector SLAM to simulataneously localise and map the environment and save the map. See <a href="http://wiki.ros.org/hector_slam">here</a> for ref. Hector SLAM is used in conjunction with an extended Kalman filter (EKF) to fuse wheel odometry with IMU to create an improved odometry estimate. This example below shows the robot performing autonomous SLAM to map the environment.</li>
+</ol>
+<p align="center">
+<img height="300" src="./feature.gif">
+</p>
+<ol start="2" type="1">
+<li>We can test localising the robot inside the saved map using AMCL (Adaptive Monte Carlo localisation) which estimates 2D position based on particle filter. The robot’s pose is represented as a distribution of particles, where each particle represents a possible pose of the robot. It takes as input a map, LIDAR scans, and transform messages, and outputs an estimated pose. See <a href="http://wiki.ros.org/amcl">here</a> for more details.</li>
+</ol>
+<p align="center">
+<img height="300" src="./AMCL_EKF_localisation.gif">
+</p>
+</section>
+<section id="architecture" class="level2">
+<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
+<p>Big T can be run into two operative modes, high level block digrams are shown below:</p>
+<ol type="1">
+<li>Autonomous Mode - this mode is often used for SLAM navigation.</li>
+</ol>
+<p align="center">
+<img height="500" src="./big_t_autonomous.png">
+</p>
+<ol start="2" type="1">
+<li>Tele-operative Mode - this mode is often used for user-controlled navigation in a saved map and also for debugging purposes.</li>
+</ol>
+<p align="center">
+<img height="500" src="./big_t_teleop.png">
+</p>
+</section>
+<section id="control-algorithm" class="level2">
+<h2 class="anchored" data-anchor-id="control-algorithm">Control Algorithm</h2>
+<p>In order to convert the sensor data to publish the motor control signal, we first listen for robot’s velocity commands <code>cmd_vel</code> and IMU data to calculate the wheel speeds and directions for each motor based on the robot’s kinematics. The calculated angular velocities are then converted to PWM signals and published as a <code>geometry_msgs::Twist</code> message, where the linear fields represent PWM values and the angular fields represent motor directions.</p>
+<section id="imports-and-global-variables" class="level3">
+<h3 class="anchored" data-anchor-id="imports-and-global-variables">1. Imports and Global Variables</h3>
+<p>We first import our initial <code>C++</code> <code>ROS</code> headers and instantiate our global variables from the robot’s physical characteristics.</p>
+<p>We include the following headers</p>
+<ul>
+<li><a href="http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html"><code>sensor_msgs/Imu.h</code></a> to collect sensor data message type from the IMU. The IMU node <a href="http://wiki.ros.org/razor_imu_9do"><code>razor_imu_9dof</code></a> publishes messages to the <code>"imu"</code> topic in the ROS system to be used by motion and planning algorithms such as this one.</li>
+<li><a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html"><code>geometry_msgs/Twist.h</code></a> to publish linear and angular velocities to facilitate interoperability throughout the system.</li>
+<li><a href="https://cplusplus.com/reference/cmath/"><code>math.h</code></a> to perform common mathmetical operations and transformations.</li>
+</ul>
+<p>We then declare our ROS publishers <code>motor_control_pub</code> to publish the motor control signal to the wheels and <code>imu_pub</code> to publish and update the robot’s orientation.</p>
+<div data-add-from="control.cpp" data-start-line="1" data-end-line="18" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb1" data-startfrom="1"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">"ros/ros.h"</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="pp">#include </span><span class="im">"geometry_msgs/Twist.h"</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="pp">#include </span><span class="im">"geometry_msgs/Quaternion.h"</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="pp">#include </span><span class="im">"sensor_msgs/Imu.h"</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="pp">#include </span><span class="im">"triangle_node/motor_control.h"</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="pp">#include </span><span class="im">&lt;math.h&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="dt">float</span> omega1<span class="op">,</span> omega2<span class="op">,</span> omega3<span class="op">;</span> <span class="co">// angular velocities</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="dt">float</span> r <span class="op">=</span> <span class="fl">0.0525</span><span class="op">;</span> <span class="co">// Wheel radius (105mm/2)</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="dt">float</span> h <span class="op">=</span> <span class="fl">0.18</span><span class="op">;</span>   <span class="co">// Distance from the center of the body to the wheel (180mm)</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="dt">float</span> v_x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in x (m/s)</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="dt">float</span> v_y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in y (m/s)</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="dt">float</span> omega_body <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  <span class="co">// Rotational speed of the body (rad/s)</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="dt">float</span> theta <span class="op">=</span> <span class="fl">3.1415</span><span class="op">;</span>  <span class="co">// Orientation of the body (rad)</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a></span>
+<span id="cb1-17"><a href="#cb1-17"></a>ros<span class="op">::</span>Publisher motor_control_pub<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>ros<span class="op">::</span>Publisher imu_pub<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="main-loop" class="level3">
+<h3 class="anchored" data-anchor-id="main-loop">2. Main Loop</h3>
+<p>We first set up the appropriate ROS publishers and subscribers, to enable ROS signal communication between incoming sensor and output motor nodes in the ROS ecosystem.</p>
+<p>The <code>main</code> loop is as follows:</p>
+<ol type="1">
+<li>Initialises the ROS system with the node name <code>triangle_control</code>.</li>
+<li>Creates <code>ros::NodeHandle</code> to interface with the ROS system.</li>
+<li>Sets up publisher <code>pub</code> to publish motor control data on the <code>motor_control_data</code> topic.</li>
+<li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function.</li>
+<li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function.</li>
+<li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> runs for as long as the ROS system is active.</li>
+</ol>
+<div data-add-from="control.cpp" data-start-line="72" data-end-line="90" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb2" data-startfrom="72"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 71;"><span id="cb2-72"><a href="#cb2-72"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">){</span></span>
+<span id="cb2-73"><a href="#cb2-73"></a></span>
+<span id="cb2-74"><a href="#cb2-74"></a>	ros<span class="op">::</span>init<span class="op">(</span>argc<span class="op">,</span> argv<span class="op">,</span> <span class="st">"triangle_control"</span><span class="op">);</span></span>
+<span id="cb2-75"><a href="#cb2-75"></a></span>
+<span id="cb2-76"><a href="#cb2-76"></a>	ros<span class="op">::</span>NodeHandle n<span class="op">;</span></span>
+<span id="cb2-77"><a href="#cb2-77"></a>	</span>
+<span id="cb2-78"><a href="#cb2-78"></a>	motor_control_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Twist<span class="op">&gt;(</span><span class="st">"motor_control_data"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb2-79"><a href="#cb2-79"></a></span>
+<span id="cb2-80"><a href="#cb2-80"></a>	ros<span class="op">::</span>Subscriber imu_sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"imu"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> imu_callback<span class="op">);</span></span>
+<span id="cb2-81"><a href="#cb2-81"></a>	</span>
+<span id="cb2-82"><a href="#cb2-82"></a>	imu_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Quaternion<span class="op">&gt;(</span><span class="st">"orientation"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb2-83"><a href="#cb2-83"></a></span>
+<span id="cb2-84"><a href="#cb2-84"></a>	ros<span class="op">::</span>Subscriber sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"cmd_vel"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> cmd_vel_callback<span class="op">);</span></span>
+<span id="cb2-85"><a href="#cb2-85"></a></span>
+<span id="cb2-86"><a href="#cb2-86"></a>	ros<span class="op">::</span>spin<span class="op">();</span></span>
+<span id="cb2-87"><a href="#cb2-87"></a></span>
+<span id="cb2-88"><a href="#cb2-88"></a>	<span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-89"><a href="#cb2-89"></a></span>
+<span id="cb2-90"><a href="#cb2-90"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="converting-sensor-input-to-angular-velocities" class="level3">
+<h3 class="anchored" data-anchor-id="converting-sensor-input-to-angular-velocities">3: Converting Sensor Input to Angular Velocities</h3>
+<p>The main callback function that updates the robot’s direction is <code>cmd_vel_callback</code> which is subscribed to the <code>cmd_vel</code> topic of a data type of <code>geometry_msgs::Twist</code> which expresses velocity in it’s angular and linear parts. This function translates the desired linear and angular velocities of the robot into individual wheel speeds, converts those speeds to PWM signals, and determines the direction for each wheel. It then publishes these control signals to the <code>motor_control_pub</code> topic to update the robot direction .</p>
+<div data-add-from="control.cpp" data-start-line="41" data-end-line="69" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb3" data-startfrom="41"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 40;"><span id="cb3-41"><a href="#cb3-41"></a><span class="dt">void</span> cmd_vel_callback<span class="op">(</span><span class="at">const</span> geometry_msgs<span class="op">::</span>Twist <span class="op">&amp;</span> msg<span class="op">){</span></span>
+<span id="cb3-42"><a href="#cb3-42"></a>	<span class="co">/*</span></span>
+<span id="cb3-43"><a href="#cb3-43"></a><span class="co">		omega1	...	rotation speed of motor 1	(in rad/s)</span></span>
+<span id="cb3-44"><a href="#cb3-44"></a><span class="co">		omega2	...	rotation speed of motor 2	(in rad/s)</span></span>
+<span id="cb3-45"><a href="#cb3-45"></a><span class="co">		omega3	...	rotation speed of motor 3	(in rad/s)</span></span>
+<span id="cb3-46"><a href="#cb3-46"></a><span class="co">	*/</span></span>
+<span id="cb3-47"><a href="#cb3-47"></a>	ROS_INFO<span class="op">(</span><span class="st">"Msg received"</span><span class="op">);</span></span>
+<span id="cb3-48"><a href="#cb3-48"></a></span>
+<span id="cb3-49"><a href="#cb3-49"></a>	geometry_msgs<span class="op">::</span>Twist out_msg<span class="op">;</span></span>
+<span id="cb3-50"><a href="#cb3-50"></a>	v_x <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>x<span class="op">;</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a>	v_y <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>y<span class="op">;</span></span>
+<span id="cb3-52"><a href="#cb3-52"></a>	omega_body <span class="op">=</span> msg<span class="op">.</span>angular<span class="op">.</span>z<span class="op">;</span></span>
+<span id="cb3-53"><a href="#cb3-53"></a></span>
+<span id="cb3-54"><a href="#cb3-54"></a>	omega1 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>v_x <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> v_y <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-55"><a href="#cb3-55"></a>	omega2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x <span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-56"><a href="#cb3-56"></a>	omega3 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(-</span>sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span>  <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">-</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-57"><a href="#cb3-57"></a></span>
+<span id="cb3-58"><a href="#cb3-58"></a>	<span class="co">// pwm signal </span></span>
+<span id="cb3-59"><a href="#cb3-59"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>x <span class="op">=</span> omega2pwm<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// convert from rad/s to pwm signal</span></span>
+<span id="cb3-60"><a href="#cb3-60"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>y <span class="op">=</span> omega2pwm<span class="op">(</span>omega2<span class="op">);</span></span>
+<span id="cb3-61"><a href="#cb3-61"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>z <span class="op">=</span> omega2pwm<span class="op">(</span>omega3<span class="op">);</span></span>
+<span id="cb3-62"><a href="#cb3-62"></a></span>
+<span id="cb3-63"><a href="#cb3-63"></a>	<span class="co">// motor direction</span></span>
+<span id="cb3-64"><a href="#cb3-64"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>x <span class="op">=</span> sign<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// set direction bit depending on the rotation speed</span></span>
+<span id="cb3-65"><a href="#cb3-65"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>y <span class="op">=</span> sign<span class="op">(</span>omega2<span class="op">);</span></span>
+<span id="cb3-66"><a href="#cb3-66"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>z <span class="op">=</span> sign<span class="op">(</span>omega3<span class="op">);</span></span>
+<span id="cb3-67"><a href="#cb3-67"></a></span>
+<span id="cb3-68"><a href="#cb3-68"></a>	motor_control_pub<span class="op">.</span>publish<span class="op">(</span>out_msg<span class="op">);</span></span>
+<span id="cb3-69"><a href="#cb3-69"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>See the following sections below for more details.</p>
+</section>
+<section id="deriving-the-kinematic-equations-for-a-three-wheeled-omnidirectional-robot" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-the-kinematic-equations-for-a-three-wheeled-omnidirectional-robot">4: Deriving the Kinematic Equations for a Three-Wheeled Omnidirectional Robot</h3>
+<p><strong>Assumptions and Setup</strong></p>
+<ol type="1">
+<li><strong>Robot Configuration:</strong>
+<ul>
+<li>The robot is a triangle with three holonomic wheels.</li>
+<li>The wheels are positioned 120 degrees apart from each other.</li>
+</ul></li>
+<li><strong>Variables:</strong>
+<ul>
+<li><span class="math inline">\(v_x\)</span>: Linear velocity in the x-direction (global frame).</li>
+<li><span class="math inline">\(v_y\)</span>: Linear velocity in the y-direction (global frame).</li>
+<li><span class="math inline">\(\omega_\text{body}\)</span>: Rotational velocity of the robot around its center.</li>
+<li><span class="math inline">\(\theta\)</span>: Orientation of the robot (angle between the robot’s frame and the global frame).</li>
+<li><span class="math inline">\(r\)</span>: Radius of each wheel.</li>
+<li><span class="math inline">\(h\)</span>: Distance from the center of the robot to each wheel.</li>
+</ul></li>
+</ol>
+<p><strong>Diagram</strong></p>
+<p align="center">
+<img height="300" src="./kinematics.png">
+</p>
+<p><strong>Derivation</strong></p>
+<p>We aim to derive the angular velocities of the three holonomic wheels <span class="math inline">\(\omega_1\)</span>, <span class="math inline">\(\omega_2\)</span>, <span class="math inline">\(\omega_3\)</span> based on the robot’s linear veloicities (<span class="math inline">\(v_x\)</span>, <span class="math inline">\(v_y\)</span>) and rotational velocity (<span class="math inline">\(\omega_{\text{body}}\)</span>) in the global frame, considering the robot’s orientation <span class="math inline">\(\theta\)</span>.</p>
+<p><strong>1. Transform Global Velocities to Local Velocities</strong></p>
+<p>First, we need to transform The global velocities <span class="math inline">\(v_x\)</span> and <span class="math inline">\(v_y\)</span> into the local frame of the robot using its orientation <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[
+v_{x,\text{local}} = v_x \cos(\theta) + v_y \sin(\theta)
+\]</span></p>
+<p><span class="math display">\[
+v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
+\]</span></p>
+<p><strong>2. Express Local Velocities and Rotational Velocity in Terms of Wheel Velocities</strong></p>
+<p>Each wheel contributes to the robot’s motion. The linear velocities of the wheels can be decomposed into components that affect the overall motion of the robot.</p>
+<p>For a wheel positioned at an angle <span class="math inline">\(\alpha\)</span> with respect to the robot’s frame: <span class="math display">\[
+\omega_{\text{wheel}} = \frac{1}{r} (v_{x,\text{local}} \cos(\alpha) + v_{y,\text{local}} \sin(\alpha) + \omega_{\text{body}} h)
+\]</span></p>
+<p>Where <span class="math inline">\(\omega_\text{wheel}\)</span> is the angular velocity of the wheel, and <span class="math inline">\(h\)</span> is the distance from the center to the wheel.</p>
+<p><strong>3. Apply to Each Wheel</strong></p>
+<p>Each wheel is positioned <span class="math inline">\(120^\circ\)</span> apart, so the angles <span class="math inline">\(\alpha\)</span> for the three wheels are <span class="math inline">\(0^\circ\)</span>, <span class="math inline">\(120^\circ\)</span>, and <span class="math inline">\(240^\circ\)</span>.</p>
+<p><strong>For Wheel 1 where <span class="math inline">\(\alpha = 0^\circ\)</span>:</strong></p>
+<p><span class="math display">\[
+\omega_1 = \frac{1}{r} ( v_{x,\text{local}} \cos(0) + v_{y,\text{local}} \sin(0) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Since <span class="math inline">\(cos(0^\circ)= 1\)</span> and <span class="math inline">\(\sin(0^\circ) = 0\)</span>:</p>
+<p><span class="math display">\[
+\omega_1 = \frac{1}{r} ( v_{x,\text{local}} + \omega_{\text{body}} h )
+\]</span></p>
+<p>Substituting the local velocities:</p>
+<p><span class="math display">\[
+\omega_1 = \frac{1}{r} ( v_x \cos(\theta) + v_y \sin(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p><strong>For Wheel 2 where <span class="math inline">\(\alpha = 120^\circ\)</span>:</strong></p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( v_{x,\text{local}} \cos(120^\circ) + v_{y,\text{local}} \sin(120^\circ) + \omega_{\text{body}} h)
+\]</span></p>
+<p>Since <span class="math inline">\(\cos(120^\circ) = -\frac{1}{2}\)</span> and <span class="math inline">\(\sin(120^\circ) = \frac{\sqrt{3}}{2}\)</span>:</p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( v_{x,\text{local}}( -\frac{1}{2} ) + v_{y,\text{local}} ( \frac{\sqrt{3}}{2} ) + \omega_{\text{body}} h)
+\]</span></p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( (v_x \cos(\theta) + v_y \sin(\theta)) ( -\frac{1}{2} ) + (-v_x \sin(\theta) + v_y \cos(\theta)) ( \frac{\sqrt{3}}{2} ) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Expanding and simplifying:</p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( -\frac{1}{2} v_x \cos(\theta) - \frac{1}{2} v_y \sin(\theta) + \frac{\sqrt{3}}{2} (-v_x \sin(\theta)) + \frac{\sqrt{3}}{2} v_y \cos(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( -\frac{1}{2} v_x \cos(\theta) - \frac{1}{2} v_y \sin(\theta) - \frac{\sqrt{3}}{2} v_x \sin(\theta) + \frac{\sqrt{3}}{2} v_y \cos(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Combining terms and simplifying further:</p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( \frac{\cos(\theta) v_y}{3} - \frac{\sin(\theta) v_x}{3} + \frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\sqrt{3} \cos(\theta) v_x}{3}  + \omega_{\text{body}} h )
+\]</span></p>
+<p><strong>For Wheel 3 where <span class="math inline">\(\alpha = 240^\circ\)</span>:</strong></p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( v_{x,\text{local}} \cos(240^\circ) + v_{y,\text{local}} \sin(240^\circ) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Since <span class="math inline">\(\cos(240^\circ) = -\frac{1}{2}\)</span> and <span class="math inline">\(\sin(240^\circ) = -\frac{\sqrt{3}}{2}\)</span>:</p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( (v_x \cos(\theta) + v_y \sin(\theta)) ( -\frac{1}{2} ) + (-v_x \sin(\theta) + v_y \cos(\theta)) ( -\frac{\sqrt{3}}{2} ) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Expanding and simplifying:</p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( -\frac{1}{2} v_x \cos(\theta) - \frac{1}{2} v_y \sin(\theta) - \frac{\sqrt{3}}{2} (-v_x \sin(\theta)) - \frac{\sqrt{3}}{2} v_y \cos(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( -\frac{1}{2} v_x \cos(\theta) - \frac{1}{2} v_y \sin(\theta) + \frac{\sqrt{3}}{2} v_x \sin(\theta) - \frac{\sqrt{3}}{2} v_y \cos(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p>Combining terms and simplifying further:</p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} h )
+\]</span></p>
+</section>
+<section id="final-equations" class="level3">
+<h3 class="anchored" data-anchor-id="final-equations">Final Equations</h3>
+<p>The final simplified equations for the angular velocities of the wheels are:</p>
+<p><span class="math display">\[
+\omega_1 = \frac{1}{r} ( v_x \cos(\theta) + v_y \sin(\theta) + \omega_{\text{body}} h )
+\]</span></p>
+<p><span class="math display">\[
+\omega_2 = \frac{1}{r} ( \frac{\cos(\theta) v_y}{3} - \frac{\sin(\theta) v_x}{3} + \frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\sqrt{3} \cos(\theta) v_x}{3}  + \omega_{\text{body}} h )
+\]</span></p>
+<p><span class="math display">\[
+\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} * h )
+\]</span></p>
+<p>These equations relate the global motion commands (<span class="math inline">\(v_x\)</span>, <span class="math inline">\(v_y\)</span>, <span class="math inline">\(\omega_{\text{body}}\)</span>) to the angular velocities of the three wheels (<span class="math inline">\(\omega_1\)</span>, <span class="math inline">\(\omega_2\)</span>, <span class="math inline">\(\omega_3\)</span>) taking into account the robot’s orientation <span class="math inline">\(\theta\)</span>, wheel radius <span class="math inline">\(r\)</span> and distance from center to the wheels <span class="math inline">\(h\)</span>.</p>
+</section>
+<section id="converting-angular-velocities-to-pwm-signal-for-motor-control" class="level3">
+<h3 class="anchored" data-anchor-id="converting-angular-velocities-to-pwm-signal-for-motor-control">5. Converting angular velocities to PWM signal for motor control</h3>
+<p>After we’ve calculated the angular velocities in terms on radians per second (<span class="math inline">\(rad/s\)</span>), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors.</p>
+<p><strong>1. Angular Velocity to RPM</strong></p>
+<p>We first convert angular velocity (in radians per second) to a revolutions per minute (RPM).</p>
+<p>We know that <span class="math inline">\(1 revolution=2\pi radians\)</span> and <span class="math inline">\(1 minute = 60 seconds\)</span>, therefore, the conversion factor is:</p>
+<p><span class="math display">\[
+RPM = \omega\times(60/(2\pi)) \approx \omega\times 9.5493 \approx \omega\times 9.55
+\]</span></p>
+<p><strong>2. Conversion from RPM to PWM</strong></p>
+<p>In order to measure and calibrate the relationship betwen PWM and RPM for the motor, an empirical experiment was performed in order to measurements and fit a linear regression model to the data.</p>
+<p>For series of PWM signals from a low duty cycle to (eg. 10%) to high duty cycle (eg. 90%) generated using an oscilloscope, the respective RPM for the motor was recorded using a tachometer.</p>
+<p>The resulting linear relationship is:</p>
+<p><span class="math display">\[
+PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
+\]</span></p>
+<p>This means that for every unit increase in RPM, the PWM value increases by approximately 2.4307 units, and when the RPM is zero, the PWM value starts at approximately 36.2178.</p>
+<p><strong>3. Handling Very Small Angular Velocities</strong></p>
+<p>Small angular velocities <code>&lt;=0.05</code> are ignored, to smooth the noise and avoid unnecessary motor activation.</p>
+<div data-add-from="control.cpp" data-start-line="27" data-end-line="27" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb4" data-startfrom="27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 26;"><span id="cb4-27"><a href="#cb4-27"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>4. Linear Equation of Angular velocity to PWM</strong></p>
+<p>Through substituting and simplifying the equations above, we can derive the following linear relationship for converting angular velocity to PWM.</p>
+<p><span class="math display">\[
+PWM = 2.4307 \times RPM + 36.2178 =  2.43 \times (\omega\times 9.55) + 36.22
+\]</span></p>
+<p>The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel in Big T when calculate the new angular velocities from sensor feedback. We make omega absolute <span class="math inline">\(|\omega_{\text{wheel}}|\)</span> in order to ensure the angular velocity is never non-negative.</p>
+<div data-add-from="control.cpp" data-start-line="21" data-end-line="31" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb5" data-startfrom="21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 20;"><span id="cb5-21"><a href="#cb5-21"></a><span class="dt">int</span>	omega2pwm<span class="op">(</span><span class="dt">float</span> omega<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a>	<span class="co">/*	</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">		omega ... angular velocity ( in rad/s )</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">		rpm = omega*9.5493; // conversion from rad/s to rpm	 ( 1/(2*pi)*60 = 9.5493 )</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">		pwm = 2.4307*rpm + 36.2178; // conversion of rpm to pwm values</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">	*/</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a></span>
+<span id="cb5-29"><a href="#cb5-29"></a>	<span class="cf">return</span> <span class="op">(</span><span class="dt">int</span><span class="op">)(</span><span class="fl">2.43</span><span class="op">*(</span>fabs<span class="op">(</span>omega<span class="op">)*</span><span class="fl">9.55</span><span class="op">)</span> <span class="op">+</span> <span class="fl">36.22</span><span class="op">);</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a><span class="op">}</span></span>
+<span id="cb5-31"><a href="#cb5-31"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>5. Setting Direction Bit of Motor</strong></p>
+<p>The direction bit of the motor is set based on the sign of the angular velocity <span class="math inline">\(\omega_{\text{wheel}}\)</span>.</p>
+<div data-add-from="control.cpp" data-start-line="32" data-end-line="34" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb6" data-startfrom="32"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 31;"><span id="cb6-32"><a href="#cb6-32"></a><span class="dt">int</span> sign<span class="op">(</span><span class="dt">float</span> number<span class="op">){</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a>	<span class="cf">if</span><span class="op">(</span>number<span class="op">&gt;=</span><span class="dv">0</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span> <span class="cf">else</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p>This project was executed as part of the course - ECEN430: Advanced Mechatronic Engineering 2: Intelligence and Design at Victoria University of Wellington 2018.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.ai-intuition\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
+          }
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="" data-category="Comments" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light_high_contrast">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

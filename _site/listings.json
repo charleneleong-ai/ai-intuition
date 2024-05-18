@@ -1,0 +1,23 @@
+[
+  {
+    "listing": "/index.html",
+    "items": [
+      "/posts/kan/index.html",
+      "/posts/welcome/index.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/bigT_ros_control/index.html",
+      "/projects/crane_plus_motion_planning/index.html"
+    ]
+  },
+  {
+    "listing": "/blog/index.html",
+    "items": [
+      "/blog/posts/kan/index.html",
+      "/blog/posts/mamba/index.html"
+    ]
+  }
+]
