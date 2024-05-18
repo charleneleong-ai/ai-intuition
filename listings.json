@@ -1,0 +1,16 @@
+[
+  {
+    "listing": "/blog/index.html",
+    "items": [
+      "/blog/posts/kan/index.html",
+      "/blog/posts/mamba/index.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/crane_plus_motion_planning/index.html",
+      "/projects/bigT_ros_control/index.html"
+    ]
+  }
+]
