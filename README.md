@@ -1,6 +1,6 @@
 ## AI Intuition
 
-This is my personal blog using [Quarto](https://quarto.org/), welcome! :) 
+This is my personal blog using [Quarto](https://quarto.org/), welcome! :)
 
 
 ### Setup
@@ -14,7 +14,7 @@ This is my personal blog using [Quarto](https://quarto.org/), welcome! :)
 
 
 ```
-sudo apt install pipx quarto texlive-latex-extra dvisvgm  
+sudo apt install pipx quarto texlive-latex-extra dvisvgm
 ```
 
 2. Setup initial virtual env

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
-      xmlns:media="http://search.yahoo.com/mrss/" 
-      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
-      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+<rss  xmlns:atom="http://www.w3.org/2005/Atom"
+      xmlns:media="http://search.yahoo.com/mrss/"
+      xmlns:content="http://purl.org/rss/1.0/modules/content/"
+      xmlns:dc="http://purl.org/dc/elements/1.1/"
       version="2.0">
 <channel>
 <title>AI Intuition</title>
@@ -12,10 +12,49 @@
 <generator>quarto-1.4.554</generator>
 <lastBuildDate>Mon, 13 May 2024 00:00:00 GMT</lastBuildDate>
 <item>
+  <title>Crane+ V2 Motion Planning Optimisation</title>
+  <dc:creator>Charlene Leong</dc:creator>
+  <link>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</link>
+  <description><![CDATA[
+
+
+
+
+<p><a href="https://github.com/charleneleong-ai/crane_plus_v2_motion_planning">Open in Github</a></p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/feature.gif">
+</p>
+<section id="build" class="level2">
+<h2 class="anchored" data-anchor-id="build">Build</h2>
+<p><a href="https://www.rt-net.jp/products/cranep2?lang=en">Crane+V2</a> is a 4DOF arm + gripper from <a href="https://rt-net.jp/products/cranev2/">RT-Net</a>. This project explores the application of blackbox optimisation techniques to optimise hyperparameters in motion planning algorithms in robotic arms. The control state is implemented in <a href="http://wiki.ros.org/">ROS</a> with motion planning integration with the <a href="http://moveit.ros.org/">MoveIt! Motion Planning Framework</a> and simulation with <a href="https://gazebosim.org/home">Gazebo</a>.</p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/crane_plus_moveit.png">
+</p>
+</section>
+<section id="motion-planning-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="motion-planning-algorithms">Motion Planning Algorithms</h2>
+<p>This project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&amp;D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss.</p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/mitsubishi.png">
+</p>
+
+
+</section>
+
+ ]]></description>
+  <category>robotics</category>
+  <category>control</category>
+  <category>motion planning</category>
+  <category>ros</category>
+  <category>optimisation</category>
+  <guid>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</guid>
+  <pubDate>Mon, 13 May 2024 00:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Big T ROS Navigation and Control</title>
   <dc:creator>Charlene Leong</dc:creator>
   <link>https://www.ai-intuition.com/projects/bigT_ros_control/</link>
-  <description><![CDATA[ 
+  <description><![CDATA[
 
 
 
@@ -208,8 +247,8 @@ font-style: inherit;">;</span></span></code></pre></div>
 <li>Initialises the ROS system with the node name <code>triangle_control</code>.</li>
 <li>Creates <code>ros::NodeHandle</code> to interface with the ROS system.</li>
 <li>Sets up publisher <code>pub</code> to publish motor control data on the <code>motor_control_data</code> topic.</li>
-<li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function.</li>
-<li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function.</li>
+<li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function. This allows us to explicitly publish the IMU orientation to an <code>orientation</code> topic.</li>
+<li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function. The <code>cmd_vel</code> topic is typically used to publish velocity commands published by the <code>teleop_twist_keyboard</code> node in <code>teleop</code> mode or <code>move_base</code> node in the ROS navigation stack when in SLAM node.</li>
 <li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> runs for as long as the ROS system is active.</li>
 </ol>
 <div data-add-from="control.cpp" data-start-line="72" data-end-line="90" data-code-line-numbers="true">
@@ -248,7 +287,7 @@ background-color: null;
 font-style: inherit;">::</span>NodeHandle n<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span>
-<span id="cb2-77">	</span>
+<span id="cb2-77"></span>
 <span id="cb2-78">	motor_control_pub <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> n<span class="op" style="color: #5E5E5E;
@@ -288,7 +327,7 @@ background-color: null;
 font-style: inherit;">,</span> imu_callback<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">);</span></span>
-<span id="cb2-81">	</span>
+<span id="cb2-81"></span>
 <span id="cb2-82">	imu_pub <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> n<span class="op" style="color: #5E5E5E;
@@ -613,7 +652,7 @@ font-style: inherit;">);</span></span>
 <span id="cb3-57"></span>
 <span id="cb3-58">	<span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">// pwm signal </span></span>
+font-style: inherit;">// pwm signal</span></span>
 <span id="cb3-59">	out_msg<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">.</span>linear<span class="op" style="color: #5E5E5E;
@@ -827,7 +866,7 @@ background-color: null;
 font-style: inherit;">{</span></span>
 <span id="cb5-22">	<span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">/*	</span></span>
+font-style: inherit;">/*</span></span>
 <span id="cb5-23"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">		omega ... angular velocity ( in rad/s )</span></span>
@@ -948,45 +987,6 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>navigation</category>
   <category>ros</category>
   <guid>https://www.ai-intuition.com/projects/bigT_ros_control/</guid>
-  <pubDate>Mon, 13 May 2024 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Crane+ V2 Motion Planning Optimisation</title>
-  <dc:creator>Charlene Leong</dc:creator>
-  <link>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p><a href="https://github.com/charleneleong-ai/crane_plus_v2_motion_planning">Open in Github</a></p>
-<p align="center">
-<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/feature.gif">
-</p>
-<section id="build" class="level2">
-<h2 class="anchored" data-anchor-id="build">Build</h2>
-<p><a href="https://www.rt-net.jp/products/cranep2?lang=en">Crane+V2</a> is a 4DOF arm + gripper from RT-Net. This project explores the application of blackbox optimisation <strong>techniques</strong> to optimise hyperparameters in motion planning algorithms in robotic arms. The control state is implemented in <a href="http://wiki.ros.org/">ROS</a> with motion planning integration with the <a href="http://moveit.ros.org/">MoveIt! Motion Planning Framework</a> and simulation with <a href="https://gazebosim.org/home">Gazebo</a>.</p>
-<p align="center">
-<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/crane_plus_moveit.png">
-</p>
-</section>
-<section id="motion-planning-algorithms" class="level2">
-<h2 class="anchored" data-anchor-id="motion-planning-algorithms">Motion Planning Algorithms</h2>
-<p>This project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&amp;D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss.</p>
-<p align="center">
-<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/mitsubishi.png">
-</p>
-
-
-</section>
-
- ]]></description>
-  <category>robotics</category>
-  <category>control</category>
-  <category>motion planning</category>
-  <category>ros</category>
-  <category>optimisation</category>
-  <guid>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</guid>
   <pubDate>Mon, 13 May 2024 00:00:00 GMT</pubDate>
 </item>
 </channel>

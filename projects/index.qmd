@@ -12,7 +12,7 @@ listing:
   categories: numbered
   sort-ui: [date, file-modified]
   filter-ui: true
-  feed: 
+  feed:
     categories: Python
     items: 40
   page-size: 40

@@ -1,0 +1,34 @@
+default_language_version:
+  python: python3
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # list of supported hooks: https://pre-commit.com/hooks.html
+      - id: trailing-whitespace
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: end-of-file-fixer
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-docstring-first
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-yaml
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: debug-statements
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: detect-private-key
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-executables-have-shebangs
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-toml
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-case-conflict
+        exclude: '^(_site/|_blog/|projects/)'
+      - id: check-added-large-files
+        args: ['--maxkb=30000']
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.7
+    hooks:
+      - id: ruff
+      - id: ruff-format

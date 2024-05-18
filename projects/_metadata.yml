@@ -7,3 +7,14 @@ knitr:
   opts_chunk:
     out.width: "100%"
 code-annotations: hover
+comments:
+  giscus:
+    repo: charleneleong-ai/ai-intuition
+    category: "Comments"
+    mapping: "pathname"
+    reactions-enabled: true
+    loading: lazy
+    input-position: "bottom"
+    theme:
+      light: light_high_contrast
+      dark: dark_dimmed

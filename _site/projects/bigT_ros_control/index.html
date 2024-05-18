@@ -20,7 +20,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
@@ -155,29 +155,29 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html"> 
+    <a class="nav-link" href="../../projects/index.html">
 <span class="menu-text">Projects</span></a>
-  </li>  
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="../../blog/index.html"> 
+    <a class="nav-link" href="../../blog/index.html">
 <span class="menu-text">Blog</span></a>
-  </li>  
+  </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about/index.html"> 
+    <a class="nav-link" href="../../about/index.html">
 <span class="menu-text">Charlene Leong</span></a>
-  </li>  
+  </li>
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/charleneleong-ai/"> <i class="bi bi-github" role="img">
-</i> 
+</i>
 <span class="menu-text"></span></a>
-  </li>  
+  </li>
   <li class="nav-item compact">
     <a class="nav-link" href="https://www.linkedin.com/in/charleneleong/"> <i class="bi bi-linkedin" role="img">
-</i> 
+</i>
 <span class="menu-text"></span></a>
-  </li>  
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
@@ -189,7 +189,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -219,36 +219,37 @@ window.Quarto = {
              <p>Charlene Leong </p>
           </div>
   </div>
-    
+
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
       <p class="date">May 13, 2024</p>
     </div>
   </div>
-  
+
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
       <p class="date-modified">May 18, 2024</p>
     </div>
   </div>
-    
+
   </div>
-  
+
 
 
 </header>
 
 
 <p><a href="https://github.com/charleneleong-ai/big_T_ROS_navigation">Open in Github</a></p>
+<p>This post describes the control node implementation for a three-wheeled omni-wheeled holonomic robot to update motor direction and speed from incoming linear and angular velocities.</p>
 <section id="build" class="level2">
 <h2 class="anchored" data-anchor-id="build">Build</h2>
 <p>Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities.</p>
 <p align="center">
 <img height="300" src="./big_T.png">
 </p>
-<p>Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm. This project focuses on the control node to update the robot’s motor direction and speed from incoming motor and sensor inputs.</p>
+<p>Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm.</p>
 <p align="center">
 <img height="300" src="./blockdiagram.png">
 </p>
@@ -287,36 +288,31 @@ window.Quarto = {
 </section>
 <section id="control-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="control-algorithm">Control Algorithm</h2>
-<p>In order to convert the sensor data to publish the motor control signal, we first listen for robot’s velocity commands <code>cmd_vel</code> and IMU data to calculate the wheel speeds and directions for each motor based on the robot’s kinematics. The calculated angular velocities are then converted to PWM signals and published as a <code>geometry_msgs::Twist</code> message, where the linear fields represent PWM values and the angular fields represent motor directions.</p>
+<p>The robot’s velocity commands are published on the <code>cmd_vel</code> topic from either the<code>teleop_twist_keyboard</code> node in <code>teleop</code> mode or <code>move_base</code> node in the ROS navigation stack when in SLAM node. The control node aims to translate directions in the global frame to the individual directions to each motor in three-wheeled omnidirectional robot configuration.</p>
 <section id="imports-and-global-variables" class="level3">
 <h3 class="anchored" data-anchor-id="imports-and-global-variables">1. Imports and Global Variables</h3>
 <p>We first import our initial <code>C++</code> <code>ROS</code> headers and instantiate our global variables from the robot’s physical characteristics.</p>
-<p>We include the following headers</p>
-<ul>
-<li><a href="http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html"><code>sensor_msgs/Imu.h</code></a> to collect sensor data message type from the IMU. The IMU node <a href="http://wiki.ros.org/razor_imu_9do"><code>razor_imu_9dof</code></a> publishes messages to the <code>"imu"</code> topic in the ROS system to be used by motion and planning algorithms such as this one.</li>
-<li><a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html"><code>geometry_msgs/Twist.h</code></a> to publish linear and angular velocities to facilitate interoperability throughout the system.</li>
-<li><a href="https://cplusplus.com/reference/cmath/"><code>math.h</code></a> to perform common mathmetical operations and transformations.</li>
-</ul>
+<p>We include the following headers - [<code>ros/ros.h</code>] to include too headers necessary to use the most common public pieces of the ROS system. - <a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html"><code>geometry_msgs/Twist.h</code></a> to publish linear and angular velocities to facilitate interoperability throughout the system. - <a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Quaternion.html"><code>geometry_msgs/Quaternion.h</code></a> to publish orientation in quarternion form. - <a href="http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html"><code>sensor_msgs/Imu.h</code></a> to collect sensor data message type from the IMU. The IMU node <a href="http://wiki.ros.org/razor_imu_9do"><code>razor_imu_9dof</code></a> publishes messages to the <code>"imu"</code> topic in the ROS system to be used by motion and planning algorithms such as this <a href="http://wiki.ros.org/robot_pose_ekf"><code>robot_pose_ekf</code></a>. - <a href="https://cplusplus.com/reference/cmath/"><code>math.h</code></a> to perform common mathmetical operations and transformations.</p>
 <p>We then declare our ROS publishers <code>motor_control_pub</code> to publish the motor control signal to the wheels and <code>imu_pub</code> to publish and update the robot’s orientation.</p>
 <div data-add-from="control.cpp" data-start-line="1" data-end-line="18" data-code-line-numbers="true">
 <div class="sourceCode cell-code" id="cb1" data-startfrom="1"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">"ros/ros.h"</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="pp">#include </span><span class="im">"geometry_msgs/Twist.h"</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="pp">#include </span><span class="im">"geometry_msgs/Quaternion.h"</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a><span class="pp">#include </span><span class="im">"sensor_msgs/Imu.h"</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="pp">#include </span><span class="im">"triangle_node/motor_control.h"</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="pp">#include </span><span class="im">&lt;math.h&gt;</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="dt">float</span> omega1<span class="op">,</span> omega2<span class="op">,</span> omega3<span class="op">;</span> <span class="co">// angular velocities</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="dt">float</span> r <span class="op">=</span> <span class="fl">0.0525</span><span class="op">;</span> <span class="co">// Wheel radius (105mm/2)</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="dt">float</span> h <span class="op">=</span> <span class="fl">0.18</span><span class="op">;</span>   <span class="co">// Distance from the center of the body to the wheel (180mm)</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="dt">float</span> v_x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in x (m/s)</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="dt">float</span> v_y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in y (m/s)</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="dt">float</span> omega_body <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  <span class="co">// Rotational speed of the body (rad/s)</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="dt">float</span> theta <span class="op">=</span> <span class="fl">3.1415</span><span class="op">;</span>  <span class="co">// Orientation of the body (rad)</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a></span>
-<span id="cb1-17"><a href="#cb1-17"></a>ros<span class="op">::</span>Publisher motor_control_pub<span class="op">;</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a>ros<span class="op">::</span>Publisher imu_pub<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="pp">#include </span><span class="im">&lt;math.h&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="dt">float</span> omega1<span class="op">,</span> omega2<span class="op">,</span> omega3<span class="op">;</span> <span class="co">// angular velocities</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="dt">float</span> r <span class="op">=</span> <span class="fl">0.0525</span><span class="op">;</span> <span class="co">// Wheel radius (105mm/2)</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="dt">float</span> h <span class="op">=</span> <span class="fl">0.18</span><span class="op">;</span>   <span class="co">// Distance from the center of the body to the wheel (180mm)</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="dt">float</span> v_x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in x (m/s)</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="dt">float</span> v_y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>    <span class="co">// Global translation speed in y (m/s)</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="dt">float</span> omega_body <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  <span class="co">// Rotational speed of the body (rad/s)</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="dt">float</span> theta <span class="op">=</span> <span class="fl">3.1415</span><span class="op">;</span>  <span class="co">// Orientation of the body (rad)</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a>ros<span class="op">::</span>Publisher motor_control_pub<span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>ros<span class="op">::</span>Publisher imu_pub<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="main-loop" class="level3">
@@ -327,65 +323,65 @@ window.Quarto = {
 <li>Initialises the ROS system with the node name <code>triangle_control</code>.</li>
 <li>Creates <code>ros::NodeHandle</code> to interface with the ROS system.</li>
 <li>Sets up publisher <code>pub</code> to publish motor control data on the <code>motor_control_data</code> topic.</li>
-<li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function.</li>
-<li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function.</li>
+<li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function. This allows us to explicitly publish the IMU orientation to an <code>orientation</code> topic.</li>
+<li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function. The <code>cmd_vel</code> topic is typically used to publish velocity commands published by the <code>teleop_twist_keyboard</code> node in <code>teleop</code> mode or <code>move_base</code> node in the ROS navigation stack when in SLAM node.</li>
 <li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> runs for as long as the ROS system is active.</li>
 </ol>
-<div data-add-from="control.cpp" data-start-line="72" data-end-line="90" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb2" data-startfrom="72"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 71;"><span id="cb2-72"><a href="#cb2-72"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">){</span></span>
-<span id="cb2-73"><a href="#cb2-73"></a></span>
-<span id="cb2-74"><a href="#cb2-74"></a>	ros<span class="op">::</span>init<span class="op">(</span>argc<span class="op">,</span> argv<span class="op">,</span> <span class="st">"triangle_control"</span><span class="op">);</span></span>
-<span id="cb2-75"><a href="#cb2-75"></a></span>
-<span id="cb2-76"><a href="#cb2-76"></a>	ros<span class="op">::</span>NodeHandle n<span class="op">;</span></span>
-<span id="cb2-77"><a href="#cb2-77"></a>	</span>
-<span id="cb2-78"><a href="#cb2-78"></a>	motor_control_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Twist<span class="op">&gt;(</span><span class="st">"motor_control_data"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
-<span id="cb2-79"><a href="#cb2-79"></a></span>
-<span id="cb2-80"><a href="#cb2-80"></a>	ros<span class="op">::</span>Subscriber imu_sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"imu"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> imu_callback<span class="op">);</span></span>
-<span id="cb2-81"><a href="#cb2-81"></a>	</span>
-<span id="cb2-82"><a href="#cb2-82"></a>	imu_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Quaternion<span class="op">&gt;(</span><span class="st">"orientation"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
-<span id="cb2-83"><a href="#cb2-83"></a></span>
-<span id="cb2-84"><a href="#cb2-84"></a>	ros<span class="op">::</span>Subscriber sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"cmd_vel"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> cmd_vel_callback<span class="op">);</span></span>
-<span id="cb2-85"><a href="#cb2-85"></a></span>
-<span id="cb2-86"><a href="#cb2-86"></a>	ros<span class="op">::</span>spin<span class="op">();</span></span>
-<span id="cb2-87"><a href="#cb2-87"></a></span>
-<span id="cb2-88"><a href="#cb2-88"></a>	<span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-89"><a href="#cb2-89"></a></span>
-<span id="cb2-90"><a href="#cb2-90"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div data-add-from="control.cpp" data-start-line="71" data-end-line="89" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb2" data-startfrom="71"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 70;"><span id="cb2-71"><a href="#cb2-71"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">){</span></span>
+<span id="cb2-72"><a href="#cb2-72"></a></span>
+<span id="cb2-73"><a href="#cb2-73"></a>	ros<span class="op">::</span>init<span class="op">(</span>argc<span class="op">,</span> argv<span class="op">,</span> <span class="st">"triangle_control"</span><span class="op">);</span></span>
+<span id="cb2-74"><a href="#cb2-74"></a></span>
+<span id="cb2-75"><a href="#cb2-75"></a>	ros<span class="op">::</span>NodeHandle n<span class="op">;</span></span>
+<span id="cb2-76"><a href="#cb2-76"></a></span>
+<span id="cb2-77"><a href="#cb2-77"></a>	motor_control_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Twist<span class="op">&gt;(</span><span class="st">"motor_control_data"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb2-78"><a href="#cb2-78"></a></span>
+<span id="cb2-79"><a href="#cb2-79"></a>	ros<span class="op">::</span>Subscriber imu_sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"imu"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> imu_callback<span class="op">);</span></span>
+<span id="cb2-80"><a href="#cb2-80"></a></span>
+<span id="cb2-81"><a href="#cb2-81"></a>	imu_pub <span class="op">=</span> n<span class="op">.</span>advertise<span class="op">&lt;</span>geometry_msgs<span class="op">::</span>Quaternion<span class="op">&gt;(</span><span class="st">"orientation"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb2-82"><a href="#cb2-82"></a></span>
+<span id="cb2-83"><a href="#cb2-83"></a>	ros<span class="op">::</span>Subscriber sub <span class="op">=</span> n<span class="op">.</span>subscribe<span class="op">(</span><span class="st">"cmd_vel"</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> cmd_vel_callback<span class="op">);</span></span>
+<span id="cb2-84"><a href="#cb2-84"></a></span>
+<span id="cb2-85"><a href="#cb2-85"></a>	ros<span class="op">::</span>spin<span class="op">();</span></span>
+<span id="cb2-86"><a href="#cb2-86"></a></span>
+<span id="cb2-87"><a href="#cb2-87"></a>	<span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-88"><a href="#cb2-88"></a></span>
+<span id="cb2-89"><a href="#cb2-89"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="converting-sensor-input-to-angular-velocities" class="level3">
 <h3 class="anchored" data-anchor-id="converting-sensor-input-to-angular-velocities">3: Converting Sensor Input to Angular Velocities</h3>
 <p>The main callback function that updates the robot’s direction is <code>cmd_vel_callback</code> which is subscribed to the <code>cmd_vel</code> topic of a data type of <code>geometry_msgs::Twist</code> which expresses velocity in it’s angular and linear parts. This function translates the desired linear and angular velocities of the robot into individual wheel speeds, converts those speeds to PWM signals, and determines the direction for each wheel. It then publishes these control signals to the <code>motor_control_pub</code> topic to update the robot direction .</p>
-<div data-add-from="control.cpp" data-start-line="41" data-end-line="69" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb3" data-startfrom="41"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 40;"><span id="cb3-41"><a href="#cb3-41"></a><span class="dt">void</span> cmd_vel_callback<span class="op">(</span><span class="at">const</span> geometry_msgs<span class="op">::</span>Twist <span class="op">&amp;</span> msg<span class="op">){</span></span>
-<span id="cb3-42"><a href="#cb3-42"></a>	<span class="co">/*</span></span>
-<span id="cb3-43"><a href="#cb3-43"></a><span class="co">		omega1	...	rotation speed of motor 1	(in rad/s)</span></span>
-<span id="cb3-44"><a href="#cb3-44"></a><span class="co">		omega2	...	rotation speed of motor 2	(in rad/s)</span></span>
-<span id="cb3-45"><a href="#cb3-45"></a><span class="co">		omega3	...	rotation speed of motor 3	(in rad/s)</span></span>
-<span id="cb3-46"><a href="#cb3-46"></a><span class="co">	*/</span></span>
-<span id="cb3-47"><a href="#cb3-47"></a>	ROS_INFO<span class="op">(</span><span class="st">"Msg received"</span><span class="op">);</span></span>
-<span id="cb3-48"><a href="#cb3-48"></a></span>
-<span id="cb3-49"><a href="#cb3-49"></a>	geometry_msgs<span class="op">::</span>Twist out_msg<span class="op">;</span></span>
-<span id="cb3-50"><a href="#cb3-50"></a>	v_x <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>x<span class="op">;</span></span>
-<span id="cb3-51"><a href="#cb3-51"></a>	v_y <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>y<span class="op">;</span></span>
-<span id="cb3-52"><a href="#cb3-52"></a>	omega_body <span class="op">=</span> msg<span class="op">.</span>angular<span class="op">.</span>z<span class="op">;</span></span>
-<span id="cb3-53"><a href="#cb3-53"></a></span>
-<span id="cb3-54"><a href="#cb3-54"></a>	omega1 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>v_x <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> v_y <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
-<span id="cb3-55"><a href="#cb3-55"></a>	omega2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x <span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
-<span id="cb3-56"><a href="#cb3-56"></a>	omega3 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(-</span>sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span>  <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">-</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
-<span id="cb3-57"><a href="#cb3-57"></a></span>
-<span id="cb3-58"><a href="#cb3-58"></a>	<span class="co">// pwm signal </span></span>
-<span id="cb3-59"><a href="#cb3-59"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>x <span class="op">=</span> omega2pwm<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// convert from rad/s to pwm signal</span></span>
-<span id="cb3-60"><a href="#cb3-60"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>y <span class="op">=</span> omega2pwm<span class="op">(</span>omega2<span class="op">);</span></span>
-<span id="cb3-61"><a href="#cb3-61"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>z <span class="op">=</span> omega2pwm<span class="op">(</span>omega3<span class="op">);</span></span>
-<span id="cb3-62"><a href="#cb3-62"></a></span>
-<span id="cb3-63"><a href="#cb3-63"></a>	<span class="co">// motor direction</span></span>
-<span id="cb3-64"><a href="#cb3-64"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>x <span class="op">=</span> sign<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// set direction bit depending on the rotation speed</span></span>
-<span id="cb3-65"><a href="#cb3-65"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>y <span class="op">=</span> sign<span class="op">(</span>omega2<span class="op">);</span></span>
-<span id="cb3-66"><a href="#cb3-66"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>z <span class="op">=</span> sign<span class="op">(</span>omega3<span class="op">);</span></span>
-<span id="cb3-67"><a href="#cb3-67"></a></span>
-<span id="cb3-68"><a href="#cb3-68"></a>	motor_control_pub<span class="op">.</span>publish<span class="op">(</span>out_msg<span class="op">);</span></span>
-<span id="cb3-69"><a href="#cb3-69"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div data-add-from="control.cpp" data-start-line="40" data-end-line="68" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb3" data-startfrom="40"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 39;"><span id="cb3-40"><a href="#cb3-40"></a><span class="dt">void</span> cmd_vel_callback<span class="op">(</span><span class="at">const</span> geometry_msgs<span class="op">::</span>Twist <span class="op">&amp;</span> msg<span class="op">){</span></span>
+<span id="cb3-41"><a href="#cb3-41"></a>	<span class="co">/*</span></span>
+<span id="cb3-42"><a href="#cb3-42"></a><span class="co">		omega1	...	rotation speed of motor 1	(in rad/s)</span></span>
+<span id="cb3-43"><a href="#cb3-43"></a><span class="co">		omega2	...	rotation speed of motor 2	(in rad/s)</span></span>
+<span id="cb3-44"><a href="#cb3-44"></a><span class="co">		omega3	...	rotation speed of motor 3	(in rad/s)</span></span>
+<span id="cb3-45"><a href="#cb3-45"></a><span class="co">	*/</span></span>
+<span id="cb3-46"><a href="#cb3-46"></a>	ROS_INFO<span class="op">(</span><span class="st">"Msg received"</span><span class="op">);</span></span>
+<span id="cb3-47"><a href="#cb3-47"></a></span>
+<span id="cb3-48"><a href="#cb3-48"></a>	geometry_msgs<span class="op">::</span>Twist out_msg<span class="op">;</span></span>
+<span id="cb3-49"><a href="#cb3-49"></a>	v_x <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>x<span class="op">;</span></span>
+<span id="cb3-50"><a href="#cb3-50"></a>	v_y <span class="op">=</span> msg<span class="op">.</span>linear<span class="op">.</span>y<span class="op">;</span></span>
+<span id="cb3-51"><a href="#cb3-51"></a>	omega_body <span class="op">=</span> msg<span class="op">.</span>angular<span class="op">.</span>z<span class="op">;</span></span>
+<span id="cb3-52"><a href="#cb3-52"></a></span>
+<span id="cb3-53"><a href="#cb3-53"></a>	omega1 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>v_x <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> v_y <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-54"><a href="#cb3-54"></a>	omega2 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(</span>cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x <span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-55"><a href="#cb3-55"></a>	omega3 <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>r <span class="op">*</span> <span class="op">(-</span>sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span> <span class="op">*</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_y<span class="op">/</span><span class="dv">3</span> <span class="op">-</span>  sqrt<span class="op">(</span><span class="dv">3</span><span class="op">)</span>  <span class="op">*</span> cosf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">-</span> sinf<span class="op">(</span>theta<span class="op">)</span> <span class="op">*</span> v_x<span class="op">/</span><span class="dv">3</span> <span class="op">+</span> omega_body <span class="op">*</span> h<span class="op">);</span></span>
+<span id="cb3-56"><a href="#cb3-56"></a></span>
+<span id="cb3-57"><a href="#cb3-57"></a>	<span class="co">// pwm signal</span></span>
+<span id="cb3-58"><a href="#cb3-58"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>x <span class="op">=</span> omega2pwm<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// convert from rad/s to pwm signal</span></span>
+<span id="cb3-59"><a href="#cb3-59"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>y <span class="op">=</span> omega2pwm<span class="op">(</span>omega2<span class="op">);</span></span>
+<span id="cb3-60"><a href="#cb3-60"></a>	out_msg<span class="op">.</span>linear<span class="op">.</span>z <span class="op">=</span> omega2pwm<span class="op">(</span>omega3<span class="op">);</span></span>
+<span id="cb3-61"><a href="#cb3-61"></a></span>
+<span id="cb3-62"><a href="#cb3-62"></a>	<span class="co">// motor direction</span></span>
+<span id="cb3-63"><a href="#cb3-63"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>x <span class="op">=</span> sign<span class="op">(</span>omega1<span class="op">);</span> <span class="co">// set direction bit depending on the rotation speed</span></span>
+<span id="cb3-64"><a href="#cb3-64"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>y <span class="op">=</span> sign<span class="op">(</span>omega2<span class="op">);</span></span>
+<span id="cb3-65"><a href="#cb3-65"></a>	out_msg<span class="op">.</span>angular<span class="op">.</span>z <span class="op">=</span> sign<span class="op">(</span>omega3<span class="op">);</span></span>
+<span id="cb3-66"><a href="#cb3-66"></a></span>
+<span id="cb3-67"><a href="#cb3-67"></a>	motor_control_pub<span class="op">.</span>publish<span class="op">(</span>out_msg<span class="op">);</span></span>
+<span id="cb3-68"><a href="#cb3-68"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>See the following sections below for more details.</p>
 </section>
@@ -517,8 +513,8 @@ PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
 <p>This means that for every unit increase in RPM, the PWM value increases by approximately 2.4307 units, and when the RPM is zero, the PWM value starts at approximately 36.2178.</p>
 <p><strong>3. Handling Very Small Angular Velocities</strong></p>
 <p>Small angular velocities <code>&lt;=0.05</code> are ignored, to smooth the noise and avoid unnecessary motor activation.</p>
-<div data-add-from="control.cpp" data-start-line="27" data-end-line="27" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb4" data-startfrom="27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 26;"><span id="cb4-27"><a href="#cb4-27"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div data-add-from="control.cpp" data-start-line="26" data-end-line="26" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb4" data-startfrom="26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 25;"><span id="cb4-26"><a href="#cb4-26"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>4. Linear Equation of Angular velocity to PWM</strong></p>
 <p>Through substituting and simplifying the equations above, we can derive the following linear relationship for converting angular velocity to PWM.</p>
@@ -526,25 +522,24 @@ PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
 PWM = 2.4307 \times RPM + 36.2178 =  2.43 \times (\omega\times 9.55) + 36.22
 \]</span></p>
 <p>The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel in Big T when calculate the new angular velocities from sensor feedback. We make omega absolute <span class="math inline">\(|\omega_{\text{wheel}}|\)</span> in order to ensure the angular velocity is never non-negative.</p>
-<div data-add-from="control.cpp" data-start-line="21" data-end-line="31" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb5" data-startfrom="21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 20;"><span id="cb5-21"><a href="#cb5-21"></a><span class="dt">int</span>	omega2pwm<span class="op">(</span><span class="dt">float</span> omega<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a>	<span class="co">/*	</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a><span class="co">		omega ... angular velocity ( in rad/s )</span></span>
-<span id="cb5-24"><a href="#cb5-24"></a><span class="co">		rpm = omega*9.5493; // conversion from rad/s to rpm	 ( 1/(2*pi)*60 = 9.5493 )</span></span>
-<span id="cb5-25"><a href="#cb5-25"></a><span class="co">		pwm = 2.4307*rpm + 36.2178; // conversion of rpm to pwm values</span></span>
-<span id="cb5-26"><a href="#cb5-26"></a><span class="co">	*/</span></span>
-<span id="cb5-27"><a href="#cb5-27"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb5-28"><a href="#cb5-28"></a></span>
-<span id="cb5-29"><a href="#cb5-29"></a>	<span class="cf">return</span> <span class="op">(</span><span class="dt">int</span><span class="op">)(</span><span class="fl">2.43</span><span class="op">*(</span>fabs<span class="op">(</span>omega<span class="op">)*</span><span class="fl">9.55</span><span class="op">)</span> <span class="op">+</span> <span class="fl">36.22</span><span class="op">);</span></span>
-<span id="cb5-30"><a href="#cb5-30"></a><span class="op">}</span></span>
-<span id="cb5-31"><a href="#cb5-31"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div data-add-from="control.cpp" data-start-line="20" data-end-line="29" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb5" data-startfrom="20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 19;"><span id="cb5-20"><a href="#cb5-20"></a><span class="dt">int</span>	omega2pwm<span class="op">(</span><span class="dt">float</span> omega<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a>	<span class="co">/*</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">		omega ... angular velocity ( in rad/s )</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">		rpm = omega*9.5493; // conversion from rad/s to rpm	 ( 1/(2*pi)*60 = 9.5493 )</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">		pwm = 2.4307*rpm + 36.2178; // conversion of rpm to pwm values</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">	*/</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a></span>
+<span id="cb5-28"><a href="#cb5-28"></a>	<span class="cf">return</span> <span class="op">(</span><span class="dt">int</span><span class="op">)(</span><span class="fl">2.43</span><span class="op">*(</span>fabs<span class="op">(</span>omega<span class="op">)*</span><span class="fl">9.55</span><span class="op">)</span> <span class="op">+</span> <span class="fl">36.22</span><span class="op">);</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>5. Setting Direction Bit of Motor</strong></p>
 <p>The direction bit of the motor is set based on the sign of the angular velocity <span class="math inline">\(\omega_{\text{wheel}}\)</span>.</p>
-<div data-add-from="control.cpp" data-start-line="32" data-end-line="34" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb6" data-startfrom="32"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 31;"><span id="cb6-32"><a href="#cb6-32"></a><span class="dt">int</span> sign<span class="op">(</span><span class="dt">float</span> number<span class="op">){</span></span>
-<span id="cb6-33"><a href="#cb6-33"></a>	<span class="cf">if</span><span class="op">(</span>number<span class="op">&gt;=</span><span class="dv">0</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span> <span class="cf">else</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb6-34"><a href="#cb6-34"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div data-add-from="control.cpp" data-start-line="31" data-end-line="33" data-code-line-numbers="true">
+<div class="sourceCode cell-code" id="cb6" data-startfrom="31"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 30;"><span id="cb6-31"><a href="#cb6-31"></a><span class="dt">int</span> sign<span class="op">(</span><span class="dt">float</span> number<span class="op">){</span></span>
+<span id="cb6-32"><a href="#cb6-32"></a>	<span class="cf">if</span><span class="op">(</span>number<span class="op">&gt;=</span><span class="dv">0</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span> <span class="cf">else</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 <p>This project was executed as part of the course - ECEN430: Advanced Mechatronic Engineering 2: Intelligence and Design at Victoria University of Wellington 2018.</p>
@@ -573,7 +568,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       toggleBodyColorMode(bsSheetEl);
     }
   }
-  toggleBodyColorPrimary();  
+  toggleBodyColorPrimary();
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -583,7 +578,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
+      if (clz.startsWith('code-annotation-')) {
         return true;
       }
     }
@@ -614,11 +609,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
       button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
+      tooltip = new bootstrap.Tooltip(button,
+        { trigger: "manual",
           customClass: "code-copy-button-tooltip",
           offset: [0, -8]});
-      tooltip.show();    
+      tooltip.show();
     }
     setTimeout(function() {
       if (tooltip) {
@@ -681,7 +676,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     if (onUntriggerFn) {
       config.onUntrigger = onUntriggerFn;
     }
-    window.tippy(el, config); 
+    window.tippy(el, config);
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
@@ -757,7 +752,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     tippyHover(xref, undefined, function(instance) {
       instance.disable();
       let url = xref.getAttribute('href');
-      let hash = undefined; 
+      let hash = undefined;
       if (url.startsWith('#')) {
         hash = url;
       } else {
@@ -785,7 +780,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             if (note !== null) {
               const html = processXRef(id, note);
               instance.setContent(html);
-            } 
+            }
           }).finally(() => {
             instance.enable();
             instance.show();
@@ -809,7 +804,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             const html = processXRef(null, note);
             instance.setContent(html);
-          } 
+          }
         }).finally(() => {
           instance.enable();
           instance.show();
@@ -849,7 +844,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             height = bottom - top;
           }
           if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
+            // cook up a div (if necessary) and position it
             let div = window.document.getElementById("code-annotation-line-highlight");
             if (div === null) {
               div = window.document.createElement("div");
@@ -965,10 +960,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
                 altAxis: false
               }
             }
-            ]        
-          }      
+            ]
+          }
         };
-        window.tippy(annoteTarget, config); 
+        window.tippy(annoteTarget, config);
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -1009,7 +1004,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="" data-category="Comments" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
+<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="R_kgDOL8P5yg" data-category="Comments" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
 </script>
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">

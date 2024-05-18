@@ -2,7 +2,6 @@
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/Quaternion.h"
 #include "sensor_msgs/Imu.h"
-#include "triangle_node/motor_control.h"
 #include <math.h>
 
 float omega1, omega2, omega3; // angular velocities
@@ -19,7 +18,7 @@ ros::Publisher imu_pub;
 
 
 int	omega2pwm(float omega) {
-	/*	
+	/*
 		omega ... angular velocity ( in rad/s )
 		rpm = omega*9.5493; // conversion from rad/s to rpm	 ( 1/(2*pi)*60 = 9.5493 )
 		pwm = 2.4307*rpm + 36.2178; // conversion of rpm to pwm values
@@ -34,7 +33,7 @@ int sign(float number){
 }
 
 void imu_callback(const sensor_msgs::Imu & msg){
-	imu_pub.publish(msg.orientation);	
+	imu_pub.publish(msg.orientation);
 }
 
 
@@ -55,7 +54,7 @@ void cmd_vel_callback(const geometry_msgs::Twist & msg){
 	omega2 = 1/r * (cosf(theta) * v_y/3 -  sinf(theta) * v_x/3 +  sqrt(3) * sinf(theta) * v_y/3 +  sqrt(3) * cosf(theta) * v_x /3 + omega_body * h);
 	omega3 = 1/r * (-sqrt(3) * sinf(theta) * v_y/3 + cosf(theta) * v_y/3 -  sqrt(3)  * cosf(theta) * v_x/3 - sinf(theta) * v_x/3 + omega_body * h);
 
-	// pwm signal 
+	// pwm signal
 	out_msg.linear.x = omega2pwm(omega1); // convert from rad/s to pwm signal
 	out_msg.linear.y = omega2pwm(omega2);
 	out_msg.linear.z = omega2pwm(omega3);
@@ -74,11 +73,11 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "triangle_control");
 
 	ros::NodeHandle n;
-	
+
 	motor_control_pub = n.advertise<geometry_msgs::Twist>("motor_control_data", 1000);
 
 	ros::Subscriber imu_sub = n.subscribe("imu", 1000, imu_callback);
-	
+
 	imu_pub = n.advertise<geometry_msgs::Quaternion>("orientation", 1000);
 
 	ros::Subscriber sub = n.subscribe("cmd_vel", 1000, cmd_vel_callback);

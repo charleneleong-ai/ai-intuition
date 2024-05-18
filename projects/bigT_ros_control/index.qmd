@@ -16,14 +16,15 @@ tikz:
 
 [Open in Github](https://github.com/charleneleong-ai/big_T_ROS_navigation)
 
+This post describes the control node implementation for a three-wheeled omni-wheeled holonomic robot to update motor direction and speed from incoming linear and angular velocities.
 
 ## Build
 
-Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities. 
+Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities.
 
 <p align="center"> <img height="300" src="./big_T.png"></p>
 
-Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm. This project focuses on the control node to update the robot's motor direction and speed  from incoming motor and sensor inputs.
+Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm.
 
 <p align="center"> <img height="300" src="./blockdiagram.png"></p>
 
@@ -33,7 +34,7 @@ Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR 
 
 There are two main mapping modes we can operate in with Big T.
 
-1. The map of the environment is first created using Hector SLAM to simulataneously localise and map the environment and save the map. See [here](http://wiki.ros.org/hector_slam) for ref.  Hector SLAM is used in conjunction with an extended Kalman filter (EKF) to fuse wheel odometry with IMU to create an improved odometry estimate. This example below shows the robot performing autonomous SLAM to map the environment. 
+1. The map of the environment is first created using Hector SLAM to simulataneously localise and map the environment and save the map. See [here](http://wiki.ros.org/hector_slam) for ref.  Hector SLAM is used in conjunction with an extended Kalman filter (EKF) to fuse wheel odometry with IMU to create an improved odometry estimate. This example below shows the robot performing autonomous SLAM to map the environment.
 
 
 <p align="center">  <img height="300" src="./feature.gif"></p>
@@ -63,18 +64,18 @@ Big T can be run into two operative modes, high level block digrams are shown be
 
 ## Control Algorithm
 
-In order to convert the sensor data to publish the motor control signal, we first listen for robot's velocity commands `cmd_vel` and IMU data to calculate the wheel speeds and directions for each motor based on the robot's kinematics. The calculated angular velocities are then converted to PWM signals and published as a `geometry_msgs::Twist` message, where the linear fields represent PWM values and the angular fields represent motor directions.
-
+The robot's velocity commands are published on the `cmd_vel` topic from either  the`teleop_twist_keyboard` node in `teleop` mode or `move_base` node in the ROS navigation stack when in SLAM node. The control node aims to translate directions in the global frame to the individual directions to each motor in three-wheeled omnidirectional robot configuration.
 
 ### 1. Imports and Global Variables
 
 We first import our initial `C++` `ROS` headers and instantiate our global variables from the robot's physical characteristics.
 
 We include the following headers
-
-   - [`sensor_msgs/Imu.h`](http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html) to collect sensor data message type from the IMU. The IMU node [`razor_imu_9dof`](http://wiki.ros.org/razor_imu_9do) publishes messages to the `"imu"` topic in the ROS system to be used by motion and planning algorithms such as this one.
+   - [`ros/ros.h`] to include too headers necessary to use the most common public pieces of the ROS system.
    - [`geometry_msgs/Twist.h`](http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html) to publish linear and angular velocities to facilitate interoperability throughout the system.
-   - [`math.h`](https://cplusplus.com/reference/cmath/) to perform common mathmetical operations and transformations. 
+   -  [`geometry_msgs/Quaternion.h`](http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Quaternion.html) to publish orientation in quarternion form.
+   - [`sensor_msgs/Imu.h`](http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html) to collect sensor data message type from the IMU. The IMU node [`razor_imu_9dof`](http://wiki.ros.org/razor_imu_9do) publishes messages to the `"imu"` topic in the ROS system to be used by motion and planning algorithms such as this [`robot_pose_ekf`](http://wiki.ros.org/robot_pose_ekf).
+   - [`math.h`](https://cplusplus.com/reference/cmath/) to perform common mathmetical operations and transformations.
 
 We then declare our ROS publishers `motor_control_pub` to publish the motor control signal to the wheels and `imu_pub` to publish and update the robot's orientation.
 
@@ -96,10 +97,10 @@ The `main` loop is as follows:
 3. Sets up publisher `pub` to publish motor control data on the `motor_control_data` topic.
 4. Sets up `imu_sub` to receive IMU data on `imu` topic to process with `imu_callback` function. This allows us to explicitly publish the IMU orientation to an `orientation` topic.
 5. Sets up `imu_pub` to receive velocity cmmmands on the `cmd_vel` topic and process with the `cmd_vel_callback` function. The `cmd_vel` topic is typically used to publish velocity commands published by the `teleop_twist_keyboard` node in `teleop` mode or `move_base` node in the ROS navigation stack when in SLAM node.
-6. Enters infinite event loop with `ros::spin()` to continuously process incoming messages on all topics to which the node is subscribed (eg. `imu` and `cmd_vel`), call the appropriate callback functions (eg. `imu_callback` and `cmd_vel_callback`) and publish messages to the advertised topics (eg. `motor_control_data` and `orientation`). It blocks the main thread and ensures the `triangle_control` runs for as long as the ROS system is active. 
+6. Enters infinite event loop with `ros::spin()` to continuously process incoming messages on all topics to which the node is subscribed (eg. `imu` and `cmd_vel`), call the appropriate callback functions (eg. `imu_callback` and `cmd_vel_callback`) and publish messages to the advertised topics (eg. `motor_control_data` and `orientation`). It blocks the main thread and ensures the `triangle_control` runs for as long as the ROS system is active.
 
 
-::: {add-from=control.cpp start-line=72 end-line=90 code-line-numbers="true"}
+::: {add-from=control.cpp start-line=71 end-line=89 code-line-numbers="true"}
 ```{.cpp}
 ```
 :::
@@ -109,12 +110,12 @@ The `main` loop is as follows:
 
 The main callback function that updates the robot's direction is `cmd_vel_callback` which is subscribed to the `cmd_vel` topic of a data type of  `geometry_msgs::Twist` which expresses velocity in it's angular and linear parts.  This function translates the desired linear and angular velocities of the robot into individual wheel speeds, converts those speeds to PWM signals, and determines the direction for each wheel. It then publishes these control signals to the `motor_control_pub` topic to update the robot direction .
 
-::: {add-from=control.cpp start-line=41 end-line=69 code-line-numbers="true"}
+::: {add-from=control.cpp start-line=40 end-line=68 code-line-numbers="true"}
 ```{.cpp}
 ```
 :::
 
-See the following sections below for more details. 
+See the following sections below for more details.
 
 ### 4: Deriving the Kinematic Equations for a Three-Wheeled Omnidirectional Robot
 
@@ -147,12 +148,12 @@ We aim to derive the angular velocities of the three holonomic wheels $\omega_1$
 
 First, we need to transform The global velocities $v_x$ and $v_y$ into the local frame of the robot using its orientation $\theta$:
 
-$$ 
-v_{x,\text{local}} = v_x \cos(\theta) + v_y \sin(\theta) 
+$$
+v_{x,\text{local}} = v_x \cos(\theta) + v_y \sin(\theta)
 $$
 
-$$ 
-v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta) 
+$$
+v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 $$
 
 
@@ -161,8 +162,8 @@ $$
 Each wheel contributes to the robot's motion. The linear velocities of the wheels can be decomposed into components that affect the overall motion of the robot.
 
 For a wheel positioned at an angle $\alpha$ with respect to the robot's frame:
-$$ 
-\omega_{\text{wheel}} = \frac{1}{r} (v_{x,\text{local}} \cos(\alpha) + v_{y,\text{local}} \sin(\alpha) + \omega_{\text{body}} h) 
+$$
+\omega_{\text{wheel}} = \frac{1}{r} (v_{x,\text{local}} \cos(\alpha) + v_{y,\text{local}} \sin(\alpha) + \omega_{\text{body}} h)
 $$
 
 Where $\omega_\text{wheel}$ is the angular velocity of the wheel, and $h$ is the distance from the center to the wheel.
@@ -276,12 +277,12 @@ These equations relate the global motion commands ($v_x$, $v_y$, $\omega_{\text{
 
 ### 5. Converting angular velocities to PWM signal for motor control
 
-After we've calculated the angular velocities in terms on radians per second ($rad/s$), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors. 
+After we've calculated the angular velocities in terms on radians per second ($rad/s$), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors.
 
 
 **1. Angular Velocity to RPM**
 
-We first convert angular velocity (in radians per second) to a revolutions per minute (RPM). 
+We first convert angular velocity (in radians per second) to a revolutions per minute (RPM).
 
 We know that $1 revolution=2\pi radians$ and $1 minute = 60 seconds$, therefore, the conversion factor is:
 
@@ -294,9 +295,9 @@ $$
 
 In order to measure and calibrate the relationship betwen PWM and RPM for the motor, an empirical experiment was performed in order to measurements and fit a linear regression model to the data.
 
-For series of PWM signals from a low duty cycle to (eg. 10%) to high duty cycle (eg. 90%) generated using an oscilloscope, the respective RPM for the motor was recorded using a tachometer. 
+For series of PWM signals from a low duty cycle to (eg. 10%) to high duty cycle (eg. 90%) generated using an oscilloscope, the respective RPM for the motor was recorded using a tachometer.
 
-The resulting linear relationship is: 
+The resulting linear relationship is:
 
 $$
 PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
@@ -310,7 +311,7 @@ This means that for every unit increase in RPM, the PWM value increases by appro
 
 Small angular velocities `<=0.05` are ignored, to smooth the noise and avoid unnecessary motor activation.
 
-::: {add-from=control.cpp start-line=27 end-line=27 code-line-numbers="true"}
+::: {add-from=control.cpp start-line=26 end-line=26 code-line-numbers="true"}
 ```{.cpp}
 ```
 :::
@@ -321,14 +322,14 @@ Small angular velocities `<=0.05` are ignored, to smooth the noise and avoid unn
 Through substituting and simplifying the equations above, we can derive the following linear relationship for converting angular velocity to PWM.
 
 $$
-PWM = 2.4307 \times RPM + 36.2178 =  2.43 \times (\omega\times 9.55) + 36.22 
+PWM = 2.4307 \times RPM + 36.2178 =  2.43 \times (\omega\times 9.55) + 36.22
 $$
 
 
-The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel in Big T when calculate the new angular velocities from sensor feedback.  We make omega absolute $|\omega_{\text{wheel}}|$ in order to ensure the angular velocity is never non-negative. 
+The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel in Big T when calculate the new angular velocities from sensor feedback.  We make omega absolute $|\omega_{\text{wheel}}|$ in order to ensure the angular velocity is never non-negative.
 
 
-::: {add-from=control.cpp start-line=21 end-line=31 code-line-numbers="true"}
+::: {add-from=control.cpp start-line=20 end-line=29 code-line-numbers="true"}
 ```{.cpp}
 ```
 :::
@@ -337,7 +338,7 @@ The result is then returned as an integer PWM value which can be used to control
 
 The direction bit of the motor is set based on the sign of the angular velocity $\omega_{\text{wheel}}$.
 
-::: {add-from=control.cpp start-line=32 end-line=34 code-line-numbers="true"}
+::: {add-from=control.cpp start-line=31 end-line=33 code-line-numbers="true"}
 ```{.cpp}
 ```
 :::

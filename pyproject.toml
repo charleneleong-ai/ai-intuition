@@ -3,18 +3,19 @@ name = "ai-intuition"
 version = "0.0.1"
 description = "AI Intuition"
 authors = ["Charlene Leong <charleneleong84@gmail.com>"]
-package-mode = true
+package-mode = false
 license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-latex = "^0.7.0" 
+latex = "^0.7.0"
 
 ## Dev dependencies
 [tool.poetry.dev-dependencies]
 jupyterlab = "^4.1.6" # https://github.com/jupyterlab/jupyterlab/releases/
+pre-commit = "^3.7.0" # https://github.com/pre-commit/pre-commit/releases/
+ruff = "^0.3.1" # https://github.com/astral-sh/ruff/releases
 
 [build-system]
 requires = ["poetry"]
 build-backend = "poetry.core.masonry.api"
-
