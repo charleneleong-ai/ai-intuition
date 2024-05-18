@@ -2,26 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.ai-intuition.com/projects/bigT_ros_control/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.783Z</lastmod>
+    <lastmod>2024-05-18T10:40:30.879Z</lastmod>
   </url>
   <url>
-    <loc>https://www.ai-intuition.com/about/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.679Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ai-intuition.com/blog/posts/mamba/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.683Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ai-intuition.com/blog/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.679Z</lastmod>
+    <loc>https://www.ai-intuition.com/projects/crane_plus_motion_planning/index.html</loc>
+    <lastmod>2024-05-18T10:40:30.891Z</lastmod>
   </url>
   <url>
     <loc>https://www.ai-intuition.com/blog/posts/kan/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.679Z</lastmod>
+    <lastmod>2024-05-18T10:40:30.779Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/blog/index.html</loc>
+    <lastmod>2024-05-18T10:40:30.779Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/blog/posts/mamba/index.html</loc>
+    <lastmod>2024-05-18T10:40:30.779Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/about/index.html</loc>
+    <lastmod>2024-05-18T10:40:30.779Z</lastmod>
   </url>
   <url>
     <loc>https://www.ai-intuition.com/projects/index.html</loc>
-    <lastmod>2024-05-18T10:18:23.783Z</lastmod>
+    <lastmod>2024-05-18T10:40:30.899Z</lastmod>
   </url>
 </urlset>

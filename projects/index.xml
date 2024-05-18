@@ -12,6 +12,62 @@
 <generator>quarto-1.4.554</generator>
 <lastBuildDate>Mon, 13 May 2024 00:00:00 GMT</lastBuildDate>
 <item>
+  <title>Crane+ V2 Motion Planning Optimisation</title>
+  <dc:creator>Charlene Leong</dc:creator>
+  <link>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p><a href="https://github.com/charleneleong-ai/crane_plus_v2_motion_planning">Open in Github</a></p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/feature.gif">
+</p>
+<p>This post describes the experiment setup for testing blackbox optimisation algorithms to motion planning algorithms in the <code>Crane+V2</code> 4DOF robotic arm.</p>
+<section id="build" class="level2">
+<h2 class="anchored" data-anchor-id="build">Build</h2>
+<p><a href="https://www.rt-net.jp/products/cranep2?lang=en">Crane+V2</a> is a 4DOF arm + gripper from <a href="https://rt-net.jp/products/cranev2/">RT-Net</a>. This project explores the application of blackbox optimisation techniques to optimise hyperparameters in motion planning algorithms in robotic arms. The control state is implemented in <a href="http://wiki.ros.org/">ROS</a> with motion planning integration with the <a href="http://moveit.ros.org/">MoveIt! Motion Planning Framework</a> and simulation with <a href="https://gazebosim.org/home">Gazebo</a>.</p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/crane_plus_moveit.png">
+</p>
+</section>
+<section id="package-setup" class="level2">
+<h2 class="anchored" data-anchor-id="package-setup">Package Setup</h2>
+<p>In order to setup the ROS environment for the <code>Crane+V2</code> arm, the following packages were implemented to aid in setting up the experimentation environment. Please refer to the repo <a href="https://github.com/charleneleong-ai/crane_plus_v2_motion_planning">here</a> for more details on how to things up, even though this is no longer maintained!</p>
+<p><strong>crane_plus_control:</strong> Parameter tuning and benchmarking nodes</p>
+<p><strong>crane_plus_description:</strong> <a href="https://github.com/charleneleong-ai/crane_plus_description/README.md">CAD files</a> and <a href="http://wiki.ros.org/urdf">URDF</a> (Unified Robot Description Format) model of CRANE+V2</p>
+<p><strong>crane_plus_gripper:</strong> Node that controls the gripper of CRANE+V2</p>
+<p><strong>crane_plus_hardware:</strong> Launch file that configures the settings for use with CRANE+V2 hardware</p>
+<p><strong>crane_plus_ikfast_arm_plugin:</strong> Custom inverse kinematics plugin for CRANE+V2 in the MoveIt! framework</p>
+<p><strong>crane_plus_joint_state_publisher:</strong> Node that converts servo status messages (<a href="http://docs.ros.org/kinetic/api/dynamixel_msgs/html/msg/JointState.html"><code>dynamixel_msgs/JointState</code></a> message type) output by the Dynamixel servo controller to ROS <a href="http://docs.ros.org/melodic/api/sensor_msgs/html/msg/JointState.html"><code>sensor_msgs/JointState</code></a> message type</p>
+<p><strong>crane_plus_moveit_config:</strong> Parameters and launch files for using CRANE+V2 with MoveIt! framework</p>
+<p><strong>crane_plus_simulation:</strong> Launch file that configures the settings for simulating CRANE+V2 in Gazebo</p>
+</section>
+<section id="experiment-setup" class="level2">
+<h2 class="anchored" data-anchor-id="experiment-setup">Experiment Setup</h2>
+<p>…</p>
+<p>WIP! Will add details soon!</p>
+<p>…</p>
+<hr>
+<p>This project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&amp;D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss.</p>
+<p align="center">
+<img height="300" src="https://www.ai-intuition.com/projects/crane_plus_motion_planning/mitsubishi.png">
+</p>
+
+
+</section>
+
+ ]]></description>
+  <category>robotics</category>
+  <category>control</category>
+  <category>motion planning</category>
+  <category>ros</category>
+  <category>optimisation</category>
+  <guid>https://www.ai-intuition.com/projects/crane_plus_motion_planning/</guid>
+  <pubDate>Mon, 13 May 2024 00:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Big T ROS Navigation and Control</title>
   <dc:creator>Charlene Leong</dc:creator>
   <link>https://www.ai-intuition.com/projects/bigT_ros_control/</link>
