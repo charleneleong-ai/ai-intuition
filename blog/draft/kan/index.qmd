@@ -1,0 +1,9 @@
+---
+title: "KAN"
+author: "Charlene Leong"
+date: "2024-05-13"
+categories: [model, code, analysis]
+image: "image.jpg"
+---
+
+This is a post with executable code.

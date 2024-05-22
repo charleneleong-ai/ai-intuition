@@ -32,5 +32,9 @@ format:
     smooth-scroll: true
     highlight-style: gruvbox
     df-print: kable
+    csl: styles/ieee.csl
+    page-layout: full
+    fig-cap-location: bottom
+    crossrefs-hover: true
 
 editor: visual

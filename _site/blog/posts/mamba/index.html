@@ -9,7 +9,7 @@
 <meta name="author" content="Charlene Leong">
 <meta name="dcterms.date" content="2024-05-13">
 
-<title>AI Intuition - Mamba</title>
+<title>AI Intuition - Structured State Space Sequence Models (S4) Explained: Mamba</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -41,6 +61,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,14 +92,43 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -122,50 +174,644 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Mamba</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">news</div>
-              </div>
-                  </div>
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#why-mamba-and-structured-state-space-sequence-models" id="toc-why-mamba-and-structured-state-space-sequence-models" class="nav-link active" data-scroll-target="#why-mamba-and-structured-state-space-sequence-models">Why Mamba and Structured State Space Sequence Models?</a>
+  <ul class="collapse">
+  <li><a href="#limitations-of-transformers-for-long-contexts" id="toc-limitations-of-transformers-for-long-contexts" class="nav-link" data-scroll-target="#limitations-of-transformers-for-long-contexts">Limitations of Transformers for Long Contexts</a></li>
+  <li><a href="#limitations-of-rnns-for-long-contexts" id="toc-limitations-of-rnns-for-long-contexts" class="nav-link" data-scroll-target="#limitations-of-rnns-for-long-contexts">Limitations of RNNs for Long Contexts</a></li>
+  <li><a href="#complexity" id="toc-complexity" class="nav-link" data-scroll-target="#complexity">Complexity</a></li>
+  </ul></li>
+  <li><a href="#what-are-structured-state-space-sequence-models-s4" id="toc-what-are-structured-state-space-sequence-models-s4" class="nav-link" data-scroll-target="#what-are-structured-state-space-sequence-models-s4">What are Structured State Space Sequence Models (S4)?</a>
+  <ul class="collapse">
+  <li><a href="#state-space-models" id="toc-state-space-models" class="nav-link" data-scroll-target="#state-space-models">1. State Space Models</a></li>
+  <li><a href="#discretisation-for-training-and-inference" id="toc-discretisation-for-training-and-inference" class="nav-link" data-scroll-target="#discretisation-for-training-and-inference">2. Discretisation for Training and Inference</a></li>
+  <li><a href="#the-state-transition-matrix-mathbfbara" id="toc-the-state-transition-matrix-mathbfbara" class="nav-link" data-scroll-target="#the-state-transition-matrix-mathbfbara">3. The State Transition Matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span></a></li>
+  </ul></li>
+  <li><a href="#how-does-mamba-improve-on-s4-to-be-a-potential-alternative-to-transformers" id="toc-how-does-mamba-improve-on-s4-to-be-a-potential-alternative-to-transformers" class="nav-link" data-scroll-target="#how-does-mamba-improve-on-s4-to-be-a-potential-alternative-to-transformers">How does Mamba improve on S4 to be a potential alternative to transformers?</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Structured State Space Sequence Models (S4) Explained: Mamba</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">state space models</div>
+    <div class="quarto-category">s4</div>
+    <div class="quarto-category">mamba</div>
+    <div class="quarto-category">sequence models</div>
+    <div class="quarto-category">long range</div>
+    <div class="quarto-category">modelling</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta column-page-right">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Charlene Leong </p>
+          </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 13, 2024</p>
+    </div>
+  </div>
   
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Charlene Leong </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">May 13, 2024</p>
-      </div>
-    </div>
     
-      
-    </div>
-    
+  </div>
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
-<!-- sidebar -->
-<!-- margin-sidebar -->
-    
-<!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
+</header>
 
 
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./feature.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="./feature.gif" class="quarto-figure quarto-figure-center figure-img" height="300"></a></p>
+</figure>
+</div>
+<section id="why-mamba-and-structured-state-space-sequence-models" class="level2">
+<h2 class="anchored" data-anchor-id="why-mamba-and-structured-state-space-sequence-models">Why Mamba and Structured State Space Sequence Models?</h2>
+<p>The Mamba model architecture has recently emerged as a promising alternative to deep sequence modeling overcoming key limitations in other model families such as transformers, recurrent neural networks (RNNs), convolutional neural networks (CNNs), particularly for modelling long-range dependencies (LRDs).</p>
+<p>They come from the family of structured state space models (SSMs), particularly useful for modelling long-range dependencies in continuous data such as time series and signal data <span class="citation" data-cites="tay2020long"><a href="#ref-tay2020long" role="doc-biblioref">[1]</a></span>. It offers a robust framework for handling long-range dependencies efficiently with up to 5x higher throughput than transformers, linear scaling with sequence length, with in-context learning performance improvement on real data up to million-length sequences <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[2]</a></span>. Therefore, their strengths are suited to problems in the long-range high frame-rate domain such as medical signal, speech, video or energy waveforms <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[3]</a></span>.</p>
+<div id="fig-signaldata" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./signal_data.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2"><img src="./signal_data.png" class="quarto-figure quarto-figure-center figure-img" height="220"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Discrete - Continuous Spectrum of Data Sources and Examples
+</figcaption>
+</figure>
+</div>
+<p>It primarily does this by framing the modelling problem of learning complex non-linear interdependencies between inputs and outputs as a discretised signal-to-signal learning problem where we aim to learn the compressed selective memory state between a higher-dimensional input signal and it’s online function reconstruction with the goal to learn the properties of the continuous signal in a compressed discrete space. It borrows ideas from control theory and signal processing, where it is analogous to learning an evolving first-order differential equation (eg. Kalman Filter as a state space model) to capture the input signal’s dynamics whilst employing structured matrices (e.g.&nbsp;HIPPO matrix operator <span class="citation" data-cites="gu2020hippo"><a href="#ref-gu2020hippo" role="doc-biblioref">[4]</a></span>, <a href="https://bobbielf2.github.io/blog/2021/03/21/low-rank-and-rank-structured-matrices/">diagonal plus low-rank matrices</a>) to reduce computational complexity and utilising <a href="https://medium.com/swlh/the-fast-fourier-transform-fft-5e96cf637c38">Fast Fourier transforms (FFTs)</a> to further speed up computations.</p>
+<p>The predecessor to Mamba, the S4 model <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[5]</a></span>, was the first SSM to show promising results in the Long Range Arena <span class="citation" data-cites="tay2020long"><a href="#ref-tay2020long" role="doc-biblioref">[1]</a></span> even on the Path-X task where the task is to determine whether two points are connected between a flattened sequence of the image which is notable as many other models fail at this task as seen in <a href="#fig-lra" class="quarto-xref">Figure&nbsp;2</a>.</p>
+<div id="fig-lra" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./long_range_arena.png" class="lightbox" data-glightbox="description: .lightbox-desc-3" data-gallery="quarto-lightbox-gallery-3"><img src="./long_range_arena.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[5]</a></span>
+</figcaption>
+</figure>
+</div>
+<p>Mamba has also been shown to hold their own against the Transformer++ recipe (eg. PaLM and LLama architectures) with significant improvements in scaling with sequence length and model parameters wih its novel scan algorithm. As a general sequence model backbone, Mamba achieves state-of-the-art performance across several modalities such as language, audio, and genomics. On language modelling, the Mamba-3B model outperforms Transformers of the same size and matches Transformers twice its size, both in pretraining and downstream evaluation. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[2]</a></span></p>
+<div id="fig-scale" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scale-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./scaling_laws.png" class="lightbox" data-glightbox="description: .lightbox-desc-4" data-gallery="quarto-lightbox-gallery-4"><img src="./scaling_laws.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./efficiency_benchmark.png" class="lightbox" data-glightbox="description: .lightbox-desc-5" data-gallery="quarto-lightbox-gallery-5"><img src="./efficiency_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scale-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[2]</a></span>
+</figcaption>
+</figure>
+</div>
+<section id="limitations-of-transformers-for-long-contexts" class="level3">
+<h3 class="anchored" data-anchor-id="limitations-of-transformers-for-long-contexts">Limitations of Transformers for Long Contexts</h3>
+<p>In recent years, transformers have revolutionised AI by enabling models to capture complex relationships within sequences, leading to significant advancements in various fields, including solving the <a href="https://www.nature.com/articles/s41586-021-03819-2#citeas">protein folding problem (AlphaFold)</a>, performing in the <a href="https://arxiv.org/pdf/2303.08774">80-90th percentile in the uniform bar exams and college-level AP subjects</a><span class="citation" data-cites="openai2024gpt4"><a href="#ref-openai2024gpt4" role="doc-biblioref">[6]</a></span>, to <a href="https://openai.com/index/hello-gpt-4o/">translating between nuanced languages from Tamil, Turkish, Arabic to Urdu</a>. However, transformers face challenges with long sequences (e.g., 100,000 tokens or more) due to the <strong>quadratic complexity of the self-attention mechanism</strong>, which results in substantial computational and memory costs. This inefficiency becomes particularly problematic during inference.</p>
+<p>A useful visual explainer can be seen with the BERTViz tool <span class="citation" data-cites="vig2019multiscale"><a href="#ref-vig2019multiscale" role="doc-biblioref">[7]</a></span> (see <a href="#fig-attention" class="quarto-xref">Figure&nbsp;4</a>) where we can observe attention for one or more attention heads in the same layer as well how individual neurons in the query and key vectors are activated in the attention computation.</p>
+<div id="fig-attention" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./bertviz_head.gif" class="lightbox" data-glightbox="description: .lightbox-desc-6" data-gallery="quarto-lightbox-gallery-6" title="Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words."><img src="./bertviz_head.gif" class="img-fluid figure-img" style="width:61.0%"></a></p>
+<figcaption>Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./bertviz_neuron.gif" class="lightbox" data-glightbox="description: .lightbox-desc-7" data-gallery="quarto-lightbox-gallery-7" title="Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange."><img src="./bertviz_neuron.gif" class="img-fluid figure-img" style="width:200.0%"></a></p>
+<figcaption>Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Visualising Attention Weights in Transformer Networks <span class="citation" data-cites="vig2019multiscale"><a href="#ref-vig2019multiscale" role="doc-biblioref">[7]</a></span>
+</figcaption>
+</figure>
+</div>
+<p>We can observe in the following experiments in <a href="#fig-llm-long-context" class="quarto-xref">Figure&nbsp;5</a> pressure testing LLMs that GPT4’s recall performance started to degrade above 73K tokens where the low recall performance was placed between 7-50% document depth given. However, facts at the beginning of documents were recalled regardless of document length. This also seems to be the case for Anthropic’s Claude 2.1 model.</p>
+<div id="fig-llm-long-context" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-llm-long-context-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./gpt4_long_context.png" class="lightbox" data-glightbox="description: .lightbox-desc-8" data-gallery="quarto-lightbox-gallery-8" title="OpenAI’s GPT-4-128K"><img src="./gpt4_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<figcaption>OpenAI’s GPT-4-128K</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./claude_long_context.png" class="lightbox" data-glightbox="description: .lightbox-desc-9" data-gallery="quarto-lightbox-gallery-9" title="Anthropic’s Claude 2.1"><img src="./claude_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<figcaption>Anthropic’s Claude 2.1</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-llm-long-context-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Needle In A Haystack - Pressure Testing LLMs Results for Long Context Retrieval <span class="citation" data-cites="llmtestneedlehaystack"><a href="#ref-llmtestneedlehaystack" role="doc-biblioref">[8]</a></span>
+</figcaption>
+</figure>
+</div>
+<p><span class="math inline">\(T\)</span>: Sequence length <span class="math inline">\(d\)</span>: Dimension of the hidden state</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Unreasonably effective at modelling complex dependencies</strong>: Each token explicitly attends to all other tokens in the sequence. Unlike architectures that rely on a fixed-sized state as a summary, masked attention in transformers enables each token to see an uncompressed view of the sequence during training.</td>
+<td><strong>Quadratic scaling with context length</strong>: Since every input attends to all prior inputs, the total amount of computation increases quadratically both in time and space - <span class="math inline">\(T^2d\)</span>. The cost of inference is therefore quadratic in nature, having to recalculate attention for the full sequence.</td>
+</tr>
+<tr class="even">
+<td><strong>Highly parallel training</strong>: There are no dependencies along the time dimension, and the core operations are matrix multiplications, which hardware accelerators have been excellent at parallelisation for decades.</td>
+<td><strong>Weak inductive bias</strong>: Unlike CNNs, there is almost no prior knowledge of dependency patterns. For example, position information only comes from absolute/relative positional embeddings.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="limitations-of-rnns-for-long-contexts" class="level3">
+<h3 class="anchored" data-anchor-id="limitations-of-rnns-for-long-contexts">Limitations of RNNs for Long Contexts</h3>
+<p>Before transformers, RNNs were the go-to architecture for sequence modeling where they process sequences iteratively, maintaining a hidden state that captures previous information. However, RNNs suffer from vanishing and exploding gradient problems as the sequence length grows, making it difficult for them to learn long-range dependencies effectively. Additionally, the recurrent nature of RNN’s inhibit ability to parallelise training.</p>
+<div id="fig-rnn" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./rnn.gif" class="lightbox" data-glightbox="description: .lightbox-desc-10" data-gallery="quarto-lightbox-gallery-10"><img src="./rnn.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Unrolling Recurrent Neural Network Architecture Over Time
+</figcaption>
+</figure>
+</div>
+<p><span class="math inline">\(T\)</span>: Sequence length <span class="math inline">\(d\)</span>: Dimension of the hidden state</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Efficient autoregressive inference</strong>: Since the hidden state <span class="math inline">\(h(t)\)</span> encapsulates prior inputs, the model only needs to consider a small and constant set of new information for each subsequent input.</td>
+<td><strong>Ineffective modeling of complex dependencies</strong>: All prior context must be compressed, via static updates, into a fixed amount of bits. Therefore, RNNs often suffer with the vanishing gradient problem with long range sequences.</td>
+</tr>
+<tr class="even">
+<td><strong>No limits to context length</strong>: There is nothing in the formulation that explicitly constrains the model to a maximal sequence length and therefore the state is constant. Inference scales linearly with sequence length.</td>
+<td><strong>Slow training</strong>: Training requires sequential backpropagation through time, making poor utilisation of hardware accelerators, e.g., GPUs. In feed-forward propagation and backpropagation, the computation of each state is contingent upon the previous step, therefore the training complexity is <span class="math inline">\(O(Td^2)\)</span>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="complexity" class="level3">
+<h3 class="anchored" data-anchor-id="complexity">Complexity</h3>
+<p>In summary, the state space models are the only models with linear complexity in both time and space for both training and inference.</p>
+<p><span class="math inline">\(T\)</span>: Sequence length <span class="math inline">\(d\)</span>: Dimension of the hidden state</p>
+<table class="table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 23%">
+<col style="width: 25%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>RNNs</th>
+<th>Transformers</th>
+<th>State Space Models (SSMs) (Mamba)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Training Time Complexity</strong></td>
+<td><span class="math inline">\(O(T \cdot d^2)\)</span></td>
+<td><span class="math inline">\(O(T^2 \cdot d)\)</span></td>
+<td><span class="math inline">\(O(T \cdot d)\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Training Space Complexity</strong></td>
+<td><span class="math inline">\(O(T \cdot d)\)</span></td>
+<td><span class="math inline">\(O(T^2 \cdot d)\)</span></td>
+<td><span class="math inline">\(O(T \cdot d)\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Inference Time Complexity</strong></td>
+<td><span class="math inline">\(O(T \cdot d^2)\)</span></td>
+<td><span class="math inline">\(O(T^2 \cdot d)\)</span></td>
+<td><span class="math inline">\(O(T \cdot d)\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Inference Space Complexity</strong></td>
+<td><span class="math inline">\(O(d)\)</span></td>
+<td><span class="math inline">\(O(T^2 \cdot d)\)</span></td>
+<td><span class="math inline">\(O(d)\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="what-are-structured-state-space-sequence-models-s4" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-structured-state-space-sequence-models-s4">What are Structured State Space Sequence Models (S4)?</h2>
+<p>Structured state space sequence models (S4) are introduced as a unified framework for applying SSMs to sequence modelling and can be placed on a spectrum between highly compressed (e.g.&nbsp;RNNs) to highly explicit (e.g.&nbsp;transformers) based on their approach to information representation. Their architecture can be interpreted as a combination of recurrent, convolutional and continuous-time models with linear state-space layers <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[9]</a></span> with online memory approximation in the form of the HIPPO matrix operator <span class="citation" data-cites="gu2020hippo"><a href="#ref-gu2020hippo" role="doc-biblioref">[4]</a></span> to effectively approximate sequences with long-range dependencies. This framework allows us to represent the model in three representations; as an implicit continuous-time input signal, as a discretised recurrent network for efficient inference and as a convolutional representation which allows for efficient parallelisable training.</p>
+<div id="fig-lssml" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./state_space_layer.png" class="lightbox" data-glightbox="description: .lightbox-desc-11" data-gallery="quarto-lightbox-gallery-11"><img src="./state_space_layer.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: The Three Representations of Linear State Space Layers in S4: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel. <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[9]</a></span>
+</figcaption>
+</figure>
+</div>
+<section id="state-space-models" class="level3">
+<h3 class="anchored" data-anchor-id="state-space-models">1. State Space Models</h3>
+<p>To understand S4, we must first understand their origins from classical SSMs, commonly used to describe state representations of continuous-time systems, mathematically formulated as a set of first-order differential equations. The state of the system is represented by a vector of variables (<span class="math inline">\(x(t)\)</span>), and the dynamics of the system are described by how these state variables change over time (<span class="math inline">\(\mathbf{A}\)</span>).</p>
+<p>Therefore, at each timestep <span class="math inline">\(t\)</span>, we project the input sequence <span class="math inline">\(x(t) \in \mathbb{R}^{M}\)</span> to higher-dimensional latent state space representation <span class="math inline">\(h(t) \in \mathbb{R}^{N}\)</span> (memory state) to derive the predicted output sequence <span class="math inline">\(y(t) \in \mathbb{R}^{O}\)</span>.</p>
+<p><span id="eq-state"><span class="math display">\[
+\text State \space equation: \quad  h'(t) = \mathbf{A}h(t) + \mathbf{B}x(t)
+\tag{1}\]</span></span></p>
+<p><span id="eq-output"><span class="math display">\[
+\text Output \space equation: \quad y(t) = \mathbf{C}h(t) +  \mathbf{D}x(t)
+\tag{2}\]</span></span></p>
+<p>The matrices definitions therefore are:</p>
+<ul>
+<li><span class="math inline">\(\mathbf{A} \in \mathbb{R}^{N \times N}\)</span> the system matrix which describes the system dynamics (otherwise known as the state transition matrix)</li>
+<li><span class="math inline">\(\mathbf{B} \in \mathbb{R}^{N \times M}\)</span> the input matrix which describes how inputs affect the state</li>
+<li><span class="math inline">\(\mathbf{C} \in \mathbb{R}^{O \times N}\)</span> the output matrix which maps the state to the output</li>
+<li><span class="math inline">\(\mathbf{D} \in \mathbb{R}^{O \times M}\)</span> the feedthrough or direction transmission matrix which describes how the input directly influences the output</li>
+</ul>
+<p>Often, we consider the the case of a single-input single-output system where <span class="math inline">\(O=M=1\)</span> therefore <span class="math inline">\(\mathbf{D}=0\)</span>, where we omit <span class="math inline">\(\mathbf{D}x(t)\)</span> by treating it as a skip connection.</p>
+<div id="fig-ssm" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./ssm_cont_simplified.png" class="lightbox" data-glightbox="description: .lightbox-desc-12" data-gallery="quarto-lightbox-gallery-12"><img src="./ssm_cont_simplified.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./ssm_cont.png" class="lightbox" data-glightbox="description: .lightbox-desc-13" data-gallery="quarto-lightbox-gallery-13"><img src="./ssm_cont.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span>
+</figcaption>
+</figure>
+</div>
+<p>These equations suggest that the SSM exhibits global awareness, as the current output is influenced by all preceding input data. When <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\mathbf{B}\)</span>, and <span class="math inline">\(\mathbf{C}\)</span> have constant values, <a href="#eq-state" class="quarto-xref">Equation&nbsp;1</a> defines a <a href="https://en.wikipedia.org/wiki/Linear_time-invariant_system">linear time-invariant (LTI) system</a>. Otherwise, it describes a <a href="https://en.wikipedia.org/wiki/Time-variant_system">linear time-varying (LTV) system</a>, as in Mamba. LTI systems inherently lack the ability to perceive input content, whereas input-aware LTV systems are designed with this capability. This key distinction enables Mamba to surpass the limitations of S4.</p>
+</section>
+<section id="discretisation-for-training-and-inference" class="level3">
+<h3 class="anchored" data-anchor-id="discretisation-for-training-and-inference">2. Discretisation for Training and Inference</h3>
+<p>In order to apply the state space model to deep learning applications for language, audio, image data etc, we must first discretise the system. To achieve this, a timescale (step size) parameter, denoted as <span class="math inline">\(\triangle \in \mathbb{R}\)</span>, is introduced to represent the resolution of the input to transform the continuous parameters (<span class="math inline">\(\Delta\)</span>, <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\mathbf{B}\)</span>), into discrete forms (<span class="math inline">\(\mathbf{\bar{A}}\)</span> and <span class="math inline">\(\mathbf{\bar{B}}\)</span>).</p>
+<p>There are many discretisation rules that can be applied to transform the parameters, in S4, they use the <a href="https://en.wikipedia.org/wiki/Bilinear_transform">bilinear method</a>. In Mamba, they apply the <a href="https://en.wikipedia.org/wiki/Zero-order_hold">zero-order hold rule</a>, we discretise the parameters as follows: <span id="eq-zoh"><span class="math display">\[
+\begin{align}
+&amp; \mathbf{\bar{A}} = \exp(\Delta \mathbf{A}) \\
+&amp; \mathbf{\bar{B}} = (\Delta \mathbf{A})^{-1} (\bar{\mathbf{A}} - \mathbf{I}) (\Delta \mathbf{B}) \\
+&amp; \approx (\Delta \mathbf{A})^{-1} (\Delta \mathbf{A})(\Delta \mathbf{B})  \\
+&amp; = \Delta \mathbf{B}.
+\end{align}
+\tag{3}\]</span></span></p>
+<p>By holding the input constant over each interval and applying the ZOH rule, we simplify the transformation from continuous-time to discrete-time state space representations. This makes the computation more efficient, especially for systems where <span class="math inline">\(\Delta t\)</span> is small.</p>
+<p>Thus, we transform the continuous signal-to-signal problem <span class="math inline">\(x(t)\rightarrow y(t)\)</span> to a discrete sequence-to-sequence problem <span class="math inline">\(x_k \rightarrow y_k\)</span> which can be computed as a linear recurrence similarly to RNNs. This discretised recurrent form is used for efficient autoregressive inference where the inputs are seen one timestep at a time (see <a href="#fig-rnn" class="quarto-xref">Figure&nbsp;6</a>). In practice, <span class="math inline">\(x_k\)</span> is a feature vector of size <span class="math inline">\(\mathbf{C}\)</span>.</p>
+<div id="fig-ssm" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./zero_order_hold.png" class="lightbox" data-glightbox="description: .lightbox-desc-14" data-gallery="quarto-lightbox-gallery-14"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./discrete_ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-15" data-gallery="quarto-lightbox-gallery-15"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span>
+</figcaption>
+</figure>
+</div>
+<p>To acommodate for parallelised training, we can unroll the linear recurrent form to yield a global convolutional representation to <a href="#eq-s-conv" class="quarto-xref">Equation&nbsp;4</a></p>
+<p><span id="eq-s-conv"><span class="math display">\[
+y = x * \mathbf{\bar{K}}
+\tag{4}\]</span></span></p>
+<p>where <span class="math inline">\(\mathbf{\bar{K}}=(\mathbf{C}\mathbf{\bar{B}}, \mathbf{C}\mathbf{\bar{A}}\mathbf{\bar{B}, ..., \mathbf{C}\mathbf{\bar{A}}}^{T-1}\mathbf{\bar{B}})\)</span> represents the SSM convolutional kernel with length <span class="math inline">\(T\)</span> of the entire sequence. We can do this because <span class="math inline">\(\mathbf{\bar{A}}\)</span>, <span class="math inline">\(\mathbf{\bar{B}}\)</span>, and <span class="math inline">\(\mathbf{C}\)</span> are constant. To compute this efficiently, we apply the <a href="https://brianmcfee.net/dstbook-site/content/ch10-convtheorem/ConvolutionTheorem.html">discrete convolution theorem</a> which states that the convolution of two sequences can be computed as the inverse FFT of the product of their FFTs, transforming the convolution operation into a multiplication in the frequency domain.</p>
+<div id="fig-s4-conv" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="./conv_layer.gif" class="lightbox" data-glightbox="description: .lightbox-desc-16" data-gallery="quarto-lightbox-gallery-16"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[11]</a></span>
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="the-state-transition-matrix-mathbfbara" class="level3">
+<h3 class="anchored" data-anchor-id="the-state-transition-matrix-mathbfbara">3. The State Transition Matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span></h3>
+<p>The core idea that makes S4 work is the theory of treating memory as an online polynomial function approximation problem where a function <span class="math inline">\(f(t): \mathbb{R} \rightarrow \mathbb{R}_{+}\)</span> can be summarised by the summation of its optimal coefficients in terms of orthogonal polynomial basis functions. This led to the authors, Gu et al, to introducing the HIPPO (high-order polynomial projection operators) matrix operator <span class="citation" data-cites="gu2020hippo"><a href="#ref-gu2020hippo" role="doc-biblioref">[4]</a></span> applying <a href="https://binhbar.com/posts/2020/11/generalised-fourier-series-part-3-comparing-series-expansions/">Legendre polynomials</a> for signal decomposition for continuous-time memorisation. Their orthogonal nature ensures minimal redundancy and interference between different components, leading to stable and efficient representations of sequences with the ability to represent functions between an interval <span class="math inline">\([1, -1]\)</span>.</p>
+<div id="fig-legendre" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-legendre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-bottom">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./fft_signal_decomposition.png" class="lightbox" data-glightbox="description: .lightbox-desc-17" data-gallery="quarto-lightbox-gallery-17" title="Signal in Time and Frequency Domain [@king2020conv]"><img src="./fft_signal_decomposition.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+</figure>
+</div>
+<figcaption>Signal in Time and Frequency Domain <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[11]</a></span></figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./legendre.png" class="lightbox" data-glightbox="description: .lightbox-desc-18" data-gallery="quarto-lightbox-gallery-18" title="Legendre Polynomials [@wiki24legendre]"><img src="./legendre.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+</figure>
+</div>
+<figcaption>Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[12]</a></span></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-legendre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Decomposing Signals into Legendre Polynomials
+</figcaption>
+</figure>
+</div>
+<p>This state transition matrix aims to compress the past history into hidden state that has enough information to approximately reconstruct the history in a lower-dimensional state of fixed memory size. We can see in <a href="#fig-hippo" class="quarto-xref">Figure&nbsp;12</a> how we can learn the compressed form <span class="math inline">\(y(t)\)</span> of the input signal <span class="math inline">\(u(t)\)</span> as a linear combination of the Legendre polynomials in <span class="math inline">\(x(t)\)</span> (or <span class="math inline">\(h(t)\)</span> from our notation above) by applying the HIPPO matrix as <span class="math inline">\(\mathbf{\bar{A}}\)</span> at each timestep.</p>
+<div id="fig-hippo" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-19" data-gallery="quarto-lightbox-gallery-19"><img src="./ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./hippo.gif" class="lightbox" data-glightbox="description: .lightbox-desc-20" data-gallery="quarto-lightbox-gallery-20"><img src="./hippo.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./hippo_transform.png" class="lightbox" data-glightbox="description: .lightbox-desc-21" data-gallery="quarto-lightbox-gallery-21"><img src="./hippo_transform.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[3]</a></span>
+</figcaption>
+</figure>
+</div>
+<p>In order to compute this matrix even more efficiently, since we have a structured matrix with known properties, we can speed up the computation of <span class="math inline">\(\mathbf{\bar{K}}\)</span> significantly, and overcome the <span class="math inline">\(O(d^2T)\)</span> computational complexity and <span class="math inline">\(O(dT)\)</span> space complexity in applying <span class="math inline">\(\mathbf{\bar{A}}\)</span> for each time step in the sequence.</p>
+<p>The original S4 approach was to leverage the Diagonal Plus Low-Rank (DPLR) structure in complex space <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[13]</a></span> which significantly reduces the space and time complexity as we only need to store and compute the diagonal elements and low-rank components of the dense matrix. It can be expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{\Lambda}+ \mathbf{PQ^*}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix and <span class="math inline">\(\mathbf{PQ}\)</span> are low-rank matrices (vectors for rank-1 updates). The addition of the low-rank term allows the DPLR matrix to capture more complex relationships in LRD compared to a simple diagonal matrix whilst specialised techniques like the <a href="https://en.wikipedia.org/wiki/Woodbury_matrix_identity">Woodbury identity</a> make operations on DPLR matrices feasible and efficient. This was followed by a paper that showed empirically that just using the diagonal matrix and removing the low-rank portion of the DPLR form of the HIPPO matrix, yielded similar results <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[13]</a></span>.</p>
+<p>This work led to S4D used in Mamba <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[14]</a></span>, further improving the computational effiency and expressiveness of <span class="math inline">\(\mathbf{\bar{A}}\)</span> by leveraging the <a href="https://www.netlib.org/utk/people/JackDongarra/etemplates/node384.html">Vandermonde Matrix</a> to compute the diagonal matrix, leveraging the properties of <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors and eigenvalues</a> to efficiently capture more complex relationships between state variables (such as powers and exponentials). This is expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{V \Lambda V^{-1}}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix of eigenvalues, <span class="math inline">\(\mathbf{V}\)</span> is the Vandermonde matrix of eigenvectors and <span class="math inline">\(\mathbf{V^{-1}}\)</span> is the inverse Vandermonde matrix.</p>
+<div id="fig-diagonal" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./DPLR.png" class="lightbox" data-glightbox="description: .lightbox-desc-22" data-gallery="quarto-lightbox-gallery-22" title="Diagonal Plus Low-rank Approximation"><img src="./DPLR.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+</figure>
+</div>
+<figcaption>Diagonal Plus Low-rank Approximation</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./s4d_arch.png" class="lightbox" data-glightbox="description: .lightbox-desc-23" data-gallery="quarto-lightbox-gallery-23" title="S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters."><img src="./s4d_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+</figure>
+</div>
+<figcaption>S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: S4 vs S4D Architecture <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[14]</a></span>
+</figcaption>
+</figure>
+</div>
+<div id="fig-s4d" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-s4d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./s4_vs_s4d.png" class="lightbox" data-glightbox="description: .lightbox-desc-24" data-gallery="quarto-lightbox-gallery-24" title="Visualising S4 vs S4D Results"><img src="./s4_vs_s4d.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+</figure>
+</div>
+<figcaption>Visualising S4 vs S4D Results</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./s4d_results.png" class="lightbox" data-glightbox="description: .lightbox-desc-25" data-gallery="quarto-lightbox-gallery-25" title="S4 vs S4D Long Range Arena Results"><img src="./s4d_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+</figure>
+</div>
+<figcaption>S4 vs S4D Long Range Arena Results</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[14]</a></span>
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="how-does-mamba-improve-on-s4-to-be-a-potential-alternative-to-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-mamba-improve-on-s4-to-be-a-potential-alternative-to-transformers">How does Mamba improve on S4 to be a potential alternative to transformers?</h2>
+<p>There are two core improvements that have now made Mamba perform competitively with transformers. The first</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-tay2020long" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Y. Tay <em>et al.</em>, <span>“Long range arena: A benchmark for efficient transformers.”</span> 2020. Available: <a href="https://arxiv.org/abs/2011.04006">https://arxiv.org/abs/2011.04006</a></div>
+</div>
+<div id="ref-gu2023mamba" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">A. Gu and T. Dao, <span>“Mamba: Linear-time sequence modeling with selective state spaces.”</span> 2023. Available: <a href="https://arxiv.org/abs/2312.00752">https://arxiv.org/abs/2312.00752</a></div>
+</div>
+<div id="ref-stanfordmedaialbertgus4" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">A. Gu, YouTube, 2022. Available: <a href="https://www.youtube.com/watch?v=luCBXCErkCs">https://www.youtube.com/watch?v=luCBXCErkCs</a></div>
+</div>
+<div id="ref-gu2020hippo" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">A. Gu, T. Dao, S. Ermon, A. Rudra, and C. Re, <span>“HiPPO: Recurrent memory with optimal polynomial projections.”</span> 2020. Available: <a href="https://arxiv.org/abs/2008.07669">https://arxiv.org/abs/2008.07669</a></div>
+</div>
+<div id="ref-gu2022efficiently" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">A. Gu, K. Goel, and C. Ré, <span>“Efficiently modeling long sequences with structured state spaces,”</span> in <em>The international conference on learning representations (<span>ICLR</span>)</em>, 2022.</div>
+</div>
+<div id="ref-openai2024gpt4" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">OpenAI <em>et al.</em>, <span>“GPT-4 technical report.”</span> 2024. Available: <a href="https://arxiv.org/abs/2303.08774">https://arxiv.org/abs/2303.08774</a></div>
+</div>
+<div id="ref-vig2019multiscale" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">J. Vig, <span>“A multiscale visualization of attention in the transformer model.”</span> 2019. Available: <a href="https://arxiv.org/abs/1906.05714">https://arxiv.org/abs/1906.05714</a></div>
+</div>
+<div id="ref-llmtestneedlehaystack" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">G. Kamradt, <span>“Needle in a haystack - pressure testing LLMs results.”</span> Github, 2023. Available: <a href="https://github.com/gkamradt/LLMTest_NeedleInAHaystack">https://github.com/gkamradt/LLMTest_NeedleInAHaystack</a></div>
+</div>
+<div id="ref-gu2021combining" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">A. Gu <em>et al.</em>, <span>“Combining recurrent, convolutional, and continuous-time models with linear state-space layers.”</span> 2021. Available: <a href="https://arxiv.org/abs/2110.13985">https://arxiv.org/abs/2110.13985</a></div>
+</div>
+<div id="ref-grootendorst2024mamba" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline">M. Grootendorst, <span>“A visual guide to mamba and state space models.”</span> Blog Post, 2024. Available: <a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state">https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state</a></div>
+</div>
+<div id="ref-king2020conv" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline">N. Audio, <span>“Fast fourier transformation FFT - basics.”</span> Technical Support, 2024. Available: <a href="https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft">https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft</a></div>
+</div>
+<div id="ref-wiki24legendre" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[12] </div><div class="csl-right-inline">Wikipedia, <span>“Legendre polynomials.”</span> Article, 2024. Available: <a href="https://en.wikipedia.org/wiki/Legendre_polynomials">https://en.wikipedia.org/wiki/Legendre_polynomials</a></div>
+</div>
+<div id="ref-gupta2022diagonal" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[13] </div><div class="csl-right-inline">A. Gupta, A. Gu, and J. Berant, <span>“Diagonal state spaces are as effective as structured state spaces.”</span> 2022. Available: <a href="https://arxiv.org/abs/2203.14343">https://arxiv.org/abs/2203.14343</a></div>
+</div>
+<div id="ref-gu2022parameterization" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[14] </div><div class="csl-right-inline">A. Gu, A. Gupta, K. Goel, and C. Ré, <span>“On the parameterization and initialization of diagonal state space models.”</span> 2022. Available: <a href="https://arxiv.org/abs/2206.11893">https://arxiv.org/abs/2206.11893</a></div>
+</div>
+</div>
 
 
-
+<div class="hidden" aria-hidden="true">
+<span class="glightbox-desc lightbox-desc-2">Figure&nbsp;1: Discrete - Continuous Spectrum of Data Sources and Examples</span>
+<span class="glightbox-desc lightbox-desc-3">Figure&nbsp;2: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[5]</a></span></span>
+<span class="glightbox-desc lightbox-desc-4">Figure&nbsp;3: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[2]</a></span></span>
+<span class="glightbox-desc lightbox-desc-5">Figure&nbsp;3: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[2]</a></span></span>
+<span class="glightbox-desc lightbox-desc-6">Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</span>
+<span class="glightbox-desc lightbox-desc-7">Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</span>
+<span class="glightbox-desc lightbox-desc-8">OpenAI’s GPT-4-128K</span>
+<span class="glightbox-desc lightbox-desc-9">Anthropic’s Claude 2.1</span>
+<span class="glightbox-desc lightbox-desc-10">Figure&nbsp;6: Unrolling Recurrent Neural Network Architecture Over Time</span>
+<span class="glightbox-desc lightbox-desc-11">Figure&nbsp;7: The Three Representations of Linear State Space Layers in S4: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel. <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[9]</a></span></span>
+<span class="glightbox-desc lightbox-desc-12">Figure&nbsp;8: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span></span>
+<span class="glightbox-desc lightbox-desc-13">Figure&nbsp;8: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span></span>
+<span class="glightbox-desc lightbox-desc-14">Figure&nbsp;9: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span></span>
+<span class="glightbox-desc lightbox-desc-15">Figure&nbsp;9: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[10]</a></span></span>
+<span class="glightbox-desc lightbox-desc-16">Figure&nbsp;10: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[11]</a></span></span>
+<span class="glightbox-desc lightbox-desc-17">Signal in Time and Frequency Domain <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[11]</a></span></span>
+<span class="glightbox-desc lightbox-desc-18">Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[12]</a></span></span>
+<span class="glightbox-desc lightbox-desc-19">Figure&nbsp;12: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-20">Figure&nbsp;12: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-21">Figure&nbsp;12: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-22">Diagonal Plus Low-rank Approximation</span>
+<span class="glightbox-desc lightbox-desc-23">S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters.</span>
+<span class="glightbox-desc lightbox-desc-24">Visualising S4 vs S4D Results</span>
+<span class="glightbox-desc lightbox-desc-25">S4 vs S4D Long Range Arena Results</span>
+</div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -525,25 +1171,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
           }
-        });
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -584,11 +1269,36 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="R_kgDOL8P5yg" data-category="Blog" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
+<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="" data-category="Blog" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
 </script>
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","selector":".lightbox","closeEffect":"zoom","loop":false});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

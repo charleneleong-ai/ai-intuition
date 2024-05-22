@@ -18,3 +18,10 @@ comments:
     theme:
       light: light_high_contrast
       dark: dark_dimmed
+format:
+  html:
+    toc: true
+    toc-title: Contents
+    toc-location: left
+    toc-expand: 2
+    toc-depth: 3

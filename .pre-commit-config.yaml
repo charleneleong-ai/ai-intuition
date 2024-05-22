@@ -7,23 +7,23 @@ repos:
     hooks:
       # list of supported hooks: https://pre-commit.com/hooks.html
       - id: trailing-whitespace
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: end-of-file-fixer
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-docstring-first
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-yaml
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: debug-statements
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: detect-private-key
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-executables-have-shebangs
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-toml
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-case-conflict
-        exclude: '^(_site/|_blog/|projects/)'
+        files: '^(about/|blog/|projects/)' 
       - id: check-added-large-files
         args: ['--maxkb=30000']
 

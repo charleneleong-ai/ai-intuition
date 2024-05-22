@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-05-13">
 <meta name="description" content="Autonomous SLAM and control">
 
-<title>AI Intuition - Big T ROS Navigation and Control</title>
+<title>AI Intuition - ROS Navigation and Control for a Triangular Holonomic Robot</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,6 +76,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -137,7 +140,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -186,16 +189,37 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#build" id="toc-build" class="nav-link active" data-scroll-target="#build">Build</a></li>
+  <li><a href="#mapping-modes" id="toc-mapping-modes" class="nav-link" data-scroll-target="#mapping-modes">Mapping Modes</a></li>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">Architecture</a></li>
+  <li><a href="#control-algorithm" id="toc-control-algorithm" class="nav-link" data-scroll-target="#control-algorithm">Control Algorithm</a>
+  <ul class="collapse">
+  <li><a href="#imports-and-global-variables" id="toc-imports-and-global-variables" class="nav-link" data-scroll-target="#imports-and-global-variables">1. Imports and Global Variables</a></li>
+  <li><a href="#main-loop" id="toc-main-loop" class="nav-link" data-scroll-target="#main-loop">2. Main Loop</a></li>
+  <li><a href="#converting-sensor-input-to-angular-velocities" id="toc-converting-sensor-input-to-angular-velocities" class="nav-link" data-scroll-target="#converting-sensor-input-to-angular-velocities">3: Converting Sensor Input to Angular Velocities</a></li>
+  <li><a href="#deriving-the-kinematic-equations-for-a-three-wheeled-omnidirectional-robot" id="toc-deriving-the-kinematic-equations-for-a-three-wheeled-omnidirectional-robot" class="nav-link" data-scroll-target="#deriving-the-kinematic-equations-for-a-three-wheeled-omnidirectional-robot">4: Deriving the Kinematic Equations for a Three-Wheeled Omnidirectional Robot</a></li>
+  <li><a href="#converting-angular-velocities-to-pwm-signal-for-motor-control" id="toc-converting-angular-velocities-to-pwm-signal-for-motor-control" class="nav-link" data-scroll-target="#converting-angular-velocities-to-pwm-signal-for-motor-control">5. Converting angular velocities to PWM signal for motor control</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Big T ROS Navigation and Control</h1>
+<h1 class="title">ROS Navigation and Control for a Triangular Holonomic Robot</h1>
   <div class="quarto-categories">
     <div class="quarto-category">robotics</div>
     <div class="quarto-category">control</div>
@@ -211,7 +235,7 @@ window.Quarto = {
 </div>
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -230,7 +254,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 18, 2024</p>
+      <p class="date-modified">May 20, 2024</p>
     </div>
   </div>
     
@@ -246,29 +270,37 @@ window.Quarto = {
 <section id="build" class="level2">
 <h2 class="anchored" data-anchor-id="build">Build</h2>
 <p>Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities.</p>
-<p align="center">
-<img height="300" src="./big_T.png">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./big_T.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="./big_T.png" class="quarto-figure quarto-figure-center figure-img" height="300"></a></p>
+</figure>
+</div>
 <p>Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR and Intel RealSense and proprioceptive sensors such as IMU and encoders to capture odometry signals to inform the control algorithm.</p>
-<p align="center">
-<img height="300" src="./blockdiagram.png">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./blockdiagram.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="./blockdiagram.png" class="quarto-figure quarto-figure-center figure-img" height="300"></a></p>
+</figure>
+</div>
 </section>
 <section id="mapping-modes" class="level2">
 <h2 class="anchored" data-anchor-id="mapping-modes">Mapping Modes</h2>
 <p>There are two main mapping modes we can operate in with Big T.</p>
 <ol type="1">
-<li>The map of the environment is first created using Hector SLAM to simulataneously localise and map the environment and save the map. See <a href="http://wiki.ros.org/hector_slam">here</a> for ref. Hector SLAM is used in conjunction with an extended Kalman filter (EKF) to fuse wheel odometry with IMU to create an improved odometry estimate. This example below shows the robot performing autonomous SLAM to map the environment.</li>
+<li>The map of the environment is first created using Hector SLAM to simulataneously localise and map the environment and save the map. See <a href="http://wiki.ros.org/hector_slam">here</a> for reference. Hector SLAM is used in conjunction with an <a href="https://automaticaddison.com/extended-kalman-filter-ekf-with-python-code-example/">extended Kalman filter (EKF)</a> to fuse wheel odometry with the IMU to create an improved odometry estimate using the <a href="http://wiki.ros.org/robot_pose_ekf"><code>robot_pose_ekf</code></a> package. This example below shows the robot performing autonomous SLAM to map the environment.</li>
 </ol>
-<p align="center">
-<img height="300" src="./feature.gif">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./feature.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="./feature.gif" class="quarto-figure quarto-figure-center figure-img" height="300"></a></p>
+</figure>
+</div>
 <ol start="2" type="1">
-<li>We can test localising the robot inside the saved map using AMCL (Adaptive Monte Carlo localisation) which estimates 2D position based on particle filter. The robot’s pose is represented as a distribution of particles, where each particle represents a possible pose of the robot. It takes as input a map, LIDAR scans, and transform messages, and outputs an estimated pose. See <a href="http://wiki.ros.org/amcl">here</a> for more details.</li>
+<li>We can test localising the robot inside the saved map using AMCL (Adaptive Monte Carlo localisation) which estimates 2D position based on particle filter. The robot’s pose is represented as a distribution of particles, where each particle represents a possible pose of the robot. It takes as input a map, LIDAR scans, and transform messages, and outputs an estimated pose. See <a href="http://wiki.ros.org/amcl">here</a> for reference.</li>
 </ol>
-<p align="center">
-<img height="300" src="./AMCL_EKF_localisation.gif">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./AMCL_EKF_localisation.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="./AMCL_EKF_localisation.gif" class="quarto-figure quarto-figure-center figure-img" height="300"></a></p>
+</figure>
+</div>
 </section>
 <section id="architecture" class="level2">
 <h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
@@ -276,15 +308,19 @@ window.Quarto = {
 <ol type="1">
 <li>Autonomous Mode - this mode is often used for SLAM navigation.</li>
 </ol>
-<p align="center">
-<img height="500" src="./big_t_autonomous.png">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./big_t_autonomous.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="./big_t_autonomous.png" class="quarto-figure quarto-figure-center figure-img" height="500"></a></p>
+</figure>
+</div>
 <ol start="2" type="1">
 <li>Tele-operative Mode - this mode is often used for user-controlled navigation in a saved map and also for debugging purposes.</li>
 </ol>
-<p align="center">
-<img height="500" src="./big_t_teleop.png">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./big_t_teleop.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="./big_t_teleop.png" class="quarto-figure quarto-figure-center figure-img" height="500"></a></p>
+</figure>
+</div>
 </section>
 <section id="control-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="control-algorithm">Control Algorithm</h2>
@@ -325,7 +361,7 @@ window.Quarto = {
 <li>Sets up publisher <code>pub</code> to publish motor control data on the <code>motor_control_data</code> topic.</li>
 <li>Sets up <code>imu_sub</code> to receive IMU data on <code>imu</code> topic to process with <code>imu_callback</code> function. This allows us to explicitly publish the IMU orientation to an <code>orientation</code> topic.</li>
 <li>Sets up <code>imu_pub</code> to receive velocity cmmmands on the <code>cmd_vel</code> topic and process with the <code>cmd_vel_callback</code> function. The <code>cmd_vel</code> topic is typically used to publish velocity commands published by the <code>teleop_twist_keyboard</code> node in <code>teleop</code> mode or <code>move_base</code> node in the ROS navigation stack when in SLAM node.</li>
-<li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> runs for as long as the ROS system is active.</li>
+<li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> node runs for as long as the ROS system is active.</li>
 </ol>
 <div data-add-from="control.cpp" data-start-line="71" data-end-line="89" data-code-line-numbers="true">
 <div class="sourceCode cell-code" id="cb2" data-startfrom="71"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 70;"><span id="cb2-71"><a href="#cb2-71"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">){</span></span>
@@ -405,11 +441,13 @@ window.Quarto = {
 </ul></li>
 </ol>
 <p><strong>Diagram</strong></p>
-<p align="center">
-<img height="300" src="./kinematics.png">
-</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./kinematics.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="./kinematics.png" class="quarto-figure quarto-figure-center figure-img" height="500"></a></p>
+</figure>
+</div>
 <p><strong>Derivation</strong></p>
-<p>We aim to derive the angular velocities of the three holonomic wheels <span class="math inline">\(\omega_1\)</span>, <span class="math inline">\(\omega_2\)</span>, <span class="math inline">\(\omega_3\)</span> based on the robot’s linear veloicities (<span class="math inline">\(v_x\)</span>, <span class="math inline">\(v_y\)</span>) and rotational velocity (<span class="math inline">\(\omega_{\text{body}}\)</span>) in the global frame, considering the robot’s orientation <span class="math inline">\(\theta\)</span>.</p>
+<p>We aim to derive the angular velocities of the three holonomic wheels <span class="math inline">\(\omega_1\)</span>, <span class="math inline">\(\omega_2\)</span>, <span class="math inline">\(\omega_3\)</span> based on the robot’s linear velocities (<span class="math inline">\(v_x\)</span>, <span class="math inline">\(v_y\)</span>) and rotational velocity (<span class="math inline">\(\omega_{\text{body}}\)</span>) in the global frame, considering the robot’s orientation <span class="math inline">\(\theta\)</span>.</p>
 <p><strong>1. Transform Global Velocities to Local Velocities</strong></p>
 <p>First, we need to transform The global velocities <span class="math inline">\(v_x\)</span> and <span class="math inline">\(v_y\)</span> into the local frame of the robot using its orientation <span class="math inline">\(\theta\)</span>:</p>
 <p><span class="math display">\[
@@ -479,9 +517,7 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <p><span class="math display">\[
 \omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} h )
 \]</span></p>
-</section>
-<section id="final-equations" class="level3">
-<h3 class="anchored" data-anchor-id="final-equations">Final Equations</h3>
+<p><strong>Final Equations</strong></p>
 <p>The final simplified equations for the angular velocities of the wheels are:</p>
 <p><span class="math display">\[
 \omega_1 = \frac{1}{r} ( v_x \cos(\theta) + v_y \sin(\theta) + \omega_{\text{body}} h )
@@ -498,13 +534,13 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <h3 class="anchored" data-anchor-id="converting-angular-velocities-to-pwm-signal-for-motor-control">5. Converting angular velocities to PWM signal for motor control</h3>
 <p>After we’ve calculated the angular velocities in terms on radians per second (<span class="math inline">\(rad/s\)</span>), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors.</p>
 <p><strong>1. Angular Velocity to RPM</strong></p>
-<p>We first convert angular velocity (in radians per second) to a revolutions per minute (RPM).</p>
+<p>We first convert angular velocity (in radians per second) to revolutions per minute (RPM).</p>
 <p>We know that <span class="math inline">\(1 revolution=2\pi radians\)</span> and <span class="math inline">\(1 minute = 60 seconds\)</span>, therefore, the conversion factor is:</p>
 <p><span class="math display">\[
 RPM = \omega\times(60/(2\pi)) \approx \omega\times 9.5493 \approx \omega\times 9.55
 \]</span></p>
 <p><strong>2. Conversion from RPM to PWM</strong></p>
-<p>In order to measure and calibrate the relationship betwen PWM and RPM for the motor, an empirical experiment was performed in order to measurements and fit a linear regression model to the data.</p>
+<p>In order to measure and calibrate the relationship betwen PWM and RPM for the motor, an empirical experiment was performed in order to collect measurements and fit a linear regression model to the data.</p>
 <p>For series of PWM signals from a low duty cycle to (eg. 10%) to high duty cycle (eg. 90%) generated using an oscilloscope, the respective RPM for the motor was recorded using a tachometer.</p>
 <p>The resulting linear relationship is:</p>
 <p><span class="math display">\[
@@ -512,7 +548,7 @@ PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
 \]</span></p>
 <p>This means that for every unit increase in RPM, the PWM value increases by approximately 2.4307 units, and when the RPM is zero, the PWM value starts at approximately 36.2178.</p>
 <p><strong>3. Handling Very Small Angular Velocities</strong></p>
-<p>Small angular velocities <code>&lt;=0.05</code> are ignored, to smooth the noise and avoid unnecessary motor activation.</p>
+<p>Small angular velocities <code>&lt;=0.05</code> are ignored, to smooth noise in the signal and avoid unnecessary motor activation.</p>
 <div data-add-from="control.cpp" data-start-line="26" data-end-line="26" data-code-line-numbers="true">
 <div class="sourceCode cell-code" id="cb4" data-startfrom="26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 25;"><span id="cb4-26"><a href="#cb4-26"></a>	<span class="cf">if</span><span class="op">(</span>fabs<span class="op">(</span>omega<span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -521,7 +557,7 @@ PWM = a \times RPM + b  = 2.4307 \times RPM + 36.2178
 <p><span class="math display">\[
 PWM = 2.4307 \times RPM + 36.2178 =  2.43 \times (\omega\times 9.55) + 36.22
 \]</span></p>
-<p>The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel in Big T when calculate the new angular velocities from sensor feedback. We make omega absolute <span class="math inline">\(|\omega_{\text{wheel}}|\)</span> in order to ensure the angular velocity is never non-negative.</p>
+<p>The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel when we calculate the new angular velocities from sensor feedback. We make <span class="math inline">\(\omega\)</span> absolute <span class="math inline">\(|\omega_{\text{wheel}}|\)</span> in order to ensure the angular velocity is never non-negative.</p>
 <div data-add-from="control.cpp" data-start-line="20" data-end-line="29" data-code-line-numbers="true">
 <div class="sourceCode cell-code" id="cb5" data-startfrom="20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 19;"><span id="cb5-20"><a href="#cb5-20"></a><span class="dt">int</span>	omega2pwm<span class="op">(</span><span class="dt">float</span> omega<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb5-21"><a href="#cb5-21"></a>	<span class="co">/*</span></span>
@@ -1009,6 +1045,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 
