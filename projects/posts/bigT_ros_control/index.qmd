@@ -5,7 +5,7 @@ categories: [robotics, control, navigation, ros]
 description: "Autonomous SLAM and control"
 # bibliography: references.bib
 filters:
-    - add-code-files
+   - add-code-files
 ---
 
 
@@ -13,7 +13,7 @@ filters:
 
 This post describes the control node implementation for a three-wheeled omni-wheeled holonomic robot to update motor direction and speed from incoming linear and angular velocities.
 
-## Build
+# Build
 
 Big T is an autonomous three-wheeled omni-wheel holonomic robot with SLAM capabilities.
 
@@ -27,7 +27,7 @@ Big T is mounted with both exterioceptive sensors such as a mouse sensor, LIDAR 
 ![](./blockdiagram.png){fig-align="center" height="300" .lightbox}
 
 
-## Mapping Modes
+# Mapping Modes
 
 There are two main mapping modes we can operate in with Big T.
 
@@ -46,7 +46,7 @@ There are two main mapping modes we can operate in with Big T.
 
 
 
-## Architecture
+# Architecture
 
 Big T can be run into two operative modes, high level block digrams are shown below:
 
@@ -64,11 +64,11 @@ Big T can be run into two operative modes, high level block digrams are shown be
 
 
 
-## Control Algorithm
+# Control Algorithm
 
 The robot's velocity commands are published on the `cmd_vel` topic from either  the`teleop_twist_keyboard` node in `teleop` mode or `move_base` node in the ROS navigation stack when in SLAM node. The control node aims to translate directions in the global frame to the individual directions to each motor in three-wheeled omnidirectional robot configuration.
 
-### 1. Imports and Global Variables
+## Imports and Global Variables
 
 We first import our initial `C++` `ROS` headers and instantiate our global variables from the robot's physical characteristics.
 
@@ -87,7 +87,7 @@ We then declare our ROS publishers `motor_control_pub` to publish the motor cont
 :::
 
 
-### 2. Main Loop
+## Main Loop
 
 
 We first set up the appropriate ROS publishers and subscribers, to enable ROS signal communication between incoming sensor and output motor nodes in the ROS ecosystem.
@@ -108,7 +108,7 @@ The `main` loop is as follows:
 :::
 
 
-### 3: Converting Sensor Input to Angular Velocities
+## Converting Sensor Input to Angular Velocities
 
 The main callback function that updates the robot's direction is `cmd_vel_callback` which is subscribed to the `cmd_vel` topic of a data type of  `geometry_msgs::Twist` which expresses velocity in it's angular and linear parts.  This function translates the desired linear and angular velocities of the robot into individual wheel speeds, converts those speeds to PWM signals, and determines the direction for each wheel. It then publishes these control signals to the `motor_control_pub` topic to update the robot direction .
 
@@ -119,7 +119,7 @@ The main callback function that updates the robot's direction is `cmd_vel_callba
 
 See the following sections below for more details.
 
-### 4: Deriving the Kinematic Equations for a Three-Wheeled Omnidirectional Robot
+## Deriving the Kinematic Equations for a Three-Wheeled Omnidirectional Robot
 
 
 **Assumptions and Setup**
@@ -279,7 +279,7 @@ These equations relate the global motion commands ($v_x$, $v_y$, $\omega_{\text{
 
 
 
-### 5. Converting angular velocities to PWM signal for motor control
+## Converting angular velocities to PWM signal for motor control
 
 After we've calculated the angular velocities in terms on radians per second ($rad/s$), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors.
 
