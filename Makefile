@@ -28,7 +28,6 @@ install:
 	pre-commit install
 	pre-commit run --all-files
 	quarto add shafayetShafee/add-code-files
-	quarto add danmackinlay/quarto_tikz
 
 ## Sync dependencies in .venv with poetry.lock
 sync:
@@ -58,7 +57,11 @@ clean:
 	find . | grep -E ".ipynb_checkpoints" | xargs rm -rf
 	find . -type d -empty -delete
 
-
+## Lint 
+lint:
+	ruff format .
+	ruff check --fix
+	pre-commit run --all-files
 
 #################################################################################
 # Self Documenting Commands                                                     #

@@ -8,7 +8,9 @@ license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-latex = "^0.7.0"
+pillow = "^10.2.0" # https://pillow.readthedocs.io/en/stable/releasenotes/10.3.0.html
+matplotlib = "^3.8.4" # https://matplotlib.org/stable/users/release_notes.html
+numpy = "^1.24.0" # https://github.com/numpy/numpy/releases
 
 ## Dev dependencies
 [tool.poetry.dev-dependencies]

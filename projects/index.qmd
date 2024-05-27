@@ -3,7 +3,7 @@ title: "Projects"
 subtitle: "Tidbits over the years"
 listing:
   id: listing
-  contents: .
+  contents: posts
   fields: [image, date, title, reading-time, description, file-modified]
   field-display-names:
     file-modified: "Updated"

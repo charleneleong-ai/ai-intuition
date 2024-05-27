@@ -1,8 +1,24 @@
-# options specified here will apply to all posts in this folder
-
-# freeze computational output
-# (see https://quarto.org/docs/projects/code-execution.html#freeze)
-freeze: true
-
-# Enable banner style title blocks
 title-block-banner: true
+freeze: true
+number-sections: true
+crossref:
+  chapters: true
+comments:
+  giscus:
+    repo: charleneleong-ai/ai-intuition
+    category: "Blog"
+    mapping: "pathname"
+    reactions-enabled: true
+    loading: lazy
+    input-position: "bottom"
+    theme:
+      light: light_high_contrast
+      dark: dark_dimmed
+code-annotations: hover
+format:
+  html:
+    toc: true
+    toc-title: Contents
+    toc-location: left
+    toc-expand: 3
+    toc-depth: 3
