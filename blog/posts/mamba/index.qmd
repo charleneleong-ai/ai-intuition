@@ -11,7 +11,7 @@ bibliography: references.bib
 
 # Why Mamba and Structured State Space Sequence Models?
 
-The fundamental problem in deep sequence modelling is how to efficiently compress the context into a smaller learnable state representation whilst maintaining the quality of state representation. As seen in [@fig-state-spectrum], transformers have powerful in-context learning capabilties due to the inherent nature of attention but it's uncompressed memory state (the attention matrix) makes for inefficient inference especially with long-range dependencies (LRD) or large context window settings. On the end, RNNs and S4 models may be efficient but fail to preserve context state required to perform well in tasks that require in-context reasoning. Mamba proposes a context-aware method to dynamically filter out inputs in the sequence to effectively compress the context.
+The fundamental problem in deep sequence modelling is how to efficiently compress the context into a smaller learnable state representation whilst maintaining the quality of state representation. As seen in [@fig-state-spectrum], transformers have powerful in-context learning capabilties due to the inherent nature of attention but it's uncompressed memory state (the attention matrix) makes for inefficient inference especially with long-range dependencies (LRD) or large context window settings. On the other end, RNNs and S4 models may be efficient but fail to preserve context state required to perform well in tasks that require in-context reasoning. Mamba proposes a context-aware method to dynamically filter out inputs in the sequence to effectively compress the context.
 
 ::: {#fig-state-spectrum}
 
@@ -43,7 +43,7 @@ The predecessor to Mamba, the S4 model [@gu2022efficiently], was the first SSM t
 ::: {#fig-lra}
 ![](./long_range_arena.png){fig-align="center" width=80% .lightbox}
 
-Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) [@gu2022efficiently]
+**Long Range Arena**: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) [@gu2022efficiently]
 :::
 
 
@@ -56,7 +56,7 @@ Mamba has also been shown to hold its own against the Transformer++ recipe (eg. 
 
 ![](./efficiency_benchmark.png){width=80% fig-align="center" .lightbox}
 
-Mamba: Matching Transformer Performance with Efficiency in Training and Inference [@gu2023mamba]
+**Mamba**: Matching Transformer Performance with Efficiency in Training and Inference [@gu2023mamba]
 :::
 
 
@@ -71,21 +71,21 @@ $$ {#eq-attention}
 A useful visual explainer can be seen with the BERTViz tool [@vig2019multiscale] (see [@fig-attention]) where we can observe attention for one or more attention heads in the same layer as well as how individual neurons in the query and key vectors are activated in the attention computation.
 
 ::: {#fig-attention layout-ncol=2}
-![Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.](./bertviz_head.gif){width=61% .lightbox}
+![**Head View**: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.](./bertviz_head.gif){width=61% .lightbox}
 
-![Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.](./bertviz_neuron.gif){width=200% .lightbox}
+![**Neuron View**: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.](./bertviz_neuron.gif){width=200% .lightbox}
 
 Visualising Attention Weights in Transformer Networks [@vig2019multiscale]
 :::
 
-We can observe in the following experiments in [@fig-llm-long-context] that GPT4’s recall performance starts to degrade above 73K tokens where the low recall performance was placed between 7-50% document depth given. However, facts at the beginning of documents were recalled regardless of document length. This also seems to be the case for Anthropic's Claude 2.1 model.
+We can observe in the following experiments in [@fig-llm-long-context] that GPT4’s recall performance starts to degrade above 73K tokens where we observce low recall performance when fact is placed between 7-50% document depth. However, facts at the beginning of documents were recalled regardless of document length. This also seems to be the case for Anthropic's Claude 2.1 model.
 
 ::: {#fig-llm-long-context layout-ncol=2 layout-valign="bottom"}
-![OpenAI's GPT-4-128K](./gpt4_long_context.png){width=100% .lightbox}
+![OpenAI's GPT-4-128K Long Context Performance](./gpt4_long_context.png){width=100% .lightbox}
 
-![Anthropic's Claude 2.1](./claude_long_context.png){width=92% .lightbox}
+![Anthropic's Claude 2.1 Long Context Performance](./claude_long_context.png){width=100% .lightbox}
 
-Needle In A Haystack - Pressure Testing LLMs Results for Long Context Retrieval [@llmtestneedlehaystack]
+**Needle In A Haystack**: Pressure Testing LLMs Results for Long Context Retrieval [@llmtestneedlehaystack]
 :::
 
 Transformers suffer from the "lost in the middle" issue with long contexts where the model struggles to retrieve the answer if the context is in the middle of the document. This is mitigated by [prompt compression techniques](https://github.com/microsoft/LLMLingua) which involve training smaller prompt compression LLMs to identify and remove non-essential tokens before feeding them to the larger LLM and [retrieval-augmented-retrieval (RAG)](https://towardsdatascience.com/retrieval-augmented-generation-rag-from-theory-to-langchain-implementation-4e9bd5f6a4f2) techniques which involve adding additional context to prompts to allow LLMs to operate on facts fetched from external sources outside of LLM's trained context. However, this involves relying on techniques and architectures to augment the input and output to the model as opposed to improving long context performance of the model itself.
@@ -93,7 +93,7 @@ Transformers suffer from the "lost in the middle" issue with long contexts where
 ::: {#fig-lost-in-the-middle}
 ![](./lost_in_the_middle.png){width=350 fig-align="center" .lightbox}
 
-Lost in the Middle: Performance Degrades When Information Access is in the Middle of Document
+**Lost in the Middle**: Performance Degrades When Information Access is in the Middle of Document
 [@liu2023lost]
 :::
 
@@ -183,7 +183,7 @@ Structured state space sequence models (S4) are introduced as a unified framewor
 
 ![](./state_space_layer.png){width=70% fig-align="center" .lightbox}
 
-The Three Representations of Linear State Space Layers in S4: (**Left**) State space models allow us to model continuous-time systems .(**Center**) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix $\mathbf{\bar{A}}$ enables us to capture LRDs mathematically and empirically. (**Right**)  Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel [@gu2021combining].
+**The Three Representations of Linear State Space Layers in S4**: (**Left**) State space models allow us to model continuous-time systems .(**Center**) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix $\mathbf{\bar{A}}$ enables us to capture LRDs mathematically and empirically. (**Right**)  Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel [@gu2021combining].
 
 :::
 
@@ -241,11 +241,11 @@ Thus, we transform the continuous signal-to-signal problem $x(t)\rightarrow y(t)
 
 ::: {#fig-ssm layout-ncol=2 layout-valign="center" }
 
-![](./zero_order_hold.png){width=500 fig-align="center" .lightbox}
+![Zero Order Hold Sampling Function](./zero_order_hold.png){width=500 fig-align="center" .lightbox}
 
-![](./discrete_ssm.png){width=500 fig-align="center" .lightbox}
+![Discrete SSM Diagram [@grootendorst2024mamba]](./discrete_ssm.png){width=500 fig-align="center" .lightbox}
 
-From Continuous to Discrete SSMs With the Zero Order Hold Rule [@grootendorst2024mamba]
+From Continuous to Discrete SSMs With the Zero Order Hold Rule
 :::
 To acommodate for parallelised training, we can unroll the linear recurrent form to yield a global convolutional representation to [@eq-s4-conv]
 
@@ -269,7 +269,7 @@ Visualising 1D Convolution with 1x3 Kernel [@king2020conv]
 The core idea that makes S4 work is the theory of treating memory as an online polynomial function approximation problem where a function $f(t): \mathbb{R} \rightarrow \mathbb{R}_{+}$ can be summarised by the summation of its optimal coefficients in terms of orthogonal polynomial basis functions. This led to the authors, Gu et al, to introducing the HIPPO (high-order polynomial projection operators) matrix operator [@gu2020hippo] applying [Legendre polynomials](https://binhbar.com/posts/2020/11/generalised-fourier-series-part-3-comparing-series-expansions/) for signal decomposition for continuous-time memorisation. Their orthogonal nature ensures minimal redundancy and interference between different components, leading to stable and efficient representations of sequences with the ability to represent functions between an interval $[1, -1]$.
 
 ::: {#fig-legendre layout-ncol=2 layout-valign="bottom" }
-![Signal in Time and Frequency Domain [@king2020conv]](./fft_signal_decomposition.png){width=80% fig-align="center" .lightbox}
+![Signal in Time and Frequency Domain [@fftbasicnti]](./fft_signal_decomposition.png){width=80% fig-align="center" .lightbox}
 
 ![Legendre Polynomials [@wiki24legendre]](./legendre.png){width=80% fig-align="center" .lightbox}
 
@@ -300,9 +300,9 @@ This work led to S4D used in Mamba [@gu2022parameterization], further improving 
 
 ![Diagonal Plus Low-rank Approximation](./DPLR.png){width=100% fig-align="center" .lightbox}
 
-![S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters.](./s4d_arch.png){width=100% fig-align="center" .lightbox}
+![**S4D Recurrent and Convolutional View**: Colors denote independent 1D SSMs; purple denotes trainable parameters  [@gu2022parameterization]](./s4d_arch.png){width=100% fig-align="center" .lightbox}
 
-S4 vs S4D Architecture [@gu2022parameterization]
+S4 vs S4D Architecture
 :::
 
 
@@ -336,11 +336,11 @@ A model's ability to perform in-context reasoning can be inferred from their per
 
 ::: { #fig-copy-ind layout-ncol=2 layout-valign="bottom" }
 
-![Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content.](./selective_copying.png){width=100% fig-align="center" .lightbox}
+![**Selective Copying**: This requires time-varying models that can selectively remember or ignore inputs depending on their content.](./selective_copying.png){width=100% fig-align="center" .lightbox}
 
-![Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.](./induction_heads.png){width=100% fig-align="center" .lightbox}
+![**Induction Heads**: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.](./induction_heads.png){width=100% fig-align="center" .lightbox}
 
-Tasks to Demontrastae Context-Aware Reasoning [@grootendorst2024mamba]
+Tasks to Demonstrate Context-Aware Reasoning [@grootendorst2024mamba]
 :::
 
 This introduction of selection enables Mamba to perform:
@@ -352,9 +352,9 @@ between. It is able to generalise to million-length sequences, 4000x longer seen
 
 ::: { #fig-copy-ind-results layout-ncol=2 layout-valign="bottom" }
 
-![Selective Copying Results: Accuracy for combinations of architectures](./selective_copying_results.png){width=60% fig-align="center" .lightbox}
+![**Selective Copying Results**: Accuracy for combinations of architectures](./selective_copying_results.png){width=60% fig-align="center" .lightbox}
 
-![Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens ](./induction_heads_results.png){width=100% fig-align="center" .lightbox}
+![**Induction Heads Extrapolation**: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens ](./induction_heads_results.png){width=100% fig-align="center" .lightbox}
 
 Mamba Performance on Context-Aware Reasoning Tasks [@gu2023mamba]
 :::
@@ -362,13 +362,13 @@ Mamba Performance on Context-Aware Reasoning Tasks [@gu2023mamba]
 
 ## Selective SSM Layer for Parallelised Training
 
-However, making the system time-varying means we can no longer perform convolution in [@eq-s4-conv] to parallelise training since it assumes a fixed kernel. To address this, Mamba introduces the selective scan layer. It is the implementation of a hard-aware selective [parallel scan](https://en.wikipedia.org/wiki/Prefix_sum) algorithm with the same GPU kernel fusion techniques in [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) [@dao2022flashattention] for transformers, as a result of Mamba being a collaborative paper between Albert Gu (S4) and Tri Dao (FlashAttention). Therefore, the core optimisations for all three techniques, parallel scan, kernel fusion and recomputation in the selective SSM layer are to try and perform as many operations in the fast memory (SRAM) layer of the GPU before saving results back to high-bandwidth memory (HBM) of the GPU (see [@fig-flash-attention]). This reduces the data transfer (IO) between them, as loading is often the slowest process [@he2022brrrrfromfirstprinciples]. For more details on model optimisation on GPUs, [this](https://horace.io/brrr_intro.html) is a good read from first principles.
+However, making the system time-varying means we can no longer perform convolution in [@eq-s4-conv] to parallelise training since it assumes a fixed kernel. To address this, Mamba introduces the selective scan layer. It is the implementation of a hard-aware selective [parallel scan](https://en.wikipedia.org/wiki/Prefix_sum) algorithm with the same GPU kernel fusion techniques in [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) [@dao2022flashattention] for transformers, as a result of Mamba being a collaborative paper between Albert Gu (S4) and Tri Dao (FlashAttention). Therefore, the core optimisations for all three techniques, parallel scan, kernel fusion and recomputation in the selective SSM layer are to try and perform as many operations in the fast memory (SRAM) layer of the GPU before saving results back to high-bandwidth memory (HBM) (see [@fig-flash-attention]). This reduces the data transfer (IO) between them, as loading is often the slowest process [@he2022brrrrfromfirstprinciples]. For more details on model optimisation on GPUs, [this](https://horace.io/brrr_intro.html) is a good read from first principles.
 
 ::: {#fig-mamba-arch layout-nrow=2  }
 
 ![ **(Left)**: Average Memory Bandwidth for [A100](https://www.nvidia.com/en-us/data-center/a100/) **(Right)**: Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. [@grootendorst2024mamba]](./selective_ssm_simple.png){fig-align="center" width=600 .lightbox}
 
-![ State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]](./selective_ssm_hardware.png){fig-align="center" width=600 .lightbox}
+![ **State Selection with Hardware-Aware State Expansion**: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]](./selective_ssm_hardware.png){fig-align="center" width=600 .lightbox}
 
 Mamba: Selective SSM Architecture
 :::
@@ -393,7 +393,7 @@ One of the biggest efficiency gains is from implementing the parallel associativ
 
 ::: {#fig-flash-attention  }
 
-![ **(Left)**: FlashAttention: The $\mathbf{(QK)V}$ matrix of size $N\times N$ is computed in SRAM using tiling before being written to HBM. **(Right)**: Speedup of Attention on GPT-2 ](./flash_attention.png){fig-align="center" width=50% .lightbox}
+![ **(Left)**: FlashAttention: The $\mathbf{(QK)V}$ matrix of size $N^2$ is computed in SRAM using tiling before being written to HBM. **(Right)**: Speedup of Attention on GPT-2 ](./flash_attention.png){fig-align="center" width=50% .lightbox}
 
 Example of Kernel Fusion Enabling Efficient Operations in FlashAttention [@dao2022flashattention]
 :::
