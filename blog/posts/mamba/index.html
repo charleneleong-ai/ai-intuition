@@ -270,11 +270,11 @@ window.Quarto = {
 </div>
 <section id="why-mamba-and-structured-state-space-sequence-models" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Why Mamba and Structured State Space Sequence Models?</h1>
-<p>The fundamental problem in deep sequence modelling is how to efficiently compress the context into a smaller learnable state representation whilst maintaining the quality of state representation. As seen in <a href="#fig-state-spectrum" class="quarto-xref">Figure&nbsp;1.1</a>, transformers have powerful in-context learning capabilties due to the inherent nature of attention but it’s uncompressed memory state (the attention matrix) makes for inefficient inference especially with long-range dependencies (LRD) or large context window settings. On the end, RNNs and S4 models may be efficient but fail to preserve context state required to perform well in tasks that require in-context reasoning. Mamba proposes a context-aware method to dynamically filter out inputs in the sequence to effectively compress the context.</p>
+<p>The fundamental problem in deep sequence modelling is how to efficiently compress the context into a smaller learnable state representation whilst maintaining the quality of state representation. As seen in <a href="#fig-state-spectrum" class="quarto-xref">Figure&nbsp;1.1</a>, transformers have powerful in-context learning capabilties due to the inherent nature of attention but it’s uncompressed memory state (the attention matrix) makes for inefficient inference especially with long-range dependencies (LRD) or large context window settings. On the other end, RNNs and S4 models may be efficient but fail to preserve context state required to perform well in tasks that require in-context reasoning. Mamba proposes a context-aware method to dynamically filter out inputs in the sequence to effectively compress the context.</p>
 <div id="fig-state-spectrum" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-state-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./state_spectrum.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" data-glightbox="description: .lightbox-desc-2"><img src="./state_spectrum.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./state_spectrum.png" class="lightbox" data-glightbox="description: .lightbox-desc-2" data-gallery="quarto-lightbox-gallery-2"><img src="./state_spectrum.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-state-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation in Different Model Architecture Families <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span>
@@ -287,7 +287,7 @@ Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation
 <div id="fig-signaldata" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./signal_data.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" data-glightbox="description: .lightbox-desc-3"><img src="./signal_data.png" class="quarto-figure quarto-figure-center figure-img" height="220"></a>
+<a href="./signal_data.png" class="lightbox" data-glightbox="description: .lightbox-desc-3" data-gallery="quarto-lightbox-gallery-3"><img src="./signal_data.png" class="quarto-figure quarto-figure-center figure-img" height="220"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
@@ -299,10 +299,10 @@ Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <sp
 <div id="fig-lra" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./long_range_arena.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" data-glightbox="description: .lightbox-desc-4"><img src="./long_range_arena.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a>
+<a href="./long_range_arena.png" class="lightbox" data-glightbox="description: .lightbox-desc-4" data-gallery="quarto-lightbox-gallery-4"><img src="./long_range_arena.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.3: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span>
+Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -314,7 +314,7 @@ Figure&nbsp;1.3: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reas
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./scaling_laws.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" data-glightbox="description: .lightbox-desc-5"><img src="./scaling_laws.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./scaling_laws.png" class="lightbox" data-glightbox="description: .lightbox-desc-5" data-gallery="quarto-lightbox-gallery-5"><img src="./scaling_laws.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 </div>
@@ -323,14 +323,14 @@ Figure&nbsp;1.3: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reas
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./efficiency_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" data-glightbox="description: .lightbox-desc-6"><img src="./efficiency_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./efficiency_benchmark.png" class="lightbox" data-glightbox="description: .lightbox-desc-6" data-gallery="quarto-lightbox-gallery-6"><img src="./efficiency_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scale-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>
+Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -348,16 +348,16 @@ Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Trai
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./bertviz_head.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-7" data-glightbox="description: .lightbox-desc-7" title="Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words."><img src="./bertviz_head.gif" class="img-fluid figure-img" style="width:61.0%"></a></p>
-<figcaption>Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</figcaption>
+<p><a href="./bertviz_head.gif" class="lightbox" data-glightbox="description: .lightbox-desc-7" data-gallery="quarto-lightbox-gallery-7" title="Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words."><img src="./bertviz_head.gif" class="img-fluid figure-img" style="width:61.0%"></a></p>
+<figcaption><strong>Head View</strong>: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</figcaption>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./bertviz_neuron.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-8" data-glightbox="description: .lightbox-desc-8" title="Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange."><img src="./bertviz_neuron.gif" class="img-fluid figure-img" style="width:200.0%"></a></p>
-<figcaption>Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</figcaption>
+<p><a href="./bertviz_neuron.gif" class="lightbox" data-glightbox="description: .lightbox-desc-8" data-gallery="quarto-lightbox-gallery-8" title="Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange."><img src="./bertviz_neuron.gif" class="img-fluid figure-img" style="width:200.0%"></a></p>
+<figcaption><strong>Neuron View</strong>: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</figcaption>
 </figure>
 </div>
 </div>
@@ -368,7 +368,7 @@ Figure&nbsp;1.5: Visualising Attention Weights in Transformer Networks <span cla
 </figcaption>
 </figure>
 </div>
-<p>We can observe in the following experiments in <a href="#fig-llm-long-context" class="quarto-xref">Figure&nbsp;1.6</a> that GPT4’s recall performance starts to degrade above 73K tokens where the low recall performance was placed between 7-50% document depth given. However, facts at the beginning of documents were recalled regardless of document length. This also seems to be the case for Anthropic’s Claude 2.1 model.</p>
+<p>We can observe in the following experiments in <a href="#fig-llm-long-context" class="quarto-xref">Figure&nbsp;1.6</a> that GPT4’s recall performance starts to degrade above 73K tokens where we observce low recall performance when fact is placed between 7-50% document depth. However, facts at the beginning of documents were recalled regardless of document length. This also seems to be the case for Anthropic’s Claude 2.1 model.</p>
 <div id="fig-llm-long-context" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-llm-long-context-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -376,23 +376,23 @@ Figure&nbsp;1.5: Visualising Attention Weights in Transformer Networks <span cla
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./gpt4_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" data-glightbox="description: .lightbox-desc-9" title="OpenAI’s GPT-4-128K"><img src="./gpt4_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
-<figcaption>OpenAI’s GPT-4-128K</figcaption>
+<p><a href="./gpt4_long_context.png" class="lightbox" data-glightbox="description: .lightbox-desc-9" data-gallery="quarto-lightbox-gallery-9" title="OpenAI’s GPT-4-128K Long Context Performance"><img src="./gpt4_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<figcaption>OpenAI’s GPT-4-128K Long Context Performance</figcaption>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./claude_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" data-glightbox="description: .lightbox-desc-10" title="Anthropic’s Claude 2.1"><img src="./claude_long_context.png" class="img-fluid figure-img" style="width:92.0%"></a></p>
-<figcaption>Anthropic’s Claude 2.1</figcaption>
+<p><a href="./claude_long_context.png" class="lightbox" data-glightbox="description: .lightbox-desc-10" data-gallery="quarto-lightbox-gallery-10" title="Anthropic’s Claude 2.1 Long Context Performance"><img src="./claude_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<figcaption>Anthropic’s Claude 2.1 Long Context Performance</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-llm-long-context-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.6: Needle In A Haystack - Pressure Testing LLMs Results for Long Context Retrieval <span class="citation" data-cites="llmtestneedlehaystack"><a href="#ref-llmtestneedlehaystack" role="doc-biblioref">[9]</a></span>
+Figure&nbsp;1.6: <strong>Needle In A Haystack</strong>: Pressure Testing LLMs Results for Long Context Retrieval <span class="citation" data-cites="llmtestneedlehaystack"><a href="#ref-llmtestneedlehaystack" role="doc-biblioref">[9]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -400,10 +400,10 @@ Figure&nbsp;1.6: Needle In A Haystack - Pressure Testing LLMs Results for Long C
 <div id="fig-lost-in-the-middle" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lost-in-the-middle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./lost_in_the_middle.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" data-glightbox="description: .lightbox-desc-11"><img src="./lost_in_the_middle.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="350"></a>
+<a href="./lost_in_the_middle.png" class="lightbox" data-glightbox="description: .lightbox-desc-11" data-gallery="quarto-lightbox-gallery-11"><img src="./lost_in_the_middle.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="350"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lost-in-the-middle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.7: Lost in the Middle: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span>
+Figure&nbsp;1.7: <strong>Lost in the Middle</strong>: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -416,7 +416,7 @@ Figure&nbsp;1.7: Lost in the Middle: Performance Degrades When Information Acces
 <div id="fig-kvcache" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-kvcache-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./kv_cache.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-12" data-glightbox="description: .lightbox-desc-12"><img src="./kv_cache.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./kv_cache.gif" class="lightbox" data-glightbox="description: .lightbox-desc-12" data-gallery="quarto-lightbox-gallery-12"><img src="./kv_cache.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-kvcache-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV caching <span class="citation" data-cites="joaolages2023kvcache"><a href="#ref-joaolages2023kvcache" role="doc-biblioref">[12]</a></span>
@@ -465,7 +465,7 @@ Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV 
 <div id="fig-rnn" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./rnn.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-13" data-glightbox="description: .lightbox-desc-13"><img src="./rnn.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
+<a href="./rnn.gif" class="lightbox" data-glightbox="description: .lightbox-desc-13" data-gallery="quarto-lightbox-gallery-13"><img src="./rnn.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
@@ -550,10 +550,10 @@ Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
 <div id="fig-lssml" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./state_space_layer.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" data-glightbox="description: .lightbox-desc-14"><img src="./state_space_layer.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./state_space_layer.png" class="lightbox" data-glightbox="description: .lightbox-desc-14" data-gallery="quarto-lightbox-gallery-14"><img src="./state_space_layer.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: The Three Representations of Linear State Space Layers in S4: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.
+Figure&nbsp;2.1: <strong>The Three Representations of Linear State Space Layers in S4</strong>: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.
 </figcaption>
 </figure>
 </div>
@@ -582,14 +582,14 @@ Figure&nbsp;2.1: The Three Representations of Linear State Space Layers in S4: (
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_cont_simplified.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" data-glightbox="description: .lightbox-desc-15"><img src="./ssm_cont_simplified.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./ssm_cont_simplified.png" class="lightbox" data-glightbox="description: .lightbox-desc-15" data-gallery="quarto-lightbox-gallery-15"><img src="./ssm_cont_simplified.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_cont.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" data-glightbox="description: .lightbox-desc-16"><img src="./ssm_cont.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./ssm_cont.png" class="lightbox" data-glightbox="description: .lightbox-desc-16" data-gallery="quarto-lightbox-gallery-16"><img src="./ssm_cont.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
 </figure>
 </div>
 </div>
@@ -618,24 +618,34 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row quarto-layout-valign-center">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./zero_order_hold.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" data-glightbox="description: .lightbox-desc-17"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./zero_order_hold.png" class="lightbox" data-glightbox="description: .lightbox-desc-17" data-gallery="quarto-lightbox-gallery-17" title="Zero Order Hold Sampling Function"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+<figcaption>Zero Order Hold Sampling Function</figcaption>
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./discrete_ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" data-glightbox="description: .lightbox-desc-18"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="./discrete_ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-18" data-gallery="quarto-lightbox-gallery-18" title="Discrete SSM Diagram [@grootendorst2024mamba]"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+</figure>
+</div>
+<figcaption>Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span>
+Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule
 </figcaption>
 </figure>
 </div>
@@ -647,7 +657,7 @@ y = x * \mathbf{\bar{K}}
 <div id="fig-s4-conv" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./conv_layer.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-19" data-glightbox="description: .lightbox-desc-19"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a>
+<a href="./conv_layer.gif" class="lightbox" data-glightbox="description: .lightbox-desc-19" data-gallery="quarto-lightbox-gallery-19"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span>
@@ -667,10 +677,10 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./fft_signal_decomposition.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" data-glightbox="description: .lightbox-desc-20" title="Signal in Time and Frequency Domain [@king2020conv]"><img src="./fft_signal_decomposition.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./fft_signal_decomposition.png" class="lightbox" data-glightbox="description: .lightbox-desc-20" data-gallery="quarto-lightbox-gallery-20" title="Signal in Time and Frequency Domain [@fftbasicnti]"><img src="./fft_signal_decomposition.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
-<figcaption>Signal in Time and Frequency Domain <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></figcaption>
+<figcaption>Signal in Time and Frequency Domain <span class="citation" data-cites="fftbasicnti"><a href="#ref-fftbasicnti" role="doc-biblioref">[17]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -679,10 +689,10 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./legendre.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" data-glightbox="description: .lightbox-desc-21" title="Legendre Polynomials [@wiki24legendre]"><img src="./legendre.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./legendre.png" class="lightbox" data-glightbox="description: .lightbox-desc-21" data-gallery="quarto-lightbox-gallery-21" title="Legendre Polynomials [@wiki24legendre]"><img src="./legendre.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
-<figcaption>Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[17]</a></span></figcaption>
+<figcaption>Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[18]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -701,7 +711,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" data-glightbox="description: .lightbox-desc-22"><img src="./ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-22" data-gallery="quarto-lightbox-gallery-22"><img src="./ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
 </div>
@@ -710,7 +720,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./hippo.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-23" data-glightbox="description: .lightbox-desc-23"><img src="./hippo.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
+<p><a href="./hippo.gif" class="lightbox" data-glightbox="description: .lightbox-desc-23" data-gallery="quarto-lightbox-gallery-23"><img src="./hippo.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
 </figure>
 </div>
 </div>
@@ -719,7 +729,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./hippo_transform.png" class="lightbox" data-gallery="quarto-lightbox-gallery-24" data-glightbox="description: .lightbox-desc-24"><img src="./hippo_transform.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
+<p><a href="./hippo_transform.png" class="lightbox" data-glightbox="description: .lightbox-desc-24" data-gallery="quarto-lightbox-gallery-24"><img src="./hippo_transform.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
 </figure>
 </div>
 </div>
@@ -731,8 +741,8 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 </figure>
 </div>
 <p>In order to compute this matrix even more efficiently, since we have a structured matrix with known properties, we can speed up the computation of <span class="math inline">\(\mathbf{\bar{K}}\)</span> significantly, and overcome the <span class="math inline">\(O(Td^2)\)</span> computational complexity and <span class="math inline">\(O(Td)\)</span> space complexity in applying <span class="math inline">\(\mathbf{\bar{A}}\)</span> for each time step in the sequence.</p>
-<p>The original S4 approach was to leverage the Diagonal Plus Low-Rank (DPLR) structure in complex space <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[18]</a></span> which significantly reduces the space and time complexity as we only need to store and compute the diagonal elements and low-rank components of the dense matrix. It can be expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{\Lambda}+ \mathbf{PQ^*}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix and <span class="math inline">\(\mathbf{PQ}\)</span> are low-rank matrices (vectors for rank-1 updates). The addition of the low-rank term allows the DPLR matrix to capture more complex relationships in LRD compared to a simple diagonal matrix whilst specialised techniques like the <a href="https://en.wikipedia.org/wiki/Woodbury_matrix_identity">Woodbury identity</a> make operations on DPLR matrices feasible and efficient. This was followed by a paper that showed empirically that just using the diagonal matrix and removing the low-rank portion of the DPLR form of the HIPPO matrix, yielded similar results <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[18]</a></span>.</p>
-<p>This work led to S4D used in Mamba <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[19]</a></span>, further improving the computational effiency and expressiveness of <span class="math inline">\(\mathbf{\bar{A}}\)</span> by leveraging the <a href="https://www.netlib.org/utk/people/JackDongarra/etemplates/node384.html">Vandermonde Matrix</a> to compute the diagonal matrix, leveraging the properties of <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors and eigenvalues</a> to efficiently capture more complex relationships between state variables (such as powers and exponentials). This is expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{V \Lambda V^{-1}}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix of eigenvalues, <span class="math inline">\(\mathbf{V}\)</span> is the Vandermonde matrix of eigenvectors and <span class="math inline">\(\mathbf{V^{-1}}\)</span> is the inverse Vandermonde matrix.</p>
+<p>The original S4 approach was to leverage the Diagonal Plus Low-Rank (DPLR) structure in complex space <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[19]</a></span> which significantly reduces the space and time complexity as we only need to store and compute the diagonal elements and low-rank components of the dense matrix. It can be expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{\Lambda}+ \mathbf{PQ^*}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix and <span class="math inline">\(\mathbf{PQ}\)</span> are low-rank matrices (vectors for rank-1 updates). The addition of the low-rank term allows the DPLR matrix to capture more complex relationships in LRD compared to a simple diagonal matrix whilst specialised techniques like the <a href="https://en.wikipedia.org/wiki/Woodbury_matrix_identity">Woodbury identity</a> make operations on DPLR matrices feasible and efficient. This was followed by a paper that showed empirically that just using the diagonal matrix and removing the low-rank portion of the DPLR form of the HIPPO matrix, yielded similar results <span class="citation" data-cites="gupta2022diagonal"><a href="#ref-gupta2022diagonal" role="doc-biblioref">[19]</a></span>.</p>
+<p>This work led to S4D used in Mamba <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>, further improving the computational effiency and expressiveness of <span class="math inline">\(\mathbf{\bar{A}}\)</span> by leveraging the <a href="https://www.netlib.org/utk/people/JackDongarra/etemplates/node384.html">Vandermonde Matrix</a> to compute the diagonal matrix, leveraging the properties of <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors and eigenvalues</a> to efficiently capture more complex relationships between state variables (such as powers and exponentials). This is expressed as <span class="math inline">\(\mathbf{\bar{A}}=\mathbf{V \Lambda V^{-1}}\)</span> where <span class="math inline">\(\mathbf{\Lambda}\)</span> is the diagonal matrix of eigenvalues, <span class="math inline">\(\mathbf{V}\)</span> is the Vandermonde matrix of eigenvectors and <span class="math inline">\(\mathbf{V^{-1}}\)</span> is the inverse Vandermonde matrix.</p>
 <div id="fig-diagonal" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -742,7 +752,7 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./DPLR.png" class="lightbox" data-gallery="quarto-lightbox-gallery-25" data-glightbox="description: .lightbox-desc-25" title="Diagonal Plus Low-rank Approximation"><img src="./DPLR.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./DPLR.png" class="lightbox" data-glightbox="description: .lightbox-desc-25" data-gallery="quarto-lightbox-gallery-25" title="Diagonal Plus Low-rank Approximation"><img src="./DPLR.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Diagonal Plus Low-rank Approximation</figcaption>
@@ -754,17 +764,17 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4d_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-26" data-glightbox="description: .lightbox-desc-26" title="S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters."><img src="./s4d_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./s4d_arch.png" class="lightbox" data-glightbox="description: .lightbox-desc-26" data-gallery="quarto-lightbox-gallery-26" title="S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters [@gu2022parameterization]"><img src="./s4d_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters.</figcaption>
+<figcaption><strong>S4D Recurrent and Convolutional View</strong>: Colors denote independent 1D SSMs; purple denotes trainable parameters <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span></figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.7: S4 vs S4D Architecture <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[19]</a></span>
+Figure&nbsp;2.7: S4 vs S4D Architecture
 </figcaption>
 </figure>
 </div>
@@ -777,7 +787,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture <span class="citation" data-cites="gu202
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4_vs_s4d.png" class="lightbox" data-gallery="quarto-lightbox-gallery-27" data-glightbox="description: .lightbox-desc-27" title="Visualising S4 vs S4D Results"><img src="./s4_vs_s4d.png" class="quarto-figure quarto-figure-center figure-img" height="350"></a></p>
+<p><a href="./s4_vs_s4d.png" class="lightbox" data-glightbox="description: .lightbox-desc-27" data-gallery="quarto-lightbox-gallery-27" title="Visualising S4 vs S4D Results"><img src="./s4_vs_s4d.png" class="quarto-figure quarto-figure-center figure-img" height="350"></a></p>
 </figure>
 </div>
 <figcaption>Visualising S4 vs S4D Results</figcaption>
@@ -789,7 +799,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture <span class="citation" data-cites="gu202
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4d_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-28" data-glightbox="description: .lightbox-desc-28" title="S4 vs S4D Long Range Arena Results"><img src="./s4d_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./s4d_results.png" class="lightbox" data-glightbox="description: .lightbox-desc-28" data-gallery="quarto-lightbox-gallery-28" title="S4 vs S4D Long Range Arena Results"><img src="./s4d_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>S4 vs S4D Long Range Arena Results</figcaption>
@@ -799,7 +809,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture <span class="citation" data-cites="gu202
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[19]</a></span>
+Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -812,7 +822,7 @@ Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022para
 <div id="fig-mamba-algo" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mamba-algo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./selective_ssm_algo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-29" data-glightbox="description: .lightbox-desc-29"><img src="./selective_ssm_algo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./selective_ssm_algo.png" class="lightbox" data-glightbox="description: .lightbox-desc-29" data-gallery="quarto-lightbox-gallery-29"><img src="./selective_ssm_algo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mamba-algo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>
@@ -831,10 +841,10 @@ Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" da
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_copying.png" class="lightbox" data-gallery="quarto-lightbox-gallery-30" data-glightbox="description: .lightbox-desc-30" title="Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content."><img src="./selective_copying.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./selective_copying.png" class="lightbox" data-glightbox="description: .lightbox-desc-30" data-gallery="quarto-lightbox-gallery-30" title="Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content."><img src="./selective_copying.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</figcaption>
+<figcaption><strong>Selective Copying</strong>: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</figcaption>
 </figure>
 </div>
 </div>
@@ -843,17 +853,17 @@ Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" da
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./induction_heads.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" data-glightbox="description: .lightbox-desc-31" title="Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs."><img src="./induction_heads.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./induction_heads.png" class="lightbox" data-glightbox="description: .lightbox-desc-31" data-gallery="quarto-lightbox-gallery-31" title="Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs."><img src="./induction_heads.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</figcaption>
+<figcaption><strong>Induction Heads</strong>: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-copy-ind-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.2: Tasks to Demontrastae Context-Aware Reasoning <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span>
+Figure&nbsp;3.2: Tasks to Demonstrate Context-Aware Reasoning <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -871,10 +881,10 @@ Figure&nbsp;3.2: Tasks to Demontrastae Context-Aware Reasoning <span class="cita
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_copying_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" data-glightbox="description: .lightbox-desc-32" title="Selective Copying Results: Accuracy for combinations of architectures"><img src="./selective_copying_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a></p>
+<p><a href="./selective_copying_results.png" class="lightbox" data-glightbox="description: .lightbox-desc-32" data-gallery="quarto-lightbox-gallery-32" title="Selective Copying Results: Accuracy for combinations of architectures"><img src="./selective_copying_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a></p>
 </figure>
 </div>
-<figcaption>Selective Copying Results: Accuracy for combinations of architectures</figcaption>
+<figcaption><strong>Selective Copying Results</strong>: Accuracy for combinations of architectures</figcaption>
 </figure>
 </div>
 </div>
@@ -883,10 +893,10 @@ Figure&nbsp;3.2: Tasks to Demontrastae Context-Aware Reasoning <span class="cita
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./induction_heads_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-33" data-glightbox="description: .lightbox-desc-33" title="Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens"><img src="./induction_heads_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./induction_heads_results.png" class="lightbox" data-glightbox="description: .lightbox-desc-33" data-gallery="quarto-lightbox-gallery-33" title="Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens"><img src="./induction_heads_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</figcaption>
+<figcaption><strong>Induction Heads Extrapolation</strong>: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</figcaption>
 </figure>
 </div>
 </div>
@@ -900,7 +910,7 @@ Figure&nbsp;3.3: Mamba Performance on Context-Aware Reasoning Tasks <span class=
 </section>
 <section id="selective-ssm-layer-for-parallelised-training" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="selective-ssm-layer-for-parallelised-training"><span class="header-section-number">3.2</span> Selective SSM Layer for Parallelised Training</h2>
-<p>However, making the system time-varying means we can no longer perform convolution in <a href="#eq-s4-conv" class="quarto-xref">Equation&nbsp;2.4</a> to parallelise training since it assumes a fixed kernel. To address this, Mamba introduces the selective scan layer. It is the implementation of a hard-aware selective <a href="https://en.wikipedia.org/wiki/Prefix_sum">parallel scan</a> algorithm with the same GPU kernel fusion techniques in <a href="https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention">FlashAttention</a> <span class="citation" data-cites="dao2022flashattention"><a href="#ref-dao2022flashattention" role="doc-biblioref">[20]</a></span> for transformers, as a result of Mamba being a collaborative paper between Albert Gu (S4) and Tri Dao (FlashAttention). Therefore, the core optimisations for all three techniques, parallel scan, kernel fusion and recomputation in the selective SSM layer are to try and perform as many operations in the fast memory (SRAM) layer of the GPU before saving results back to high-bandwidth memory (HBM) of the GPU (see <a href="#fig-flash-attention" class="quarto-xref">Figure&nbsp;3.6</a>). This reduces the data transfer (IO) between them, as loading is often the slowest process <span class="citation" data-cites="he2022brrrrfromfirstprinciples"><a href="#ref-he2022brrrrfromfirstprinciples" role="doc-biblioref">[21]</a></span>. For more details on model optimisation on GPUs, <a href="https://horace.io/brrr_intro.html">this</a> is a good read from first principles.</p>
+<p>However, making the system time-varying means we can no longer perform convolution in <a href="#eq-s4-conv" class="quarto-xref">Equation&nbsp;2.4</a> to parallelise training since it assumes a fixed kernel. To address this, Mamba introduces the selective scan layer. It is the implementation of a hard-aware selective <a href="https://en.wikipedia.org/wiki/Prefix_sum">parallel scan</a> algorithm with the same GPU kernel fusion techniques in <a href="https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention">FlashAttention</a> <span class="citation" data-cites="dao2022flashattention"><a href="#ref-dao2022flashattention" role="doc-biblioref">[21]</a></span> for transformers, as a result of Mamba being a collaborative paper between Albert Gu (S4) and Tri Dao (FlashAttention). Therefore, the core optimisations for all three techniques, parallel scan, kernel fusion and recomputation in the selective SSM layer are to try and perform as many operations in the fast memory (SRAM) layer of the GPU before saving results back to high-bandwidth memory (HBM) (see <a href="#fig-flash-attention" class="quarto-xref">Figure&nbsp;3.6</a>). This reduces the data transfer (IO) between them, as loading is often the slowest process <span class="citation" data-cites="he2022brrrrfromfirstprinciples"><a href="#ref-he2022brrrrfromfirstprinciples" role="doc-biblioref">[22]</a></span>. For more details on model optimisation on GPUs, <a href="https://horace.io/brrr_intro.html">this</a> is a good read from first principles.</p>
 <div id="fig-mamba-arch" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mamba-arch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -910,7 +920,7 @@ Figure&nbsp;3.3: Mamba Performance on Context-Aware Reasoning Tasks <span class=
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_ssm_simple.png" class="lightbox" data-gallery="quarto-lightbox-gallery-34" data-glightbox="description: .lightbox-desc-34" title="(Left): Average Memory Bandwidth for A100 (Right): Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. [@grootendorst2024mamba]"><img src="./selective_ssm_simple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./selective_ssm_simple.png" class="lightbox" data-glightbox="description: .lightbox-desc-34" data-gallery="quarto-lightbox-gallery-34" title="(Left): Average Memory Bandwidth for A100 (Right): Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. [@grootendorst2024mamba]"><img src="./selective_ssm_simple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
 <figcaption><strong>(Left)</strong>: Average Memory Bandwidth for <a href="https://www.nvidia.com/en-us/data-center/a100/">A100</a> <strong>(Right)</strong>: Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -924,10 +934,10 @@ Figure&nbsp;3.3: Mamba Performance on Context-Aware Reasoning Tasks <span class=
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_ssm_hardware.png" class="lightbox" data-gallery="quarto-lightbox-gallery-35" data-glightbox="description: .lightbox-desc-35" title="State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]"><img src="./selective_ssm_hardware.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./selective_ssm_hardware.png" class="lightbox" data-glightbox="description: .lightbox-desc-35" data-gallery="quarto-lightbox-gallery-35" title="State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]"><img src="./selective_ssm_hardware.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
-<figcaption>State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></figcaption>
+<figcaption><strong>State Selection with Hardware-Aware State Expansion</strong>: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -950,7 +960,7 @@ Figure&nbsp;3.4: Mamba: Selective SSM Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./linear_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-36" data-glightbox="description: .lightbox-desc-36" title="Visualisation of Linear Scan"><img src="./linear_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./linear_scan.gif" class="lightbox" data-glightbox="description: .lightbox-desc-36" data-gallery="quarto-lightbox-gallery-36" title="Visualisation of Linear Scan"><img src="./linear_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Visualisation of Linear Scan</figcaption>
@@ -962,7 +972,7 @@ Figure&nbsp;3.4: Mamba: Selective SSM Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./blelloch_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-37" data-glightbox="description: .lightbox-desc-37" title="Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)"><img src="./blelloch_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./blelloch_scan.gif" class="lightbox" data-glightbox="description: .lightbox-desc-37" data-gallery="quarto-lightbox-gallery-37" title="Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)"><img src="./blelloch_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)</figcaption>
@@ -972,7 +982,7 @@ Figure&nbsp;3.4: Mamba: Selective SSM Architecture
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-parallel-scan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.5: Visualising the Linear vs Parallel Associative Scan Operation <span class="citation" data-cites="MLSYS2020_BPPSA"><a href="#ref-MLSYS2020_BPPSA" role="doc-biblioref">[22]</a></span>
+Figure&nbsp;3.5: Visualising the Linear vs Parallel Associative Scan Operation <span class="citation" data-cites="MLSYS2020_BPPSA"><a href="#ref-MLSYS2020_BPPSA" role="doc-biblioref">[23]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -987,15 +997,15 @@ Figure&nbsp;3.5: Visualising the Linear vs Parallel Associative Scan Operation <
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./flash_attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-38" data-glightbox="description: .lightbox-desc-38" title="(Left): FlashAttention: The \mathbf{(QK)V} matrix of size N\times N is computed in SRAM using tiling before being written to HBM. (Right): Speedup of Attention on GPT-2"><img src="./flash_attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./flash_attention.png" class="lightbox" data-glightbox="description: .lightbox-desc-38" data-gallery="quarto-lightbox-gallery-38" title="(Left): FlashAttention: The \mathbf{(QK)V} matrix of size N^2 is computed in SRAM using tiling before being written to HBM. (Right): Speedup of Attention on GPT-2"><img src="./flash_attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
-<figcaption><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N\times N\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</figcaption>
+<figcaption><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N^2\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-flash-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in FlashAttention <span class="citation" data-cites="dao2022flashattention"><a href="#ref-dao2022flashattention" role="doc-biblioref">[20]</a></span>
+Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in FlashAttention <span class="citation" data-cites="dao2022flashattention"><a href="#ref-dao2022flashattention" role="doc-biblioref">[21]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -1012,7 +1022,7 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_graph.png" class="lightbox" data-gallery="quarto-lightbox-gallery-39" data-glightbox="description: .lightbox-desc-39" title="Neural Network Computation Graph Source"><img src="./recomputation_graph.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_graph.png" class="lightbox" data-glightbox="description: .lightbox-desc-39" data-gallery="quarto-lightbox-gallery-39" title="Neural Network Computation Graph Source"><img src="./recomputation_graph.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption>Neural Network Computation Graph <a href="https://stats.stackexchange.com/questions/377427/storage-and-re-computation-of-intermediate-weight-back-propagated-gradients">Source</a></figcaption>
@@ -1026,7 +1036,7 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_operation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-40" data-glightbox="description: .lightbox-desc-40" title="Recomputing of Activations on Backward Pass: Blue = forward, Red = backward Source"><img src="./recomputation_operation.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_operation.png" class="lightbox" data-glightbox="description: .lightbox-desc-40" data-gallery="quarto-lightbox-gallery-40" title="Recomputing of Activations on Backward Pass: Blue = forward, Red = backward Source"><img src="./recomputation_operation.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption>Recomputing of Activations on Backward Pass: Blue = forward, Red = backward <a href="https://docs.graphcore.ai/projects/memory-performance-optimisation/en/latest/common-mry-optimisations.html#activations-recomputation-and-memory-use">Source</a></figcaption>
@@ -1040,10 +1050,10 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_memory.png" class="lightbox" data-gallery="quarto-lightbox-gallery-41" data-glightbox="description: .lightbox-desc-41" title="Saving GPU Memory with Re-computation [@korthikanti2022reducing]"><img src="./recomputation_memory.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_memory.png" class="lightbox" data-glightbox="description: .lightbox-desc-41" data-gallery="quarto-lightbox-gallery-41" title="Saving GPU Memory with Re-computation [@korthikanti2022reducing]"><img src="./recomputation_memory.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
-<figcaption>Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[23]</a></span></figcaption>
+<figcaption>Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[24]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -1058,7 +1068,7 @@ Figure&nbsp;3.7: Example of Recomputing Intermediate States for Backward Pass
 </section>
 <section id="mamba-architecture" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="mamba-architecture"><span class="header-section-number">3.3</span> Mamba Architecture</h2>
-<p>The Mamba model is made by stacking multiple layers of Mamba blocks, similar to self-attention in the transformer. It is heavily inspired by its predecessor, the Hungry Hungry Hippo (H3) Architecture <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[24]</a></span>. It starts with projecting inputs to hidden state, followed by convolution over projected dimensions with sigmoid-weighted linear unit (SILU) /Swish activation <span class="citation" data-cites="elfwing2017sigmoidweighted"><a href="#ref-elfwing2017sigmoidweighted" role="doc-biblioref">[25]</a></span>. The SSM operation is then computed followed by the skip connection operation <span class="math inline">\(\mathbf{D}\)</span> before downscaling for another linear projection.</p>
+<p>The Mamba model is made by stacking multiple layers of Mamba blocks, similar to self-attention in the transformer. It is heavily inspired by its predecessor, the Hungry Hungry Hippo (H3) Architecture <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[25]</a></span>. It starts with projecting inputs to hidden state, followed by convolution over projected dimensions with sigmoid-weighted linear unit (SILU) /Swish activation <span class="citation" data-cites="elfwing2017sigmoidweighted"><a href="#ref-elfwing2017sigmoidweighted" role="doc-biblioref">[26]</a></span>. The SSM operation is then computed followed by the skip connection operation <span class="math inline">\(\mathbf{D}\)</span> before downscaling for another linear projection.</p>
 <p>The full architecture includes tokenising inputs to an embedding later, followed by the Mamba block repeated N times for the length of the sequence N with the inclusion of couple RMS Norm normalisation layers and a softmax layer for choosing the next output token.</p>
 <div id="fig-mamba-block" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1069,10 +1079,10 @@ Figure&nbsp;3.7: Example of Recomputing Intermediate States for Backward Pass
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./h3_mamba_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-42" data-glightbox="description: .lightbox-desc-42" title="From H3 to the Mamba Block [@fu2023hungry]"><img src="./h3_mamba_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./h3_mamba_arch.png" class="lightbox" data-glightbox="description: .lightbox-desc-42" data-gallery="quarto-lightbox-gallery-42" title="From H3 to the Mamba Block [@fu2023hungry]"><img src="./h3_mamba_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[24]</a></span></figcaption>
+<figcaption>From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[25]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -1081,7 +1091,7 @@ Figure&nbsp;3.7: Example of Recomputing Intermediate States for Backward Pass
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./mamba_block_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-43" data-glightbox="description: .lightbox-desc-43" title="Mamba Block Decoder Architecture [@grootendorst2024mamba]"><img src="./mamba_block_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./mamba_block_arch.png" class="lightbox" data-glightbox="description: .lightbox-desc-43" data-gallery="quarto-lightbox-gallery-43" title="Mamba Block Decoder Architecture [@grootendorst2024mamba]"><img src="./mamba_block_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Mamba Block Decoder Architecture <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -1108,7 +1118,7 @@ Figure&nbsp;3.8: Mamba Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./commonsense_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-44" data-glightbox="description: .lightbox-desc-44" title="Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag Source"><img src="./commonsense_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./commonsense_benchmark.png" class="lightbox" data-glightbox="description: .lightbox-desc-44" data-gallery="quarto-lightbox-gallery-44" title="Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag Source"><img src="./commonsense_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag <a href="https://hub.zenoml.com/report/2443/Mamba%20vs%207B?">Source</a></figcaption>
@@ -1120,7 +1130,7 @@ Figure&nbsp;3.8: Mamba Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./commonsense_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-45" data-glightbox="description: .lightbox-desc-45" title="Evaluation Comparison of Mamba variants with several similar-sized LLMs [@gu2023mamba]"><img src="./commonsense_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./commonsense_results.png" class="lightbox" data-glightbox="description: .lightbox-desc-45" data-gallery="quarto-lightbox-gallery-45" title="Evaluation Comparison of Mamba variants with several similar-sized LLMs [@gu2023mamba]"><img src="./commonsense_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Evaluation Comparison of Mamba variants with several similar-sized LLMs <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></figcaption>
@@ -1149,10 +1159,10 @@ Figure&nbsp;3.9: Mamba vs LLMs Performance on Commonsense Reasoning Benchmarks
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_timeline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-46" data-glightbox="description: .lightbox-desc-46" title="Timeline of SSM based Models [@wang2024state]"><img src="./ssm_timeline.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./ssm_timeline.png" class="lightbox" data-glightbox="description: .lightbox-desc-46" data-gallery="quarto-lightbox-gallery-46" title="Timeline of SSM based Models [@wang2024state]"><img src="./ssm_timeline.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
-<figcaption>Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[26]</a></span></figcaption>
+<figcaption>Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[27]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -1161,10 +1171,10 @@ Figure&nbsp;3.9: Mamba vs LLMs Performance on Commonsense Reasoning Benchmarks
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_applications.png" class="lightbox" data-gallery="quarto-lightbox-gallery-47" data-glightbox="description: .lightbox-desc-47" title="SSM Model Landscape Over Various Domains [@patro2024mamba360]"><img src="./ssm_applications.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./ssm_applications.png" class="lightbox" data-glightbox="description: .lightbox-desc-47" data-gallery="quarto-lightbox-gallery-47" title="SSM Model Landscape Over Various Domains [@patro2024mamba360]"><img src="./ssm_applications.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
-<figcaption>SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[27]</a></span></figcaption>
+<figcaption>SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[28]</a></span></figcaption>
 </figure>
 </div>
 </div>
@@ -1177,9 +1187,9 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 </div>
 <section id="applications-and-architectures" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="applications-and-architectures"><span class="header-section-number">4.1</span> Applications and Architectures</h2>
-<p>From a recent survey, there are still stability challenges scaling SSMs to the same network size as SoTA transformers especially in vision <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[26]</a></span>. Fusion techniques may fill in each others’ shortcomings between CNNs, vision transformers and vision mamba models in future to allow for better generalisation performance with long-context dependencies. For example, this has lead to the open-source release of a new LLM foundation model, Jamba, from AI32 Labs fusing the Transformer, Mamba, and MoE (Mixture-of-Experts) architectures to enable context length of 256K tokens with performance reaching Mixtral-7B and Llama2-7B with a reduced KV cache memory footprint of only 4GB <span class="citation" data-cites="lieber2024jamba"><a href="#ref-lieber2024jamba" role="doc-biblioref">[28]</a></span>.</p>
+<p>From a recent survey, there are still stability challenges scaling SSMs to the same network size as SoTA transformers especially in vision <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[27]</a></span>. Fusion techniques may fill in each others’ shortcomings between CNNs, vision transformers and vision mamba models in future to allow for better generalisation performance with long-context dependencies. For example, this has lead to the open-source release of a new LLM foundation model, Jamba, from AI32 Labs fusing the Transformer, Mamba, and MoE (Mixture-of-Experts) architectures to enable context length of 256K tokens with performance reaching Mixtral-7B and Llama2-7B with a reduced KV cache memory footprint of only 4GB <span class="citation" data-cites="lieber2024jamba"><a href="#ref-lieber2024jamba" role="doc-biblioref">[29]</a></span>.</p>
 <p>The plethora of Mamba vision variants of late extend the selective scan algorithm to 2 dimensions where the scan techniques can be categorised into four groups: scan mode, scan axis, scan continuity and scan sampling (see <a href="#fig-vmamba-scan" class="quarto-xref">Figure&nbsp;4.2</a>).</p>
-<p>However, a recent paper, MambaOut, highlights that Mamba models may not be needed for tasks that do not require long-sequence dependencies and autoregressive characteristics, such as image classification <span class="citation" data-cites="yu2024mambaout"><a href="#ref-yu2024mambaout" role="doc-biblioref">[29]</a></span> which they prove by showing that MambaOut can outperform SoTA vision Mamba models on ImageNet-1K classification without the Mamba block. It will be fruitful, however, to evaluate Mamba’s performance on detection and segmentation in long-context settings such as with long-term video sequences (movies) or high-dimensional imagery (remote sensing).</p>
+<p>However, a recent paper, MambaOut, highlights that Mamba models may not be needed for tasks that do not require long-sequence dependencies and autoregressive characteristics, such as image classification <span class="citation" data-cites="yu2024mambaout"><a href="#ref-yu2024mambaout" role="doc-biblioref">[30]</a></span> which they prove by showing that MambaOut can outperform SoTA vision Mamba models on ImageNet-1K classification without the Mamba block. It will be fruitful, however, to evaluate Mamba’s performance on detection and segmentation in long-context settings such as with long-term video sequences (movies) or high-dimensional imagery (remote sensing).</p>
 <p>Modifying Mamba’s inherent 1D nature of selective scan meant for a causal sequential stream to a bi-directional 2D scan technique has posed algorithmic challenges in scalability and stability, as well as maintaining spatial information without redundancy in computation. Therefore, there needs to be advancements in the scanning operators in order to apply Mamba on higher-dimensional non-causal visual data more effectively in future and to capture and obtain more comprehensive skewed feature representations to enhance the feature learning in SSMs.</p>
 <div id="fig-vmamba-scan" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1190,7 +1200,7 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./vmamba_scan_techniques.png" class="lightbox" data-gallery="quarto-lightbox-gallery-48" data-glightbox="description: .lightbox-desc-48" title="Vision Mamba Scan Techniques"><img src="./vmamba_scan_techniques.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./vmamba_scan_techniques.png" class="lightbox" data-glightbox="description: .lightbox-desc-48" data-gallery="quarto-lightbox-gallery-48" title="Vision Mamba Scan Techniques"><img src="./vmamba_scan_techniques.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Vision Mamba Scan Techniques</figcaption>
@@ -1202,7 +1212,7 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./mamba_vision.png" class="lightbox" data-gallery="quarto-lightbox-gallery-49" data-glightbox="description: .lightbox-desc-49" title="Vision Mamba Model Landscape"><img src="./mamba_vision.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./mamba_vision.png" class="lightbox" data-glightbox="description: .lightbox-desc-49" data-gallery="quarto-lightbox-gallery-49" title="Vision Mamba Model Landscape"><img src="./mamba_vision.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Vision Mamba Model Landscape</figcaption>
@@ -1212,7 +1222,7 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vmamba-scan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024survey"><a href="#ref-xu2024survey" role="doc-biblioref">[30]</a></span>
+Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024survey"><a href="#ref-xu2024survey" role="doc-biblioref">[31]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -1270,49 +1280,52 @@ Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024su
 <div class="csl-left-margin">[15] </div><div class="csl-right-inline">A. Gu <em>et al.</em>, <span>“Combining recurrent, convolutional, and continuous-time models with linear state-space layers.”</span> 2021. Available: <a href="https://arxiv.org/abs/2110.13985">https://arxiv.org/abs/2110.13985</a></div>
 </div>
 <div id="ref-king2020conv" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[16] </div><div class="csl-right-inline">N. Audio, <span>“Fast fourier transformation FFT - basics.”</span> Technical Support, 2024. Available: <a href="https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft">https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft</a></div>
+<div class="csl-left-margin">[16] </div><div class="csl-right-inline">H. Jing, <span>“How convolutional layers work in deep learning neural networks?”</span> Blog Post, 2020. Available: <a href="https://jinglescode.github.io/2020/11/01/how-convolutional-layers-work-deep-learning-neural-networks/">https://jinglescode.github.io/2020/11/01/how-convolutional-layers-work-deep-learning-neural-networks/</a></div>
+</div>
+<div id="ref-fftbasicnti" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[17] </div><div class="csl-right-inline">N. Audio, <span>“Fast fourier transformation FFT - basics.”</span> Technical Support, 2024. Available: <a href="https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft">https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft</a></div>
 </div>
 <div id="ref-wiki24legendre" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[17] </div><div class="csl-right-inline">Wikipedia, <span>“Legendre polynomials.”</span> Article, 2024. Available: <a href="https://en.wikipedia.org/wiki/Legendre_polynomials">https://en.wikipedia.org/wiki/Legendre_polynomials</a></div>
+<div class="csl-left-margin">[18] </div><div class="csl-right-inline">Wikipedia, <span>“Legendre polynomials.”</span> Article, 2024. Available: <a href="https://en.wikipedia.org/wiki/Legendre_polynomials">https://en.wikipedia.org/wiki/Legendre_polynomials</a></div>
 </div>
 <div id="ref-gupta2022diagonal" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[18] </div><div class="csl-right-inline">A. Gupta, A. Gu, and J. Berant, <span>“Diagonal state spaces are as effective as structured state spaces.”</span> 2022. Available: <a href="https://arxiv.org/abs/2203.14343">https://arxiv.org/abs/2203.14343</a></div>
+<div class="csl-left-margin">[19] </div><div class="csl-right-inline">A. Gupta, A. Gu, and J. Berant, <span>“Diagonal state spaces are as effective as structured state spaces.”</span> 2022. Available: <a href="https://arxiv.org/abs/2203.14343">https://arxiv.org/abs/2203.14343</a></div>
 </div>
 <div id="ref-gu2022parameterization" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[19] </div><div class="csl-right-inline">A. Gu, A. Gupta, K. Goel, and C. Ré, <span>“On the parameterization and initialization of diagonal state space models.”</span> 2022. Available: <a href="https://arxiv.org/abs/2206.11893">https://arxiv.org/abs/2206.11893</a></div>
+<div class="csl-left-margin">[20] </div><div class="csl-right-inline">A. Gu, A. Gupta, K. Goel, and C. Ré, <span>“On the parameterization and initialization of diagonal state space models.”</span> 2022. Available: <a href="https://arxiv.org/abs/2206.11893">https://arxiv.org/abs/2206.11893</a></div>
 </div>
 <div id="ref-dao2022flashattention" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[20] </div><div class="csl-right-inline">T. Dao, D. Y. Fu, S. Ermon, A. Rudra, and C. Ré, <span>“FlashAttention: Fast and memory-efficient exact attention with IO-awareness.”</span> 2022. Available: <a href="https://arxiv.org/abs/2205.14135">https://arxiv.org/abs/2205.14135</a></div>
+<div class="csl-left-margin">[21] </div><div class="csl-right-inline">T. Dao, D. Y. Fu, S. Ermon, A. Rudra, and C. Ré, <span>“FlashAttention: Fast and memory-efficient exact attention with IO-awareness.”</span> 2022. Available: <a href="https://arxiv.org/abs/2205.14135">https://arxiv.org/abs/2205.14135</a></div>
 </div>
 <div id="ref-he2022brrrrfromfirstprinciples" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[21] </div><div class="csl-right-inline">H. He, <span>“Making deep learning go brrrr from first principles,”</span> 2022, Available: <a href="https://horace.io/brrr_intro.html">https://horace.io/brrr_intro.html</a></div>
+<div class="csl-left-margin">[22] </div><div class="csl-right-inline">H. He, <span>“Making deep learning go brrrr from first principles,”</span> 2022, Available: <a href="https://horace.io/brrr_intro.html">https://horace.io/brrr_intro.html</a></div>
 </div>
 <div id="ref-MLSYS2020_BPPSA" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[22] </div><div class="csl-right-inline">S. Wang, Y. Bai, and G. Pekhimenko, <span>“BPPSA: Scaling back-propagation by parallel scan algorithm,”</span> in <em>Proceedings of machine learning and systems</em>, I. Dhillon, D. Papailiopoulos, and V. Sze, Eds., 2020, pp. 451–469. Available: <a href="https://proceedings.mlsys.org/paper/2020/file/96da2f590cd7246bbde0051047b0d6f7-Paper.pdf">https://proceedings.mlsys.org/paper/2020/file/96da2f590cd7246bbde0051047b0d6f7-Paper.pdf</a></div>
+<div class="csl-left-margin">[23] </div><div class="csl-right-inline">S. Wang, Y. Bai, and G. Pekhimenko, <span>“BPPSA: Scaling back-propagation by parallel scan algorithm,”</span> in <em>Proceedings of machine learning and systems</em>, I. Dhillon, D. Papailiopoulos, and V. Sze, Eds., 2020, pp. 451–469. Available: <a href="https://proceedings.mlsys.org/paper/2020/file/96da2f590cd7246bbde0051047b0d6f7-Paper.pdf">https://proceedings.mlsys.org/paper/2020/file/96da2f590cd7246bbde0051047b0d6f7-Paper.pdf</a></div>
 </div>
 <div id="ref-korthikanti2022reducing" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[23] </div><div class="csl-right-inline">V. Korthikanti <em>et al.</em>, <span>“Reducing activation recomputation in large transformer models.”</span> 2022. Available: <a href="https://arxiv.org/abs/2205.05198">https://arxiv.org/abs/2205.05198</a></div>
+<div class="csl-left-margin">[24] </div><div class="csl-right-inline">V. Korthikanti <em>et al.</em>, <span>“Reducing activation recomputation in large transformer models.”</span> 2022. Available: <a href="https://arxiv.org/abs/2205.05198">https://arxiv.org/abs/2205.05198</a></div>
 </div>
 <div id="ref-fu2023hungry" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[24] </div><div class="csl-right-inline">D. Y. Fu, T. Dao, K. K. Saab, A. W. Thomas, A. Rudra, and C. Ré, <span>“Hungry hungry hippos: Towards language modeling with state space models.”</span> 2023. Available: <a href="https://arxiv.org/abs/2212.14052">https://arxiv.org/abs/2212.14052</a></div>
+<div class="csl-left-margin">[25] </div><div class="csl-right-inline">D. Y. Fu, T. Dao, K. K. Saab, A. W. Thomas, A. Rudra, and C. Ré, <span>“Hungry hungry hippos: Towards language modeling with state space models.”</span> 2023. Available: <a href="https://arxiv.org/abs/2212.14052">https://arxiv.org/abs/2212.14052</a></div>
 </div>
 <div id="ref-elfwing2017sigmoidweighted" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[25] </div><div class="csl-right-inline">S. Elfwing, E. Uchibe, and K. Doya, <span>“Sigmoid-weighted linear units for neural network function approximation in reinforcement learning.”</span> 2017. Available: <a href="https://arxiv.org/abs/1702.03118">https://arxiv.org/abs/1702.03118</a></div>
+<div class="csl-left-margin">[26] </div><div class="csl-right-inline">S. Elfwing, E. Uchibe, and K. Doya, <span>“Sigmoid-weighted linear units for neural network function approximation in reinforcement learning.”</span> 2017. Available: <a href="https://arxiv.org/abs/1702.03118">https://arxiv.org/abs/1702.03118</a></div>
 </div>
 <div id="ref-wang2024state" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[26] </div><div class="csl-right-inline">X. Wang <em>et al.</em>, <span>“State space model for new-generation network alternative to transformers: A survey.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.09516">https://arxiv.org/abs/2404.09516</a></div>
+<div class="csl-left-margin">[27] </div><div class="csl-right-inline">X. Wang <em>et al.</em>, <span>“State space model for new-generation network alternative to transformers: A survey.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.09516">https://arxiv.org/abs/2404.09516</a></div>
 </div>
 <div id="ref-patro2024mamba360" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[27] </div><div class="csl-right-inline">B. N. Patro and V. S. Agneeswaran, <span>“Mamba-360: Survey of state space models as transformer alternative for long sequence modelling: Methods, applications, and challenges.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.16112">https://arxiv.org/abs/2404.16112</a></div>
+<div class="csl-left-margin">[28] </div><div class="csl-right-inline">B. N. Patro and V. S. Agneeswaran, <span>“Mamba-360: Survey of state space models as transformer alternative for long sequence modelling: Methods, applications, and challenges.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.16112">https://arxiv.org/abs/2404.16112</a></div>
 </div>
 <div id="ref-lieber2024jamba" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[28] </div><div class="csl-right-inline">O. Lieber <em>et al.</em>, <span>“Jamba: A hybrid transformer-mamba language model.”</span> 2024. Available: <a href="https://arxiv.org/abs/2403.19887">https://arxiv.org/abs/2403.19887</a></div>
+<div class="csl-left-margin">[29] </div><div class="csl-right-inline">O. Lieber <em>et al.</em>, <span>“Jamba: A hybrid transformer-mamba language model.”</span> 2024. Available: <a href="https://arxiv.org/abs/2403.19887">https://arxiv.org/abs/2403.19887</a></div>
 </div>
 <div id="ref-yu2024mambaout" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[29] </div><div class="csl-right-inline">W. Yu and X. Wang, <span>“MambaOut: Do we really need mamba for vision?”</span> <em>arXiv preprint arXiv:2405.07992</em>, 2024.</div>
+<div class="csl-left-margin">[30] </div><div class="csl-right-inline">W. Yu and X. Wang, <span>“MambaOut: Do we really need mamba for vision?”</span> <em>arXiv preprint arXiv:2405.07992</em>, 2024.</div>
 </div>
 <div id="ref-xu2024survey" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[30] </div><div class="csl-right-inline">R. Xu, S. Yang, Y. Wang, B. Du, and H. Chen, <span>“A survey on vision mamba: Models, applications and challenges.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.18861">https://arxiv.org/abs/2404.18861</a></div>
+<div class="csl-left-margin">[31] </div><div class="csl-right-inline">R. Xu, S. Yang, Y. Wang, B. Du, and H. Chen, <span>“A survey on vision mamba: Models, applications and challenges.”</span> 2024. Available: <a href="https://arxiv.org/abs/2404.18861">https://arxiv.org/abs/2404.18861</a></div>
 </div>
 </div>
 
@@ -1320,50 +1333,50 @@ Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024su
 <div class="hidden" aria-hidden="true">
 <span class="glightbox-desc lightbox-desc-2">Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation in Different Model Architecture Families <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
 <span class="glightbox-desc lightbox-desc-3">Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-4">Figure&nbsp;1.3: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span></span>
-<span class="glightbox-desc lightbox-desc-5">Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-6">Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-7">Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</span>
-<span class="glightbox-desc lightbox-desc-8">Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</span>
-<span class="glightbox-desc lightbox-desc-9">OpenAI’s GPT-4-128K</span>
-<span class="glightbox-desc lightbox-desc-10">Anthropic’s Claude 2.1</span>
-<span class="glightbox-desc lightbox-desc-11">Figure&nbsp;1.7: Lost in the Middle: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span></span>
+<span class="glightbox-desc lightbox-desc-4">Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span></span>
+<span class="glightbox-desc lightbox-desc-5">Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-6">Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-7"><strong>Head View</strong>: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</span>
+<span class="glightbox-desc lightbox-desc-8"><strong>Neuron View</strong>: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</span>
+<span class="glightbox-desc lightbox-desc-9">OpenAI’s GPT-4-128K Long Context Performance</span>
+<span class="glightbox-desc lightbox-desc-10">Anthropic’s Claude 2.1 Long Context Performance</span>
+<span class="glightbox-desc lightbox-desc-11">Figure&nbsp;1.7: <strong>Lost in the Middle</strong>: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span></span>
 <span class="glightbox-desc lightbox-desc-12">Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV caching <span class="citation" data-cites="joaolages2023kvcache"><a href="#ref-joaolages2023kvcache" role="doc-biblioref">[12]</a></span></span>
 <span class="glightbox-desc lightbox-desc-13">Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time</span>
-<span class="glightbox-desc lightbox-desc-14">Figure&nbsp;2.1: The Three Representations of Linear State Space Layers in S4: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.</span>
+<span class="glightbox-desc lightbox-desc-14">Figure&nbsp;2.1: <strong>The Three Representations of Linear State Space Layers in S4</strong>: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.</span>
 <span class="glightbox-desc lightbox-desc-15">Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
 <span class="glightbox-desc lightbox-desc-16">Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-17">Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-18">Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
+<span class="glightbox-desc lightbox-desc-17">Zero Order Hold Sampling Function</span>
+<span class="glightbox-desc lightbox-desc-18">Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
 <span class="glightbox-desc lightbox-desc-19">Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></span>
-<span class="glightbox-desc lightbox-desc-20">Signal in Time and Frequency Domain <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></span>
-<span class="glightbox-desc lightbox-desc-21">Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[17]</a></span></span>
+<span class="glightbox-desc lightbox-desc-20">Signal in Time and Frequency Domain <span class="citation" data-cites="fftbasicnti"><a href="#ref-fftbasicnti" role="doc-biblioref">[17]</a></span></span>
+<span class="glightbox-desc lightbox-desc-21">Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[18]</a></span></span>
 <span class="glightbox-desc lightbox-desc-22">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
 <span class="glightbox-desc lightbox-desc-23">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
 <span class="glightbox-desc lightbox-desc-24">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
 <span class="glightbox-desc lightbox-desc-25">Diagonal Plus Low-rank Approximation</span>
-<span class="glightbox-desc lightbox-desc-26">S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters.</span>
+<span class="glightbox-desc lightbox-desc-26"><strong>S4D Recurrent and Convolutional View</strong>: Colors denote independent 1D SSMs; purple denotes trainable parameters <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span></span>
 <span class="glightbox-desc lightbox-desc-27">Visualising S4 vs S4D Results</span>
 <span class="glightbox-desc lightbox-desc-28">S4 vs S4D Long Range Arena Results</span>
 <span class="glightbox-desc lightbox-desc-29">Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-30">Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</span>
-<span class="glightbox-desc lightbox-desc-31">Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</span>
-<span class="glightbox-desc lightbox-desc-32">Selective Copying Results: Accuracy for combinations of architectures</span>
-<span class="glightbox-desc lightbox-desc-33">Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</span>
+<span class="glightbox-desc lightbox-desc-30"><strong>Selective Copying</strong>: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</span>
+<span class="glightbox-desc lightbox-desc-31"><strong>Induction Heads</strong>: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</span>
+<span class="glightbox-desc lightbox-desc-32"><strong>Selective Copying Results</strong>: Accuracy for combinations of architectures</span>
+<span class="glightbox-desc lightbox-desc-33"><strong>Induction Heads Extrapolation</strong>: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</span>
 <span class="glightbox-desc lightbox-desc-34"><strong>(Left)</strong>: Average Memory Bandwidth for <a href="https://www.nvidia.com/en-us/data-center/a100/">A100</a> <strong>(Right)</strong>: Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-35">State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
+<span class="glightbox-desc lightbox-desc-35"><strong>State Selection with Hardware-Aware State Expansion</strong>: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
 <span class="glightbox-desc lightbox-desc-36">Visualisation of Linear Scan</span>
 <span class="glightbox-desc lightbox-desc-37">Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)</span>
-<span class="glightbox-desc lightbox-desc-38"><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N\times N\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</span>
+<span class="glightbox-desc lightbox-desc-38"><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N^2\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</span>
 <span class="glightbox-desc lightbox-desc-39">Neural Network Computation Graph <a href="https://stats.stackexchange.com/questions/377427/storage-and-re-computation-of-intermediate-weight-back-propagated-gradients">Source</a></span>
 <span class="glightbox-desc lightbox-desc-40">Recomputing of Activations on Backward Pass: Blue = forward, Red = backward <a href="https://docs.graphcore.ai/projects/memory-performance-optimisation/en/latest/common-mry-optimisations.html#activations-recomputation-and-memory-use">Source</a></span>
-<span class="glightbox-desc lightbox-desc-41">Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[23]</a></span></span>
-<span class="glightbox-desc lightbox-desc-42">From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[24]</a></span></span>
+<span class="glightbox-desc lightbox-desc-41">Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[24]</a></span></span>
+<span class="glightbox-desc lightbox-desc-42">From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[25]</a></span></span>
 <span class="glightbox-desc lightbox-desc-43">Mamba Block Decoder Architecture <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
 <span class="glightbox-desc lightbox-desc-44">Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag <a href="https://hub.zenoml.com/report/2443/Mamba%20vs%207B?">Source</a></span>
 <span class="glightbox-desc lightbox-desc-45">Evaluation Comparison of Mamba variants with several similar-sized LLMs <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-46">Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[26]</a></span></span>
-<span class="glightbox-desc lightbox-desc-47">SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[27]</a></span></span>
+<span class="glightbox-desc lightbox-desc-46">Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[27]</a></span></span>
+<span class="glightbox-desc lightbox-desc-47">SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[28]</a></span></span>
 <span class="glightbox-desc lightbox-desc-48">Vision Mamba Scan Techniques</span>
 <span class="glightbox-desc lightbox-desc-49">Vision Mamba Model Landscape</span>
 </div>
@@ -1830,7 +1843,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom","loop":false});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"selector":".lightbox","descPosition":"bottom","openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
