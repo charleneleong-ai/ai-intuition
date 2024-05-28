@@ -354,7 +354,7 @@ between. It is able to generalise to million-length sequences, 4000x longer seen
 
 ![Selective Copying Results: Accuracy for combinations of architectures](./selective_copying_results.png){width=60% fig-align="center" .lightbox}
 
-![Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens ](./induction_heads_results.png){width=100% fig-align="center" .lightbox
+![Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens ](./induction_heads_results.png){width=100% fig-align="center" .lightbox}
 
 Mamba Performance on Context-Aware Reasoning Tasks [@gu2023mamba]
 :::
