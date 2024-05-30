@@ -227,7 +227,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">May 28, 2024</p>
+        <p class="date-modified">May 30, 2024</p>
       </div>
     </div>
       
@@ -329,7 +329,14 @@ window.Quarto = {
 <section id="imports-and-global-variables" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="imports-and-global-variables"><span class="header-section-number">4.1</span> Imports and Global Variables</h2>
 <p>We first import our initial <code>C++</code> <code>ROS</code> headers and instantiate our global variables from the robot’s physical characteristics.</p>
-<p>We include the following headers - [<code>ros/ros.h</code>] to include too headers necessary to use the most common public pieces of the ROS system. - <a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html"><code>geometry_msgs/Twist.h</code></a> to publish linear and angular velocities to facilitate interoperability throughout the system. - <a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Quaternion.html"><code>geometry_msgs/Quaternion.h</code></a> to publish orientation in quarternion form. - <a href="http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html"><code>sensor_msgs/Imu.h</code></a> to collect sensor data message type from the IMU. The IMU node <a href="http://wiki.ros.org/razor_imu_9do"><code>razor_imu_9dof</code></a> publishes messages to the <code>"imu"</code> topic in the ROS system to be used by motion and planning algorithms such as this <a href="http://wiki.ros.org/robot_pose_ekf"><code>robot_pose_ekf</code></a>. - <a href="https://cplusplus.com/reference/cmath/"><code>math.h</code></a> to perform common mathmetical operations and transformations.</p>
+<p>We include the following headers:</p>
+<ul>
+<li>[<code>ros/ros.h</code>] to include too headers necessary to use the most common public pieces of the ROS system.</li>
+<li><a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html"><code>geometry_msgs/Twist.h</code></a> to publish linear and angular velocities to facilitate interoperability throughout the system.</li>
+<li><a href="http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Quaternion.html"><code>geometry_msgs/Quaternion.h</code></a> to publish orientation in quarternion form.</li>
+<li><a href="http://docs.ros.org/en/kinetic/api/sensor_msgs/html/msg/Imu.html"><code>sensor_msgs/Imu.h</code></a> to collect sensor data message type from the IMU. The IMU node <a href="http://wiki.ros.org/razor_imu_9do"><code>razor_imu_9dof</code></a> publishes messages to the <code>"imu"</code> topic in the ROS system to be used by motion and planning algorithms such as this <a href="http://wiki.ros.org/robot_pose_ekf"><code>robot_pose_ekf</code></a>.</li>
+<li><a href="https://cplusplus.com/reference/cmath/"><code>math.h</code></a> to perform common mathmetical operations and transformations.</li>
+</ul>
 <p>We then declare our ROS publishers <code>motor_control_pub</code> to publish the motor control signal to the wheels and <code>imu_pub</code> to publish and update the robot’s orientation.</p>
 <div data-add-from="control.cpp" data-start-line="1" data-end-line="18" data-code-line-numbers="true">
 <div class="sourceCode cell-code" id="cb1" data-startfrom="1"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#include </span><span class="im">"ros/ros.h"</span></span>
@@ -527,7 +534,7 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 \omega_2 = \frac{1}{r} ( \frac{\cos(\theta) v_y}{3} - \frac{\sin(\theta) v_x}{3} + \frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\sqrt{3} \cos(\theta) v_x}{3}  + \omega_{\text{body}} h )
 \]</span></p>
 <p><span class="math display">\[
-\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} * h )
+\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} h )
 \]</span></p>
 <p>These equations relate the global motion commands (<span class="math inline">\(v_x\)</span>, <span class="math inline">\(v_y\)</span>, <span class="math inline">\(\omega_{\text{body}}\)</span>) to the angular velocities of the three wheels (<span class="math inline">\(\omega_1\)</span>, <span class="math inline">\(\omega_2\)</span>, <span class="math inline">\(\omega_3\)</span>) taking into account the robot’s orientation <span class="math inline">\(\theta\)</span>, wheel radius <span class="math inline">\(r\)</span> and distance from center to the wheels <span class="math inline">\(h\)</span>.</p>
 </section>
@@ -535,10 +542,10 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <h2 data-number="4.5" class="anchored" data-anchor-id="converting-angular-velocities-to-pwm-signal-for-motor-control"><span class="header-section-number">4.5</span> Converting angular velocities to PWM signal for motor control</h2>
 <p>After we’ve calculated the angular velocities in terms on radians per second (<span class="math inline">\(rad/s\)</span>), we have to convert to a Pulse Width Modulation (PWM) signal to send updated speed and direction to the motors.</p>
 <p><strong>1. Angular Velocity to RPM</strong></p>
-<p>We first convert angular velocity (in radians per second) to revolutions per minute (RPM).</p>
-<p>We know that <span class="math inline">\(1 revolution=2\pi radians\)</span> and <span class="math inline">\(1 minute = 60 seconds\)</span>, therefore, the conversion factor is:</p>
+<p>We first convert angular velocity (<span class="math inline">\(rad/s\)</span>) to revolutions per minute (RPM).</p>
+<p>We know that <span class="math inline">\(1 \space revolution=2\pi \space radians\)</span> and <span class="math inline">\(1 \space minute = 60 \space seconds\)</span>, therefore, the conversion factor is:</p>
 <p><span class="math display">\[
-RPM = \omega\times(60/(2\pi)) \approx \omega\times 9.5493 \approx \omega\times 9.55
+RPM = \omega\times(60/2\pi) \approx \omega\times 9.5493 \approx \omega\times 9.55
 \]</span></p>
 <p><strong>2. Conversion from RPM to PWM</strong></p>
 <p>In order to measure and calibrate the relationship betwen PWM and RPM for the motor, an empirical experiment was performed in order to collect measurements and fit a linear regression model to the data.</p>
@@ -1046,7 +1053,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom","loop":false,"selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
