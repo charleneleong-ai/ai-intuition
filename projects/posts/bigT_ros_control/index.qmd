@@ -72,7 +72,8 @@ The robot's velocity commands are published on the `cmd_vel` topic from either  
 
 We first import our initial `C++` `ROS` headers and instantiate our global variables from the robot's physical characteristics.
 
-We include the following headers
+We include the following headers:
+
    - [`ros/ros.h`] to include too headers necessary to use the most common public pieces of the ROS system.
    - [`geometry_msgs/Twist.h`](http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Twist.html) to publish linear and angular velocities to facilitate interoperability throughout the system.
    -  [`geometry_msgs/Quaternion.h`](http://docs.ros.org/en/kinetic/api/geometry_msgs/html/msg/Quaternion.html) to publish orientation in quarternion form.
@@ -272,7 +273,7 @@ $$
 $$
 
 $$
-\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} * h )
+\omega_3 = \frac{1}{r} ( -\frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\cos(\theta) v_y}{3} - \frac{\sqrt{3} \cos(\theta) v_x}{3} - \frac{\sin(\theta) v_x}{3} + \omega_{\text{body}} h )
 $$
 
 These equations relate the global motion commands ($v_x$, $v_y$, $\omega_{\text{body}}$) to the angular velocities of the three wheels ($\omega_1$, $\omega_2$, $\omega_3$) taking into account the robot's orientation $\theta$, wheel radius $r$ and distance from center to the wheels $h$.
@@ -286,12 +287,12 @@ After we've calculated the angular velocities in terms on radians per second ($r
 
 **1. Angular Velocity to RPM**
 
-We first convert angular velocity (in radians per second) to revolutions per minute (RPM).
+We first convert angular velocity ($rad/s$) to revolutions per minute (RPM).
 
-We know that $1 revolution=2\pi radians$ and $1 minute = 60 seconds$, therefore, the conversion factor is:
+We know that $1 \space revolution=2\pi \space radians$ and $1 \space minute = 60 \space seconds$, therefore, the conversion factor is:
 
 $$
-RPM = \omega\times(60/(2\pi)) \approx \omega\times 9.5493 \approx \omega\times 9.55
+RPM = \omega\times(60/2\pi) \approx \omega\times 9.5493 \approx \omega\times 9.55
 $$
 
 
