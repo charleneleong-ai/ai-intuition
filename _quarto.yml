@@ -22,7 +22,11 @@ website:
         href: https://www.linkedin.com/in/charleneleong/
   favicon: favicon.png
   open-graph: true
-  google-analytics: G-Y94VW3WD5L
+  body-footer: 
+      <!-- 100% privacy-first analytics -->
+      <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+      <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
+      
 
 format:
   html:
