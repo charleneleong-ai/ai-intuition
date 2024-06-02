@@ -26,6 +26,7 @@ website:
       <!-- 100% privacy-first analytics -->
       <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
       <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
+      <script defer src="https://cloud.umami.is/script.js" data-website-id="07090575-f991-48f7-91da-2346a7d041ff"></script>
       
 
 format:

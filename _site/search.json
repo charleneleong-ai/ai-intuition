@@ -11,7 +11,7 @@
     "href": "projects/index.html",
     "title": "Projects",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Updated - Oldest\n        \n         \n          Updated - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nROS Navigation and Control for a Triangular Holonomic Robot\n\n\n10 min\n\n\nAutonomous SLAM and control\n\n\n\nMay 13, 2024\n\n\n\n\n\nMay 30, 2024\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Updated - Oldest\n        \n         \n          Updated - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nROS Navigation and Control for a Triangular Holonomic Robot\n\n\n10 min\n\n\nAutonomous SLAM and control\n\n\n\nMay 13, 2024\n\n\n\n\n\nJun 2, 2024\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/crane_plus_motion_planning/index.html",
@@ -171,22 +171,22 @@
     "objectID": "projects/draft/crane_plus_motion_planning/index.html#build",
     "href": "projects/draft/crane_plus_motion_planning/index.html#build",
     "title": "Crane+ V2 Motion Planning Optimisation",
-    "section": "Build",
-    "text": "Build\nCrane+V2 is a 4DOF arm + gripper from RT-Net. This project explores the application of blackbox optimisation techniques to optimise hyperparameters in motion planning algorithms in robotic arms. The control state is implemented in ROS with motion planning integration with the MoveIt! Motion Planning Framework and simulation with Gazebo."
+    "section": "0.1 Build",
+    "text": "0.1 Build\nCrane+V2 is a 4DOF arm + gripper from RT-Net. This project explores the application of blackbox optimisation techniques to optimise hyperparameters in motion planning algorithms in robotic arms. The control state is implemented in ROS with motion planning integration with the MoveIt! Motion Planning Framework and simulation with Gazebo."
   },
   {
     "objectID": "projects/draft/crane_plus_motion_planning/index.html#package-setup",
     "href": "projects/draft/crane_plus_motion_planning/index.html#package-setup",
     "title": "Crane+ V2 Motion Planning Optimisation",
-    "section": "Package Setup",
-    "text": "Package Setup\nIn order to setup the ROS environment for the Crane+V2 arm, the following packages were implemented to aid in setting up the experimentation environment. Please refer to the repo here for more details on how to things up, even though this is no longer maintained!\ncrane_plus_control: Parameter tuning and benchmarking nodes\ncrane_plus_description: CAD files and URDF (Unified Robot Description Format) model of CRANE+V2\ncrane_plus_gripper: Node that controls the gripper of CRANE+V2\ncrane_plus_hardware: Launch file that configures the settings for use with CRANE+V2 hardware\ncrane_plus_ikfast_arm_plugin: Custom inverse kinematics plugin for CRANE+V2 in the MoveIt! framework\ncrane_plus_joint_state_publisher: Node that converts servo status messages (dynamixel_msgs/JointState message type) output by the Dynamixel servo controller to ROS sensor_msgs/JointState message type\ncrane_plus_moveit_config: Parameters and launch files for using CRANE+V2 with MoveIt! framework\ncrane_plus_simulation: Launch file that configures the settings for simulating CRANE+V2 in Gazebo motion planning"
+    "section": "0.2 Package Setup",
+    "text": "0.2 Package Setup\nIn order to setup the ROS environment for the Crane+V2 arm, the following packages were implemented to aid in setting up the experimentation environment. Please refer to the repo here for more details on how to things up, even though this is no longer maintained!\ncrane_plus_control: Parameter tuning and benchmarking nodes\ncrane_plus_description: CAD files and URDF (Unified Robot Description Format) model of CRANE+V2\ncrane_plus_gripper: Node that controls the gripper of CRANE+V2\ncrane_plus_hardware: Launch file that configures the settings for use with CRANE+V2 hardware\ncrane_plus_ikfast_arm_plugin: Custom inverse kinematics plugin for CRANE+V2 in the MoveIt! framework\ncrane_plus_joint_state_publisher: Node that converts servo status messages (dynamixel_msgs/JointState message type) output by the Dynamixel servo controller to ROS sensor_msgs/JointState message type\ncrane_plus_moveit_config: Parameters and launch files for using CRANE+V2 with MoveIt! framework\ncrane_plus_simulation: Launch file that configures the settings for simulating CRANE+V2 in Gazebo motion planning"
   },
   {
     "objectID": "projects/draft/crane_plus_motion_planning/index.html#experiment-setup",
     "href": "projects/draft/crane_plus_motion_planning/index.html#experiment-setup",
     "title": "Crane+ V2 Motion Planning Optimisation",
-    "section": "Experiment Setup",
-    "text": "Experiment Setup\n…\nWIP! Will add details soon!\n…\n\nThis project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss."
+    "section": "0.3 Experiment Setup",
+    "text": "0.3 Experiment Setup\n…\nWIP! Will add details soon!\n…\n\nThis project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss."
   },
   {
     "objectID": "blog/draft/kan/index.html",
