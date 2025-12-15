@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.ai-intuition.com/projects/posts/bigT_ros_control/index.html</loc>
-    <lastmod>2024-06-02T07:08:27.145Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ai-intuition.com/projects/draft/crane_plus_motion_planning/index.html</loc>
-    <lastmod>2024-06-02T07:08:27.045Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ai-intuition.com/blog/posts/mamba/index.html</loc>
-    <lastmod>2024-06-02T07:08:26.985Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ai-intuition.com/blog/draft/kan/index.html</loc>
-    <lastmod>2024-06-02T07:08:26.929Z</lastmod>
+    <loc>https://www.ai-intuition.com/about/index.html</loc>
+    <lastmod>2025-12-15T15:39:42.972Z</lastmod>
   </url>
   <url>
     <loc>https://www.ai-intuition.com/blog/index.html</loc>
-    <lastmod>2024-06-02T07:08:26.929Z</lastmod>
+    <lastmod>2025-12-15T15:39:42.973Z</lastmod>
   </url>
   <url>
-    <loc>https://www.ai-intuition.com/about/index.html</loc>
-    <lastmod>2024-06-02T07:08:26.929Z</lastmod>
+    <loc>https://www.ai-intuition.com/projects/posts/bigT_ros_control/index.html</loc>
+    <lastmod>2025-12-15T15:39:43.163Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/projects/draft/crane_plus_motion_planning/index.html</loc>
+    <lastmod>2025-12-15T15:39:43.073Z</lastmod>
   </url>
   <url>
     <loc>https://www.ai-intuition.com/projects/index.html</loc>
-    <lastmod>2024-06-02T07:08:27.049Z</lastmod>
+    <lastmod>2025-12-15T15:39:43.076Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/blog/draft/kan/index.html</loc>
+    <lastmod>2025-12-15T15:39:42.973Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ai-intuition.com/blog/posts/mamba/index.html</loc>
+    <lastmod>2025-12-15T15:39:43.021Z</lastmod>
   </url>
 </urlset>

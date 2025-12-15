@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "about/index.html",
+    "href": "about/index.html",
+    "title": "Charlene Leong",
+    "section": "",
+    "text": "Always endeavouring to understand how AI is transforming our human experience, the technical/non-technical know-how and challenges in effectively bringing R&D to product and client to solve impactful problems.\nCurious and inquisitive, continuously endeavouring to learn, apply and pioneer new uses for machine learning in this ever-growing exciting space. Here are some snippets from my journey and a place to share my learnings!"
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Structured State Space Sequence Models (S4) and Mamba Explained: A Primer\n\n\n\n\n\n\nstate space models\n\n\ns4\n\n\nmamba\n\n\nsequence models\n\n\nlong range\n\n\nmodelling\n\n\n\n\n\n\n\n\n\nMay 13, 2024\n\n\nCharlene Leong\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "projects/posts/bigT_ros_control/index.html",
     "href": "projects/posts/bigT_ros_control/index.html",
     "title": "ROS Navigation and Control for a Triangular Holonomic Robot",
@@ -68,6 +82,20 @@
     "title": "Crane+ V2 Motion Planning Optimisation",
     "section": "0.3 Experiment Setup",
     "text": "0.3 Experiment Setup\n…\nWIP! Will add details soon!\n…\n\nThis project was part of an internship with the Machine Learning research group at Mitsubishi Electric R&D Department in Kanagawa, Japan 2019. This research was to help to optimise the performance of Mitsubishi Electric’s industrial robotic arm productss."
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Updated - Oldest\n        \n         \n          Updated - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nROS Navigation and Control for a Triangular Holonomic Robot\n\n\n10 min\n\n\nAutonomous SLAM and control\n\n\n\nMay 13, 2024\n\n\n\n\n\nDec 15, 2025\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/draft/kan/index.html",
+    "href": "blog/draft/kan/index.html",
+    "title": "KAN",
+    "section": "",
+    "text": "This is a post with executable code."
   },
   {
     "objectID": "blog/posts/mamba/index.html#sec-transformer-limitations",
@@ -145,33 +173,5 @@
     "title": "Structured State Space Sequence Models (S4) and Mamba Explained: A Primer",
     "section": "4.1 Applications and Architectures",
     "text": "4.1 Applications and Architectures\nFrom a recent survey, there are still stability challenges scaling SSMs to the same network size as SoTA transformers especially in vision [27]. Fusion techniques may fill in each others’ shortcomings between CNNs, vision transformers and vision mamba models in future to allow for better generalisation performance with long-context dependencies. For example, this has lead to the open-source release of a new LLM foundation model, Jamba, from AI32 Labs fusing the Transformer, Mamba, and MoE (Mixture-of-Experts) architectures to enable context length of 256K tokens with performance reaching Mixtral-7B and Llama2-7B with a reduced KV cache memory footprint of only 4GB [29].\nThe plethora of Mamba vision variants of late extend the selective scan algorithm to 2 dimensions where the scan techniques can be categorised into four groups: scan mode, scan axis, scan continuity and scan sampling (see Figure 4.2).\nHowever, a recent paper, MambaOut, highlights that Mamba models may not be needed for tasks that do not require long-sequence dependencies and autoregressive characteristics, such as image classification [30] which they prove by showing that MambaOut can outperform SoTA vision Mamba models on ImageNet-1K classification without the Mamba block. It will be fruitful, however, to evaluate Mamba’s performance on detection and segmentation in long-context settings such as with long-term video sequences (movies) or high-dimensional imagery (remote sensing).\nModifying Mamba’s inherent 1D nature of selective scan meant for a causal sequential stream to a bi-directional 2D scan technique has posed algorithmic challenges in scalability and stability, as well as maintaining spatial information without redundancy in computation. Therefore, there needs to be advancements in the scanning operators in order to apply Mamba on higher-dimensional non-causal visual data more effectively in future and to capture and obtain more comprehensive skewed feature representations to enhance the feature learning in SSMs.\n\n\n\n\n\n\n\n\n\n\n\n\nVision Mamba Scan Techniques\n\n\n\n\n\n\n\n\n\n\n\nVision Mamba Model Landscape\n\n\n\n\n\n\nFigure 4.2: Vision Mamba Survey [31]\n\n\n\n\nPlease feel free to suggest any improvements or corrections. Thanks for reading and hope you learnt something useful from my journey! :)"
-  },
-  {
-    "objectID": "blog/draft/kan/index.html",
-    "href": "blog/draft/kan/index.html",
-    "title": "KAN",
-    "section": "",
-    "text": "This is a post with executable code."
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Structured State Space Sequence Models (S4) and Mamba Explained: A Primer\n\n\n\n\n\n\nstate space models\n\n\ns4\n\n\nmamba\n\n\nsequence models\n\n\nlong range\n\n\nmodelling\n\n\n\n\n\n\n\n\n\nMay 13, 2024\n\n\nCharlene Leong\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about/index.html",
-    "href": "about/index.html",
-    "title": "Charlene Leong",
-    "section": "",
-    "text": "Always endeavouring to understand how AI is transforming our human experience, the technical/non-technical know-how and challenges in effectively bringing R&D to product and client to solve impactful problems.\nCurious and inquisitive, continuously endeavouring to learn, apply and pioneer new uses for machine learning in this ever-growing exciting space. Here are some snippets from my journey and a place to share my learnings!"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Updated - Oldest\n        \n         \n          Updated - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nROS Navigation and Control for a Triangular Holonomic Robot\n\n\n10 min\n\n\nAutonomous SLAM and control\n\n\n\nMay 13, 2024\n\n\n\n\n\nJun 2, 2024\n\n\n\n\n\n\n\nNo matching items"
   }
 ]
