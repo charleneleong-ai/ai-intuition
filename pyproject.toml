@@ -1,23 +1,24 @@
-[tool.poetry]
+[project]
 name = "ai-intuition"
 version = "0.0.1"
 description = "AI Intuition"
-authors = ["Charlene Leong <charleneleong84@gmail.com>"]
-package-mode = false
+requires-python = ">=3.10,<3.12"
+authors = [
+	{ name = "Charlene Leong", email = "charleneleong84@gmail.com" },
+]
 license = "Apache-2.0"
+dependencies = [
+	"pillow>=10.2.0,<11.0.0",  # https://pillow.readthedocs.io/en/stable/releasenotes/10.3.0.html
+	"matplotlib>=3.8.4,<4.0.0",  # https://matplotlib.org/stable/users/release_notes.html
+	"numpy>=1.24.0,<2.0.0",  # https://github.com/numpy/numpy/releases
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.12"
-pillow = "^10.2.0" # https://pillow.readthedocs.io/en/stable/releasenotes/10.3.0.html
-matplotlib = "^3.8.4" # https://matplotlib.org/stable/users/release_notes.html
-numpy = "^1.24.0" # https://github.com/numpy/numpy/releases
+[project.optional-dependencies]
+dev = [
+	"jupyterlab>=4.1.6,<5.0.0",  # https://github.com/jupyterlab/jupyterlab/releases/
+	"pre-commit>=3.7.0,<4.0.0",  # https://github.com/pre-commit/pre-commit/releases/
+	"ruff>=0.3.1,<0.4.0",  # https://github.com/astral-sh/ruff/releases
+]
 
-## Dev dependencies
-[tool.poetry.dev-dependencies]
-jupyterlab = "^4.1.6" # https://github.com/jupyterlab/jupyterlab/releases/
-pre-commit = "^3.7.0" # https://github.com/pre-commit/pre-commit/releases/
-ruff = "^0.3.1" # https://github.com/astral-sh/ruff/releases
-
-[build-system]
-requires = ["poetry"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools]
+packages = []
