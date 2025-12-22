@@ -232,7 +232,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">December 15, 2025</p>
+        <p class="date-modified">December 22, 2025</p>
       </div>
     </div>
       
@@ -477,7 +477,7 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <p>Where <span class="math inline">\(\omega_\text{wheel}\)</span> is the angular velocity of the wheel, and <span class="math inline">\(h\)</span> is the distance from the center to the wheel.</p>
 <p><strong>3. Apply to Each Wheel</strong></p>
 <p>Each wheel is positioned <span class="math inline">\(120^\circ\)</span> apart, so the angles <span class="math inline">\(\alpha\)</span> for the three wheels are <span class="math inline">\(0^\circ\)</span>, <span class="math inline">\(120^\circ\)</span>, and <span class="math inline">\(240^\circ\)</span>.</p>
-<p><strong>For Wheel 1 where <span class="math inline">\(\alpha = 0^\circ\)</span>:</strong></p>
+<p><strong>For Wheel 1 where</strong> <span class="math inline">\(\alpha = 0^\circ\)</span>:</p>
 <p><span class="math display">\[
 \omega_1 = \frac{1}{r} ( v_{x,\text{local}} \cos(0) + v_{y,\text{local}} \sin(0) + \omega_{\text{body}} h )
 \]</span></p>
@@ -489,7 +489,7 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <p><span class="math display">\[
 \omega_1 = \frac{1}{r} ( v_x \cos(\theta) + v_y \sin(\theta) + \omega_{\text{body}} h )
 \]</span></p>
-<p><strong>For Wheel 2 where <span class="math inline">\(\alpha = 120^\circ\)</span>:</strong></p>
+<p><strong>For Wheel 2 where</strong> <span class="math inline">\(\alpha = 120^\circ\)</span>:</p>
 <p><span class="math display">\[
 \omega_2 = \frac{1}{r} ( v_{x,\text{local}} \cos(120^\circ) + v_{y,\text{local}} \sin(120^\circ) + \omega_{\text{body}} h)
 \]</span></p>
@@ -511,7 +511,7 @@ v_{y,\text{local}} = -v_x \sin(\theta) + v_y \cos(\theta)
 <p><span class="math display">\[
 \omega_2 = \frac{1}{r} ( \frac{\cos(\theta) v_y}{3} - \frac{\sin(\theta) v_x}{3} + \frac{\sqrt{3} \sin(\theta) v_y}{3} + \frac{\sqrt{3} \cos(\theta) v_x}{3}  + \omega_{\text{body}} h )
 \]</span></p>
-<p><strong>For Wheel 3 where <span class="math inline">\(\alpha = 240^\circ\)</span>:</strong></p>
+<p><strong>For Wheel 3 where</strong> <span class="math inline">\(\alpha = 240^\circ\)</span>:</p>
 <p><span class="math display">\[
 \omega_3 = \frac{1}{r} ( v_{x,\text{local}} \cos(240^\circ) + v_{y,\text{local}} \sin(240^\circ) + \omega_{\text{body}} h )
 \]</span></p>
@@ -1058,7 +1058,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom","loop":false});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

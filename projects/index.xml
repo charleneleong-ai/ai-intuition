@@ -10,7 +10,88 @@
 <atom:link href="https://www.ai-intuition.com/projects/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Mon, 13 May 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 15 Dec 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Eco Retrofit AI</title>
+  <dc:creator>Charlene Leong</dc:creator>
+  <link>https://www.ai-intuition.com/projects/posts/eco-retrofit-ai/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p><a href="https://ecoretrofit-ai-789191346693.us-west1.run.app/">Try it out here</a></p>
+<p><img src="https://www.ai-intuition.com/projects/posts/eco-retrofit-ai/eco-retrofit.gif" class="img-fluid"></p>
+<p>I’ve been exploring vibe coding with <a href="https://aistudio.google.com/apps">Google AI Studio</a> of late and have built <strong>EcoRetrofit AI</strong>, a multi-modal home energy assistant to enable you to do energy audits and optimise energy usage and efficiency based on energy and structural data compared to other home profiles.</p>
+<p>Built with <a href="https://react.dev/"><strong>React</strong></a>, <a href="https://github.com/vitejs/vite"><strong>Vite</strong></a>, and <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-pro"><strong>Gemini Pro 3</strong></a>, it empowers you to easily perform a comprehensive assessment of your home, receiving personalised recommendations on how to reduce or optimise usage, improve energy efficiency, and ultimately reduce your carbon footprint.</p>
+<section id="reason-motivation" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Reason &amp; Motivation</h1>
+<p>Navigating the world of energy retrofits can be incredibly confusing and intimidating, especially for homeowners without an engineering background. The process is often opaque: every building is unique, and the financial payback of any upgrade hinges on a complex web of variables including local climate data, contractor availability, and ever-changing government incentives.</p>
+<p>I designed Eco Retrofit AI to help one analyse pdf bills, multi-modal home walkthrough videos, images, and documents—and frame technical upgrades in plain, accessible language. My goal is to make climate action feel actionable and personal, rather than overwhelming and abstract.</p>
+</section>
+<section id="how-it-works" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> How it Works</h1>
+<p>I designed the user journey to be as frictionless as possible. You start by uploading your historical energy bills (PDFs), a quick walkthrough video of your home, and any specific pictures of interest (like a draughty window, old furnace, boiler installation or smart meter installation).</p>
+<p>Under the hood, I use <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash"><strong>Gemini 2.5 Flash</strong></a> for the core “Energy Auditor” logic due to its speed and reasoning capabilities. It intelligently distinguishes between <strong>Renters</strong> and <strong>Homeowners</strong>, dynamically adjusting its system prompts to ensure recommendations are appropriate (e.g., suggesting non-structural fixes like draught excluders for renters vs.&nbsp;heat pumps for owners).</p>
+<p>Once the data is ingested, the system presents a dashboard of recommended actions, ranked by potential impact. You can see:</p>
+<ul>
+<li><strong>Projected Annual Savings</strong>: Estimates based on your specific consumption patterns.</li>
+<li><strong>Upfront Investment &amp; Payback Period</strong>: Clear financial metrics to help you prioritise.</li>
+<li><strong>Visual Analysis</strong>: Insights derived directly from the video walkthrough. To handle large video files efficiently on the client side, I extract representative frames using a canvas element with a safety timeout to prevent browser hangs.</li>
+<li><strong>Comparative Predictions</strong>: Benchmarks against other homes with similar profiles to contextualise your usage.</li>
+</ul>
+<p>The system also estimates your home’s current energy efficiency rating. If you have an official Energy Performance Certificate (EPC), the system extracts the data; otherwise, it estimates the rating based on visual evidence (like glazing type and insulation thickness) found in your photos.</p>
+<p>I also added a <strong>Chat Interface</strong> (EcoRetrofit Copilot) that allows you to ask follow-up questions about your analysis. It uses the full context of the audit—including your usage data, identified inefficiencies, and recommended upgrades—to provide specific answers, acting as an on-demand energy consultant.</p>
+<p>One of the most powerful features is the <strong>Generative 3D Visualisation</strong>. The app uses <strong>Gemini 3 Pro</strong> (<code>gemini-3-pro-image-preview</code>) to “dream” up 3D cutaways of your home in various styles (Realistic, Clay, Blueprint). For the interactive demo, I even built a custom “Mini 3D Engine” using <strong>Three.js</strong> and HTML5 Canvas, where I manually “vibe-coded” elements—even using cosine functions to mathematically drape fairy lights (<code>y = height + Math.cos(i * 0.5) * 8</code>) to make the space feel warm and lived-in.</p>
+<p>The analysis is dynamic and stored locally using <strong>IndexedDB</strong>. If you feel something is missing, you can simply add new information—for example, uploading a new video of the attic—and the system will update its recommendations and save a new version of the audit.</p>
+</section>
+<section id="potential-features" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Potential Features</h1>
+<p>I have an exciting roadmap for future development:</p>
+<ul>
+<li><strong>Advanced Multi-modal Ingestion</strong>: Expanding support to include thermal imaging scans, architectural floor plans, and unstructured occupant notes to build a richer context.</li>
+<li><strong>Financial Projection Module</strong>: A robust financial layer integrated with real-time rebate APIs (e.g., Rewiring America, local utility databases) to provide accurate, location-specific cost-benefit analyses.</li>
+<li><strong>Seasonal Simulation Snapshots</strong>: Using typical meteorological year data to simulate how the home performs across different seasons, helping users prepare for peak energy loads.</li>
+<li><strong>“Retrofit Bundle” Templates</strong>: Pre-packaged sets of upgrades (e.g., “Weatherisation Starter Pack”, “Solar &amp; Battery Combo”) to streamline the quoting and decision-making process.</li>
+</ul>
+</section>
+<section id="challenges" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Challenges</h1>
+<p>Building this system wasn’t without its hurdles:</p>
+<ul>
+<li><strong>Multimodal Hallucinations</strong>: Early prototypes occasionally “invented” rebates or technologies that didn’t exist. To fix this, I implemented strict grounding techniques by injecting a <strong>Verified Sources Library</strong> (containing URLs from the Energy Saving Trust) directly into the system prompt. The model is strictly instructed to cite <em>only</em> these sources, effectively clamping its outputs to a curated fact bank.</li>
+<li><strong>Privacy &amp; Security</strong>: Utility bills and home interiors are sensitive data. I prioritised privacy by making the hosted version invite-only with Google Auth, and the open-source documentation strongly emphasises the use of local environment variables (<code>.env.local</code>) to keep secrets safe.</li>
+<li><strong>Performance Optimisation</strong>: While Vertex AI and Gemini streaming are fast, analysing high-resolution images and videos can spike cold start times. I implemented a fallback mechanism where if the high-fidelity <strong>Gemini 3 Pro</strong> fails to generate a visualisation, the system automatically retries with the faster <strong>Gemini 2.5 Flash Image</strong> model to ensure the user flow isn’t interrupted.</li>
+</ul>
+</section>
+<section id="learnings" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Learnings</h1>
+<ul>
+<li><strong>AI Studio Iteration Speed</strong>: Google AI Studio proved to be a game-changer for “vibe coding.” The ability to rapidly swap prompts, verify JSON schemas, and see the flow live significantly accelerated the development cycle.</li>
+<li><strong>Role-Playing Prompts</strong>: I found that defining specific personas in the prompt—such as <em>“You are a world-class AI Architect”</em> or <em>“You are an expert Home Energy Auditor”</em>—significantly improved the quality and tone of the output.</li>
+<li><strong>Guardrails for Multimodal Prompts</strong>: I learned that multimodal models need explicit instructions to handle uncertainty. It’s crucial to instruct the model to acknowledge when data is insufficient and to nudge the user to gather more inputs, rather than guessing.</li>
+<li><strong>Transparency Builds Trust</strong>: Users are more likely to act on advice they understand. Pairing each recommendation with a confidence score, a clear payback range, and links to reputable sources was essential for building trust in the AI’s suggestions.</li>
+</ul>
+</section>
+<section id="summary" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Summary</h1>
+<p><strong>Eco Retrofit AI</strong> brings together the power of Google AI Studio, Gemini’s multimodal APIs, and a comprehensive dataset of building envelopes. It bridges the gap between complex building analysis and homeowner action, helping users reason over photos, floor plans, and utility bills.</p>
+<p><a href="https://github.com/charleneleong-ai/eco-retrofit-ai">Open in Github</a></p>
+
+
+</section>
+
+<script async="" defer="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script><script defer="" src="https://cloud.umami.is/script.js" data-website-id="07090575-f991-48f7-91da-2346a7d041ff"></script> ]]></description>
+  <category>vibe-coding</category>
+  <category>product</category>
+  <category>eco-retrofit</category>
+  <category>gemini</category>
+  <category>google</category>
+  <guid>https://www.ai-intuition.com/projects/posts/eco-retrofit-ai/</guid>
+  <pubDate>Mon, 15 Dec 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://www.ai-intuition.com/projects/posts/eco-retrofit-ai/eco-retrofit.gif" medium="image" type="image/gif"/>
+</item>
 <item>
   <title>ROS Navigation and Control for a Triangular Holonomic Robot</title>
   <dc:creator>Charlene Leong</dc:creator>
@@ -751,13 +832,13 @@ font-style: inherit;">}</span></span></code></pre></div>
 <p>Where <img src="https://latex.codecogs.com/png.latex?%5Comega_%5Ctext%7Bwheel%7D"> is the angular velocity of the wheel, and <img src="https://latex.codecogs.com/png.latex?h"> is the distance from the center to the wheel.</p>
 <p><strong>3. Apply to Each Wheel</strong></p>
 <p>Each wheel is positioned <img src="https://latex.codecogs.com/png.latex?120%5E%5Ccirc"> apart, so the angles <img src="https://latex.codecogs.com/png.latex?%5Calpha"> for the three wheels are <img src="https://latex.codecogs.com/png.latex?0%5E%5Ccirc">, <img src="https://latex.codecogs.com/png.latex?120%5E%5Ccirc">, and <img src="https://latex.codecogs.com/png.latex?240%5E%5Ccirc">.</p>
-<p><strong>For Wheel 1 where <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200%5E%5Ccirc">:</strong></p>
+<p><strong>For Wheel 1 where</strong> <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200%5E%5Ccirc">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_1%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_%7Bx,%5Ctext%7Blocal%7D%7D%20%5Ccos(0)%20+%20v_%7By,%5Ctext%7Blocal%7D%7D%20%5Csin(0)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
 <p>Since <img src="https://latex.codecogs.com/png.latex?cos(0%5E%5Ccirc)=%201"> and <img src="https://latex.codecogs.com/png.latex?%5Csin(0%5E%5Ccirc)%20=%200">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_1%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_%7Bx,%5Ctext%7Blocal%7D%7D%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
 <p>Substituting the local velocities:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_1%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_x%20%5Ccos(%5Ctheta)%20+%20v_y%20%5Csin(%5Ctheta)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
-<p><strong>For Wheel 2 where <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%20120%5E%5Ccirc">:</strong></p>
+<p><strong>For Wheel 2 where</strong> <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%20120%5E%5Ccirc">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_2%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_%7Bx,%5Ctext%7Blocal%7D%7D%20%5Ccos(120%5E%5Ccirc)%20+%20v_%7By,%5Ctext%7Blocal%7D%7D%20%5Csin(120%5E%5Ccirc)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h)%0A"></p>
 <p>Since <img src="https://latex.codecogs.com/png.latex?%5Ccos(120%5E%5Ccirc)%20=%20-%5Cfrac%7B1%7D%7B2%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Csin(120%5E%5Ccirc)%20=%20%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_2%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_%7Bx,%5Ctext%7Blocal%7D%7D(%20-%5Cfrac%7B1%7D%7B2%7D%20)%20+%20v_%7By,%5Ctext%7Blocal%7D%7D%20(%20%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D%20)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h)%0A"></p>
@@ -767,7 +848,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_2%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20-%5Cfrac%7B1%7D%7B2%7D%20v_x%20%5Ccos(%5Ctheta)%20-%20%5Cfrac%7B1%7D%7B2%7D%20v_y%20%5Csin(%5Ctheta)%20-%20%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D%20v_x%20%5Csin(%5Ctheta)%20+%20%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D%20v_y%20%5Ccos(%5Ctheta)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
 <p>Combining terms and simplifying further:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_2%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20%5Cfrac%7B%5Ccos(%5Ctheta)%20v_y%7D%7B3%7D%20-%20%5Cfrac%7B%5Csin(%5Ctheta)%20v_x%7D%7B3%7D%20+%20%5Cfrac%7B%5Csqrt%7B3%7D%20%5Csin(%5Ctheta)%20v_y%7D%7B3%7D%20+%20%5Cfrac%7B%5Csqrt%7B3%7D%20%5Ccos(%5Ctheta)%20v_x%7D%7B3%7D%20%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
-<p><strong>For Wheel 3 where <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%20240%5E%5Ccirc">:</strong></p>
+<p><strong>For Wheel 3 where</strong> <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%20240%5E%5Ccirc">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_3%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20v_%7Bx,%5Ctext%7Blocal%7D%7D%20%5Ccos(240%5E%5Ccirc)%20+%20v_%7By,%5Ctext%7Blocal%7D%7D%20%5Csin(240%5E%5Ccirc)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>
 <p>Since <img src="https://latex.codecogs.com/png.latex?%5Ccos(240%5E%5Ccirc)%20=%20-%5Cfrac%7B1%7D%7B2%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Csin(240%5E%5Ccirc)%20=%20-%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Comega_3%20=%20%5Cfrac%7B1%7D%7Br%7D%20(%20(v_x%20%5Ccos(%5Ctheta)%20+%20v_y%20%5Csin(%5Ctheta))%20(%20-%5Cfrac%7B1%7D%7B2%7D%20)%20+%20(-v_x%20%5Csin(%5Ctheta)%20+%20v_y%20%5Ccos(%5Ctheta))%20(%20-%5Cfrac%7B%5Csqrt%7B3%7D%7D%7B2%7D%20)%20+%20%5Comega_%7B%5Ctext%7Bbody%7D%7D%20h%20)%0A"></p>

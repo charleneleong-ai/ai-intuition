@@ -507,10 +507,10 @@ Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
 <p><span class="math inline">\(N\)</span>: Sequence length <span class="math inline">\(d\)</span>: Model parameters</p>
 <table class="table">
 <colgroup>
-<col style="width: 19%">
 <col style="width: 23%">
-<col style="width: 25%">
-<col style="width: 32%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 29%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -619,16 +619,17 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 \end{align}
 \tag{2.3}\]</span></span></p>
 <p>Thus, we transform the continuous signal-to-signal problem <span class="math inline">\(x(t)\rightarrow y(t)\)</span> to a discrete sequence-to-sequence problem <span class="math inline">\(x_k \rightarrow y_k\)</span>, by holding the input constant over each interval and applying the ZOH rule, which can be then computed as a linear recurrence similarly to RNNs <a href="#eq-rnn" class="quarto-xref">Equation&nbsp;1.3</a>. This discretised recurrent form is used for efficient autoregressive inference where the inputs are seen one timestep at a time (see <a href="#fig-rnn" class="quarto-xref">Figure&nbsp;1.9</a>), especially for systems where <span class="math inline">\(\Delta t\)</span> is small. In practice, <span class="math inline">\(x_k\)</span> is a feature vector of size <span class="math inline">\(\mathbf{C}\)</span>.</p>
-<div id="fig-ssm" class="quarto-layout-panel">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row quarto-layout-valign-center">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./zero_order_hold.png" class="lightbox" data-glightbox="description: .lightbox-desc-17" data-gallery="quarto-lightbox-gallery-17" title="Zero Order Hold Sampling Function"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./zero_order_hold.png" class="lightbox" data-glightbox="description: .lightbox-desc-17" data-gallery="quarto-lightbox-gallery-17" title="Zero Order Hold Sampling Function"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500" alt="Zero Order Hold Sampling Function"></a></p>
 </figure>
 </div>
 <figcaption>Zero Order Hold Sampling Function</figcaption>
@@ -640,7 +641,7 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./discrete_ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-18" data-gallery="quarto-lightbox-gallery-18" title="Discrete SSM Diagram [@grootendorst2024mamba]"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./discrete_ssm.png" class="lightbox" data-glightbox="description: .lightbox-desc-18" data-gallery="quarto-lightbox-gallery-18" title="Discrete SSM Diagram [@grootendorst2024mamba]"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500" alt="Discrete SSM Diagram [1]"></a></p>
 </figure>
 </div>
 <figcaption>Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -648,11 +649,11 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 </div>
 </div>
 </div>
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>From Continuous to Discrete SSMs With the Zero Order Hold Rule</p>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule
-</figcaption>
-</figure>
+</div>
 </div>
 <p>To acommodate for parallelised training, we can unroll the linear recurrent form to yield a global convolutional representation to <a href="#eq-s4-conv" class="quarto-xref">Equation&nbsp;2.4</a></p>
 <p><span id="eq-s4-conv"><span class="math display">\[
@@ -665,7 +666,7 @@ y = x * \mathbf{\bar{K}}
 <a href="./conv_layer.gif" class="lightbox" data-glightbox="description: .lightbox-desc-19" data-gallery="quarto-lightbox-gallery-19"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span>
+Figure&nbsp;2.3: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -704,11 +705,11 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-legendre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
+Figure&nbsp;2.4: Decomposing Signals into Legendre Polynomials
 </figcaption>
 </figure>
 </div>
-<p>This state transition matrix aims to compress the past history into hidden state that has enough information to approximately reconstruct the history in a lower-dimensional state of fixed memory size. We can see in <a href="#fig-hippo" class="quarto-xref">Figure&nbsp;2.6</a> how we can learn the compressed form <span class="math inline">\(y(t)\)</span> of the input signal <span class="math inline">\(u(t)\)</span> as a linear combination of the Legendre polynomials in <span class="math inline">\(x(t)\)</span> (or <span class="math inline">\(h(t)\)</span> from our notation above) by applying the HIPPO matrix as <span class="math inline">\(\mathbf{\bar{A}}\)</span> at each timestep.</p>
+<p>This state transition matrix aims to compress the past history into hidden state that has enough information to approximately reconstruct the history in a lower-dimensional state of fixed memory size. We can see in <a href="#fig-hippo" class="quarto-xref">Figure&nbsp;2.5</a> how we can learn the compressed form <span class="math inline">\(y(t)\)</span> of the input signal <span class="math inline">\(u(t)\)</span> as a linear combination of the Legendre polynomials in <span class="math inline">\(x(t)\)</span> (or <span class="math inline">\(h(t)\)</span> from our notation above) by applying the HIPPO matrix as <span class="math inline">\(\mathbf{\bar{A}}\)</span> at each timestep.</p>
 <div id="fig-hippo" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -741,7 +742,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
+Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -779,7 +780,7 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.7: S4 vs S4D Architecture
+Figure&nbsp;2.6: S4 vs S4D Architecture
 </figcaption>
 </figure>
 </div>
@@ -814,7 +815,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>
+Figure&nbsp;2.7: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -1353,12 +1354,12 @@ Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024su
 <span class="glightbox-desc lightbox-desc-16">Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
 <span class="glightbox-desc lightbox-desc-17">Zero Order Hold Sampling Function</span>
 <span class="glightbox-desc lightbox-desc-18">Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-19">Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></span>
+<span class="glightbox-desc lightbox-desc-19">Figure&nbsp;2.3: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></span>
 <span class="glightbox-desc lightbox-desc-20">Signal in Time and Frequency Domain <span class="citation" data-cites="fftbasicnti"><a href="#ref-fftbasicnti" role="doc-biblioref">[17]</a></span></span>
 <span class="glightbox-desc lightbox-desc-21">Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[18]</a></span></span>
-<span class="glightbox-desc lightbox-desc-22">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-23">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-24">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
+<span class="glightbox-desc lightbox-desc-22">Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
+<span class="glightbox-desc lightbox-desc-23">Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
+<span class="glightbox-desc lightbox-desc-24">Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
 <span class="glightbox-desc lightbox-desc-25">Diagonal Plus Low-rank Approximation</span>
 <span class="glightbox-desc lightbox-desc-26"><strong>S4D Recurrent and Convolutional View</strong>: Colors denote independent 1D SSMs; purple denotes trainable parameters <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span></span>
 <span class="glightbox-desc lightbox-desc-27">Visualising S4 vs S4D Results</span>
@@ -1848,7 +1849,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="light_high_contrast">
 <input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","selector":".lightbox","loop":false,"closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","openEffect":"zoom","selector":".lightbox","closeEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
