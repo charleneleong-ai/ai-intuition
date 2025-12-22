@@ -17,3 +17,5 @@ venv.bak/
 
 ## Quarto
 /.quarto/
+
+**/*.quarto_ipynb

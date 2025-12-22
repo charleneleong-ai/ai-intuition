@@ -14,18 +14,18 @@ This is my personal blog using [Quarto](https://quarto.org/), welcome! :)
 
 
 ```
-sudo apt install pipx quarto texlive-latex-extra dvisvgm
+brew install pipx quarto texlive-latex-extra dvisvgm
 ```
 
 2. Setup initial virtual env
 ```zsh
-make init
+mise uv-init
 ```
 
 3. Install packages
 ```zsh
-make install
+mise uv-install
 ```
 
 
-**NOTE**: If packages in `pyproject.toml` are updated, run `make sync` to sync the venv deps.
+**NOTE**: If packages in `pyproject.toml` are updated, run `mise uv-sync` to sync the venv deps.
