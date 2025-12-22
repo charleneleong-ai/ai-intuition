@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Charlene Leong">
 <meta name="dcterms.date" content="2024-05-13">
 
-<title>AI Intuition - Structured State Space Sequence Models (S4) and Mamba Explained: A Primer</title>
+<title>Structured State Space Sequence Models (S4) and Mamba Explained: A Primer – AI Intuition</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -53,15 +53,17 @@ div.csl-indent {
 <script src="../../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../../">
 <link href="../../../favicon.png" rel="icon" type="image/png">
-<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-af17009a09fe2fb59a7bf5ed299726c9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-f4d5c2d6f3dd4736bcfaeccb02b332b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -93,7 +95,7 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -107,7 +109,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -124,13 +126,13 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../../styles.css">
-<meta property="og:title" content="AI Intuition - Structured State Space Sequence Models (S4) and Mamba Explained: A Primer">
+<meta property="og:title" content="Structured State Space Sequence Models (S4) and Mamba Explained: A Primer – AI Intuition">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://www.ai-intuition.com/blog/posts/mamba/feature.gif">
+<meta property="og:image" content="https://www.ai-intuition.com/blog/posts/mamba/eco-retrofit.gif">
 <meta property="og:site_name" content="AI Intuition">
 </head>
 
-<body class="floating nav-fixed">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -142,7 +144,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -173,7 +175,7 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -276,10 +278,10 @@ window.Quarto = {
 <section id="why-mamba-and-structured-state-space-sequence-models" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Why Mamba and Structured State Space Sequence Models?</h1>
 <p>The fundamental problem in deep sequence modelling is how to efficiently compress the context into a smaller learnable state representation whilst maintaining the quality of state representation. As seen in <a href="#fig-state-spectrum" class="quarto-xref">Figure&nbsp;1.1</a>, transformers have powerful in-context learning capabilties due to the inherent nature of attention but it’s uncompressed memory state (the attention matrix) makes for inefficient inference especially with long-range dependencies (LRD) or large context window settings. On the other end, RNNs and S4 models may be efficient but fail to preserve context state required to perform well in tasks that require in-context reasoning. Mamba proposes a context-aware method to dynamically filter out inputs in the sequence to effectively compress the context.</p>
-<div id="fig-state-spectrum" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-state-spectrum" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-state-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./state_spectrum.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" data-glightbox="description: .lightbox-desc-2"><img src="./state_spectrum.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./state_spectrum.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation in Different Model Architecture Families [@grootendorst2024mamba]"><img src="./state_spectrum.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-state-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation in Different Model Architecture Families <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span>
@@ -289,10 +291,10 @@ Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation
 <p>The Mamba model architecture has recently emerged as a promising alternative to deep sequence modelling overcoming key limitations in other model families such as S4, transformers, recurrent neural networks (RNNs), convolutional neural networks (CNNs), in performing context-aware reasoning with extreme large context windows, up to 1 million tokens.</p>
 <p>Structured state space models (SSMs) are particularly useful for modelling long-range dependencies in continuous data such as time series and signal data <span class="citation" data-cites="tay2020long"><a href="#ref-tay2020long" role="doc-biblioref">[2]</a></span>. It offers a robust framework for handling long-range dependencies efficiently with - up to 5x higher throughput than transformers - linear scaling with sequence length - in-context learning performance improvement on real data up to million-length sequences <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>.</p>
 <p>Therefore, their strengths are suited to problems that require the ability to process long-range dependencies such as high frame-rate medical signals, speech, video, energy waveforms, DNA sequences and summarising, generating and performing reasoning on novels, movies, and large data corpuses.</p>
-<div id="fig-signaldata" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-signaldata" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./signal_data.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" data-glightbox="description: .lightbox-desc-3"><img src="./signal_data.png" class="quarto-figure quarto-figure-center figure-img" height="220"></a>
+<a href="./signal_data.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples [@stanfordmedaialbertgus4]"><img src="./signal_data.png" class="quarto-figure quarto-figure-center figure-img" height="220"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signaldata-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
@@ -301,10 +303,10 @@ Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <sp
 </div>
 <p>It primarily does this by framing the modelling problem of learning complex non-linear interdependencies between inputs and outputs as a discretised signal-to-signal learning problem. It aims to learn the compressed selective memory state between a higher-dimensional input signal and its online function reconstruction with the goal to compress the properties of the continuous signal in a discrete space. It borrows ideas from control theory and signal processing, where it is analogous to learning an evolving first-order differential equation (eg. Kalman Filter as a state space model) to capture the input signal’s dynamics whilst employing structured matrices (e.g.&nbsp;HIPPO matrix operator <span class="citation" data-cites="gu2020hippo"><a href="#ref-gu2020hippo" role="doc-biblioref">[5]</a></span>, <a href="https://bobbielf2.github.io/blog/2021/03/21/low-rank-and-rank-structured-matrices/">diagonal plus low-rank matrices</a>) to reduce computational complexity and utilising <a href="https://medium.com/swlh/the-fast-fourier-transform-fft-5e96cf637c38">Fast Fourier transforms (FFTs)</a> to further speed up computations.</p>
 <p>The predecessor to Mamba, the S4 model <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span>, was the first SSM to show promising results in the Long Range Arena <span class="citation" data-cites="tay2020long"><a href="#ref-tay2020long" role="doc-biblioref">[2]</a></span> even on the Path-X task where the task is to determine whether two points are connected between a flattened sequence of the image which is notable as many other models fail at this task as seen in <a href="#fig-lra" class="quarto-xref">Figure&nbsp;1.3</a>.</p>
-<div id="fig-lra" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-lra" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./long_range_arena.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" data-glightbox="description: .lightbox-desc-4"><img src="./long_range_arena.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a>
+<a href="./long_range_arena.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;1.3: Long Range Arena: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) [@gu2022efficiently]"><img src="./long_range_arena.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span>
@@ -319,7 +321,7 @@ Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Imag
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./scaling_laws.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" data-glightbox="description: .lightbox-desc-5"><img src="./scaling_laws.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./scaling_laws.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Training and Inference [@gu2023mamba]"><img src="./scaling_laws.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -328,7 +330,7 @@ Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Imag
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./efficiency_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" data-glightbox="description: .lightbox-desc-6"><img src="./efficiency_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./efficiency_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;1.4: Mamba: Matching Transformer Performance with Efficiency in Training and Inference [@gu2023mamba]"><img src="./efficiency_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -353,7 +355,7 @@ Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with E
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./bertviz_head.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-7" data-glightbox="description: .lightbox-desc-7" title="Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words."><img src="./bertviz_head.gif" class="img-fluid figure-img" style="width:61.0%"></a></p>
+<p><a href="./bertviz_head.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Head View: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words."><img src="./bertviz_head.gif" class="img-fluid figure-img" style="width:61.0%"></a></p>
 <figcaption><strong>Head View</strong>: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</figcaption>
 </figure>
 </div>
@@ -361,7 +363,7 @@ Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with E
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./bertviz_neuron.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-8" data-glightbox="description: .lightbox-desc-8" title="Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange."><img src="./bertviz_neuron.gif" class="img-fluid figure-img" style="width:200.0%"></a></p>
+<p><a href="./bertviz_neuron.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Neuron View: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange."><img src="./bertviz_neuron.gif" class="img-fluid figure-img" style="width:200.0%"></a></p>
 <figcaption><strong>Neuron View</strong>: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</figcaption>
 </figure>
 </div>
@@ -381,7 +383,7 @@ Figure&nbsp;1.5: Visualising Attention Weights in Transformer Networks <span cla
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./gpt4_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" data-glightbox="description: .lightbox-desc-9" title="OpenAI’s GPT-4-128K Long Context Performance"><img src="./gpt4_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<p><a href="./gpt4_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="OpenAI’s GPT-4-128K Long Context Performance"><img src="./gpt4_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
 <figcaption>OpenAI’s GPT-4-128K Long Context Performance</figcaption>
 </figure>
 </div>
@@ -389,7 +391,7 @@ Figure&nbsp;1.5: Visualising Attention Weights in Transformer Networks <span cla
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./claude_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" data-glightbox="description: .lightbox-desc-10" title="Anthropic’s Claude 2.1 Long Context Performance"><img src="./claude_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
+<p><a href="./claude_long_context.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Anthropic’s Claude 2.1 Long Context Performance"><img src="./claude_long_context.png" class="img-fluid figure-img" style="width:100.0%"></a></p>
 <figcaption>Anthropic’s Claude 2.1 Long Context Performance</figcaption>
 </figure>
 </div>
@@ -402,10 +404,10 @@ Figure&nbsp;1.6: <strong>Needle In A Haystack</strong>: Pressure Testing LLMs Re
 </figure>
 </div>
 <p>Transformers suffer from the “lost in the middle” issue with long contexts where the model struggles to retrieve the answer if the context is in the middle of the document. This is mitigated by <a href="https://github.com/microsoft/LLMLingua">prompt compression techniques</a> which involve training smaller prompt compression LLMs to identify and remove non-essential tokens before feeding them to the larger LLM and <a href="https://towardsdatascience.com/retrieval-augmented-generation-rag-from-theory-to-langchain-implementation-4e9bd5f6a4f2">retrieval-augmented-retrieval (RAG)</a> techniques which involve adding additional context to prompts to allow LLMs to operate on facts fetched from external sources outside of LLM’s trained context. However, this involves relying on techniques and architectures to augment the input and output to the model as opposed to improving long context performance of the model itself.</p>
-<div id="fig-lost-in-the-middle" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-lost-in-the-middle" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lost-in-the-middle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./lost_in_the_middle.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" data-glightbox="description: .lightbox-desc-11"><img src="./lost_in_the_middle.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="350"></a>
+<a href="./lost_in_the_middle.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;1.7: Lost in the Middle: Performance Degrades When Information Access is in the Middle of Document [@liu2023lost]"><img src="./lost_in_the_middle.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="350"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lost-in-the-middle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.7: <strong>Lost in the Middle</strong>: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span>
@@ -418,10 +420,10 @@ Figure&nbsp;1.7: <strong>Lost in the Middle</strong>: Performance Degrades When 
 <p><span id="eq-kv-cache"><span class="math display">\[
 2 \cdot BS \cdot T \cdot n_{layers} \cdot n_{heads} \cdot d_{head} \cdot p_{a}
 \tag{1.2}\]</span></span></p>
-<div id="fig-kvcache" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-kvcache" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-kvcache-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./kv_cache.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-12" data-glightbox="description: .lightbox-desc-12"><img src="./kv_cache.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./kv_cache.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV caching [@joaolages2023kvcache]"><img src="./kv_cache.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-kvcache-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV caching <span class="citation" data-cites="joaolages2023kvcache"><a href="#ref-joaolages2023kvcache" role="doc-biblioref">[12]</a></span>
@@ -438,7 +440,7 @@ Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV 
 <li>storage capacity expansion such as offloading memory to CPU or single and multi-host model parallelism, a technique to pool memory over multiple devices by sharding the model over multiple GPUs used often when LLM cannot fit on single GPU in training</li>
 </ul>
 <p><span class="math inline">\(N\)</span>: Sequence length <span class="math inline">\(d\)</span>: Model parameters</p>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Pros</th>
@@ -467,10 +469,10 @@ Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV 
 &amp; y_t &amp;= W_{hy} h_t
 \end{align}
 \tag{1.3}\]</span></span></p>
-<div id="fig-rnn" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-rnn" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./rnn.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-13" data-glightbox="description: .lightbox-desc-13"><img src="./rnn.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
+<a href="./rnn.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time"><img src="./rnn.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rnn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
@@ -478,7 +480,7 @@ Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
 </figure>
 </div>
 <p><span class="math inline">\(N\)</span>: Sequence length <span class="math inline">\(d\)</span>: Model parameters</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
 <col style="width: 50%">
@@ -505,12 +507,12 @@ Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
 <h2 data-number="1.3" class="anchored" data-anchor-id="complexity"><span class="header-section-number">1.3</span> Complexity</h2>
 <p>In summary, the state space models are the only models with linear time and space complexity for both training and inference.</p>
 <p><span class="math inline">\(N\)</span>: Sequence length <span class="math inline">\(d\)</span>: Model parameters</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 19%">
 <col style="width: 23%">
-<col style="width: 25%">
-<col style="width: 32%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 29%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -552,10 +554,10 @@ Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time
 <section id="sec-s4" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> What are Structured State Space Sequence Models (S4)?</h1>
 <p>Structured state space sequence models (S4) are introduced as a unified framework for applying SSMs to sequence modelling and can be placed on a spectrum between highly compressed (e.g.&nbsp;RNNs) to highly explicit (e.g.&nbsp;transformers) based on their approach to information representation. Their architecture can be interpreted as a combination of recurrent, convolutional and continuous-time models with linear state-space layers <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span> with online memory approximation in the form of the HIPPO matrix operator <span class="citation" data-cites="gu2020hippo"><a href="#ref-gu2020hippo" role="doc-biblioref">[5]</a></span> to effectively approximate sequences with long-range dependencies. This framework allows us to represent the model in three representations; as an implicit continuous-time input signal, as a discretised recurrent network for efficient inference and as a convolutional representation which allows for efficient parallelisable training.</p>
-<div id="fig-lssml" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-lssml" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./state_space_layer.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" data-glightbox="description: .lightbox-desc-14"><img src="./state_space_layer.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./state_space_layer.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;2.1: The Three Representations of Linear State Space Layers in S4: (Left) State space models allow us to model continuous-time systems .(Center) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix \mathbf{\bar{A}} enables us to capture LRDs mathematically and empirically. (Right) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel [@gu2021combining]."><img src="./state_space_layer.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lssml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2.1: <strong>The Three Representations of Linear State Space Layers in S4</strong>: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.
@@ -587,14 +589,14 @@ Figure&nbsp;2.1: <strong>The Three Representations of Linear State Space Layers 
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_cont_simplified.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" data-glightbox="description: .lightbox-desc-15"><img src="./ssm_cont_simplified.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./ssm_cont_simplified.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;2.2: Visualising State Space Models [@grootendorst2024mamba]"><img src="./ssm_cont_simplified.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_cont.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" data-glightbox="description: .lightbox-desc-16"><img src="./ssm_cont.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./ssm_cont.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;2.2: Visualising State Space Models [@grootendorst2024mamba]"><img src="./ssm_cont.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
 </figure>
 </div>
 </div>
@@ -619,16 +621,14 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 \end{align}
 \tag{2.3}\]</span></span></p>
 <p>Thus, we transform the continuous signal-to-signal problem <span class="math inline">\(x(t)\rightarrow y(t)\)</span> to a discrete sequence-to-sequence problem <span class="math inline">\(x_k \rightarrow y_k\)</span>, by holding the input constant over each interval and applying the ZOH rule, which can be then computed as a linear recurrence similarly to RNNs <a href="#eq-rnn" class="quarto-xref">Equation&nbsp;1.3</a>. This discretised recurrent form is used for efficient autoregressive inference where the inputs are seen one timestep at a time (see <a href="#fig-rnn" class="quarto-xref">Figure&nbsp;1.9</a>), especially for systems where <span class="math inline">\(\Delta t\)</span> is small. In practice, <span class="math inline">\(x_k\)</span> is a feature vector of size <span class="math inline">\(\mathbf{C}\)</span>.</p>
-<div id="fig-ssm" class="quarto-layout-panel">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row quarto-layout-valign-center">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./zero_order_hold.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" data-glightbox="description: .lightbox-desc-17" title="Zero Order Hold Sampling Function"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./zero_order_hold.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Zero Order Hold Sampling Function"><img src="./zero_order_hold.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500" alt="Zero Order Hold Sampling Function"></a></p>
 </figure>
 </div>
 <figcaption>Zero Order Hold Sampling Function</figcaption>
@@ -640,7 +640,7 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./discrete_ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" data-glightbox="description: .lightbox-desc-18" title="Discrete SSM Diagram [@grootendorst2024mamba]"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></a></p>
+<p><a href="./discrete_ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="Discrete SSM Diagram [@grootendorst2024mamba]"><img src="./discrete_ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500" alt="Discrete SSM Diagram [1]"></a></p>
 </figure>
 </div>
 <figcaption>Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -648,24 +648,24 @@ Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cite
 </div>
 </div>
 </div>
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>From Continuous to Discrete SSMs With the Zero Order Hold Rule</p>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ssm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: From Continuous to Discrete SSMs With the Zero Order Hold Rule
-</figcaption>
-</figure>
+</div>
 </div>
 <p>To acommodate for parallelised training, we can unroll the linear recurrent form to yield a global convolutional representation to <a href="#eq-s4-conv" class="quarto-xref">Equation&nbsp;2.4</a></p>
 <p><span id="eq-s4-conv"><span class="math display">\[
 y = x * \mathbf{\bar{K}}
 \tag{2.4}\]</span></span></p>
 <p>where <span class="math inline">\(\mathbf{\bar{K}}=(\mathbf{C}\mathbf{\bar{B}}, \mathbf{C}\mathbf{\bar{A}}\mathbf{\bar{B}, ..., \mathbf{C}\mathbf{\bar{A}}}^{T-1}\mathbf{\bar{B}})\)</span> represents the SSM convolutional kernel with length <span class="math inline">\(T\)</span> of the entire sequence. We can do this because <span class="math inline">\(\mathbf{\bar{A}}\)</span>, <span class="math inline">\(\mathbf{\bar{B}}\)</span>, and <span class="math inline">\(\mathbf{C}\)</span> are constant. To compute this efficiently, we apply the <a href="https://brianmcfee.net/dstbook-site/content/ch10-convtheorem/ConvolutionTheorem.html">discrete convolution theorem</a> trick which states that the convolution of two sequences can be computed as the inverse FFT of the product of their FFTs, transforming the convolution operation into a multiplication in the frequency domain.</p>
-<div id="fig-s4-conv" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-s4-conv" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./conv_layer.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-19" data-glightbox="description: .lightbox-desc-19"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a>
+<a href="./conv_layer.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="Figure&nbsp;2.3: Visualising 1D Convolution with 1x3 Kernel [@king2020conv]"><img src="./conv_layer.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4-conv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span>
+Figure&nbsp;2.3: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -682,7 +682,7 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./fft_signal_decomposition.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" data-glightbox="description: .lightbox-desc-20" title="Signal in Time and Frequency Domain [@fftbasicnti]"><img src="./fft_signal_decomposition.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./fft_signal_decomposition.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="Signal in Time and Frequency Domain [@fftbasicnti]"><img src="./fft_signal_decomposition.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Signal in Time and Frequency Domain <span class="citation" data-cites="fftbasicnti"><a href="#ref-fftbasicnti" role="doc-biblioref">[17]</a></span></figcaption>
@@ -694,7 +694,7 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./legendre.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" data-glightbox="description: .lightbox-desc-21" title="Legendre Polynomials [@wiki24legendre]"><img src="./legendre.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./legendre.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="Legendre Polynomials [@wiki24legendre]"><img src="./legendre.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[18]</a></span></figcaption>
@@ -704,11 +704,11 @@ Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citatio
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-legendre-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
+Figure&nbsp;2.4: Decomposing Signals into Legendre Polynomials
 </figcaption>
 </figure>
 </div>
-<p>This state transition matrix aims to compress the past history into hidden state that has enough information to approximately reconstruct the history in a lower-dimensional state of fixed memory size. We can see in <a href="#fig-hippo" class="quarto-xref">Figure&nbsp;2.6</a> how we can learn the compressed form <span class="math inline">\(y(t)\)</span> of the input signal <span class="math inline">\(u(t)\)</span> as a linear combination of the Legendre polynomials in <span class="math inline">\(x(t)\)</span> (or <span class="math inline">\(h(t)\)</span> from our notation above) by applying the HIPPO matrix as <span class="math inline">\(\mathbf{\bar{A}}\)</span> at each timestep.</p>
+<p>This state transition matrix aims to compress the past history into hidden state that has enough information to approximately reconstruct the history in a lower-dimensional state of fixed memory size. We can see in <a href="#fig-hippo" class="quarto-xref">Figure&nbsp;2.5</a> how we can learn the compressed form <span class="math inline">\(y(t)\)</span> of the input signal <span class="math inline">\(u(t)\)</span> as a linear combination of the Legendre polynomials in <span class="math inline">\(x(t)\)</span> (or <span class="math inline">\(h(t)\)</span> from our notation above) by applying the HIPPO matrix as <span class="math inline">\(\mathbf{\bar{A}}\)</span> at each timestep.</p>
 <div id="fig-hippo" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -716,7 +716,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" data-glightbox="description: .lightbox-desc-22"><img src="./ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./ssm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" title="Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures [@stanfordmedaialbertgus4]"><img src="./ssm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
 </div>
@@ -725,7 +725,7 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./hippo.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-23" data-glightbox="description: .lightbox-desc-23"><img src="./hippo.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
+<p><a href="./hippo.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-23" title="Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures [@stanfordmedaialbertgus4]"><img src="./hippo.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
 </figure>
 </div>
 </div>
@@ -734,14 +734,14 @@ Figure&nbsp;2.5: Decomposing Signals into Legendre Polynomials
 <div class="quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./hippo_transform.png" class="lightbox" data-gallery="quarto-lightbox-gallery-24" data-glightbox="description: .lightbox-desc-24"><img src="./hippo_transform.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
+<p><a href="./hippo_transform.png" class="lightbox" data-gallery="quarto-lightbox-gallery-24" title="Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures [@stanfordmedaialbertgus4]"><img src="./hippo_transform.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hippo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
+Figure&nbsp;2.5: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -757,7 +757,7 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./DPLR.png" class="lightbox" data-gallery="quarto-lightbox-gallery-25" data-glightbox="description: .lightbox-desc-25" title="Diagonal Plus Low-rank Approximation"><img src="./DPLR.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./DPLR.png" class="lightbox" data-gallery="quarto-lightbox-gallery-25" title="Diagonal Plus Low-rank Approximation"><img src="./DPLR.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Diagonal Plus Low-rank Approximation</figcaption>
@@ -769,7 +769,7 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4d_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-26" data-glightbox="description: .lightbox-desc-26" title="S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters [@gu2022parameterization]"><img src="./s4d_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./s4d_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-26" title="S4D Recurrent and Convolutional View: Colors denote independent 1D SSMs; purple denotes trainable parameters [@gu2022parameterization]"><img src="./s4d_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>S4D Recurrent and Convolutional View</strong>: Colors denote independent 1D SSMs; purple denotes trainable parameters <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span></figcaption>
@@ -779,7 +779,7 @@ Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Unifo
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diagonal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.7: S4 vs S4D Architecture
+Figure&nbsp;2.6: S4 vs S4D Architecture
 </figcaption>
 </figure>
 </div>
@@ -792,7 +792,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4_vs_s4d.png" class="lightbox" data-gallery="quarto-lightbox-gallery-27" data-glightbox="description: .lightbox-desc-27" title="Visualising S4 vs S4D Results"><img src="./s4_vs_s4d.png" class="quarto-figure quarto-figure-center figure-img" height="350"></a></p>
+<p><a href="./s4_vs_s4d.png" class="lightbox" data-gallery="quarto-lightbox-gallery-27" title="Visualising S4 vs S4D Results"><img src="./s4_vs_s4d.png" class="quarto-figure quarto-figure-center figure-img" height="350"></a></p>
 </figure>
 </div>
 <figcaption>Visualising S4 vs S4D Results</figcaption>
@@ -804,7 +804,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./s4d_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-28" data-glightbox="description: .lightbox-desc-28" title="S4 vs S4D Long Range Arena Results"><img src="./s4d_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./s4d_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-28" title="S4 vs S4D Long Range Arena Results"><img src="./s4d_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>S4 vs S4D Long Range Arena Results</figcaption>
@@ -814,7 +814,7 @@ Figure&nbsp;2.7: S4 vs S4D Architecture
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s4d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>
+Figure&nbsp;2.7: S4 vs S4D Results <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span>
 </figcaption>
 </figure>
 </div>
@@ -824,10 +824,10 @@ Figure&nbsp;2.8: S4 vs S4D Results <span class="citation" data-cites="gu2022para
 <h1 data-number="3"><span class="header-section-number">3</span> How does Mamba improve on S4 to be a potential alternative to transformers?</h1>
 <p>There are several core architectural improvements that Mamba introduces to perform competitively with transformers to overcome S4 weaknesses on tasks that are vital to language modelling and generation enabled by dynamic nature of attention. Namely, the ability to perform context-aware reasoning as <span class="math inline">\(\mathbf{\Delta}\)</span>, <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\mathbf{B}\)</span>, and <span class="math inline">\(\mathbf{C}\)</span> are constant for each input, meaning they cannot “attend” to parts of the sequence or selectively retain information based on the input.</p>
 <p>In order for the SSM model to selectively retain information, the system is made time-variant eg. <span class="math inline">\(\mathbf{\Delta}\)</span>, <span class="math inline">\(\mathbf{\bar{B}}\)</span>, and <span class="math inline">\(\mathbf{\bar{C}}\)</span> are now functions of input <span class="math inline">\(x(t)\)</span>, where <span class="math inline">\(\mathbf{\bar{A}}\)</span> also depends on the input through <span class="math inline">\(\mathbf{\Delta}\)</span> (<span class="math inline">\(\mathbf{\bar{A}} \rightarrow \mathbf{\bar{A}}_{\theta (x)}\)</span>). Since the time step <span class="math inline">\(\mathbf{\Delta}\)</span> is now learnable, <span class="math inline">\(\mathbf{\Delta}\)</span> is roughly proportional to the size of the state update; the model will learn to focus on the input tokens and update the state that correspond to large values of <span class="math inline">\(\mathbf{\Delta}\)</span>, and ignore input for when <span class="math inline">\(\mathbf{\Delta}\)</span> is small whilst persisting the state.</p>
-<div id="fig-mamba-algo" class="lightbox quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-mamba-algo" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mamba-algo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="./selective_ssm_algo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-29" data-glightbox="description: .lightbox-desc-29"><img src="./selective_ssm_algo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+<a href="./selective_ssm_algo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-29" title="Figure&nbsp;3.1: Differences between S4 and Mamba (S6) [@gu2023mamba]"><img src="./selective_ssm_algo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mamba-algo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>
@@ -846,7 +846,7 @@ Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" da
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_copying.png" class="lightbox" data-gallery="quarto-lightbox-gallery-30" data-glightbox="description: .lightbox-desc-30" title="Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content."><img src="./selective_copying.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./selective_copying.png" class="lightbox" data-gallery="quarto-lightbox-gallery-30" title="Selective Copying: This requires time-varying models that can selectively remember or ignore inputs depending on their content."><img src="./selective_copying.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>Selective Copying</strong>: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</figcaption>
@@ -858,7 +858,7 @@ Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" da
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./induction_heads.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" data-glightbox="description: .lightbox-desc-31" title="Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs."><img src="./induction_heads.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./induction_heads.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" title="Induction Heads: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs."><img src="./induction_heads.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>Induction Heads</strong>: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</figcaption>
@@ -886,7 +886,7 @@ Figure&nbsp;3.2: Tasks to Demonstrate Context-Aware Reasoning <span class="citat
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_copying_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" data-glightbox="description: .lightbox-desc-32" title="Selective Copying Results: Accuracy for combinations of architectures"><img src="./selective_copying_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a></p>
+<p><a href="./selective_copying_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" title="Selective Copying Results: Accuracy for combinations of architectures"><img src="./selective_copying_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>Selective Copying Results</strong>: Accuracy for combinations of architectures</figcaption>
@@ -898,7 +898,7 @@ Figure&nbsp;3.2: Tasks to Demonstrate Context-Aware Reasoning <span class="citat
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./induction_heads_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-33" data-glightbox="description: .lightbox-desc-33" title="Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens"><img src="./induction_heads_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./induction_heads_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-33" title="Induction Heads Extrapolation: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens"><img src="./induction_heads_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>Induction Heads Extrapolation</strong>: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</figcaption>
@@ -925,7 +925,7 @@ Figure&nbsp;3.3: Mamba Performance on Context-Aware Reasoning Tasks <span class=
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_ssm_simple.png" class="lightbox" data-gallery="quarto-lightbox-gallery-34" data-glightbox="description: .lightbox-desc-34" title="(Left): Average Memory Bandwidth for A100 (Right): Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. [@grootendorst2024mamba]"><img src="./selective_ssm_simple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./selective_ssm_simple.png" class="lightbox" data-gallery="quarto-lightbox-gallery-34" title="(Left): Average Memory Bandwidth for A100 (Right): Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. [@grootendorst2024mamba]"><img src="./selective_ssm_simple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
 <figcaption><strong>(Left)</strong>: Average Memory Bandwidth for <a href="https://www.nvidia.com/en-us/data-center/a100/">A100</a> <strong>(Right)</strong>: Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -939,7 +939,7 @@ Figure&nbsp;3.3: Mamba Performance on Context-Aware Reasoning Tasks <span class=
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./selective_ssm_hardware.png" class="lightbox" data-gallery="quarto-lightbox-gallery-35" data-glightbox="description: .lightbox-desc-35" title="State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]"><img src="./selective_ssm_hardware.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
+<p><a href="./selective_ssm_hardware.png" class="lightbox" data-gallery="quarto-lightbox-gallery-35" title="State Selection with Hardware-Aware State Expansion: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM<>HBM. [@gu2023mamba]"><img src="./selective_ssm_hardware.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></a></p>
 </figure>
 </div>
 <figcaption><strong>State Selection with Hardware-Aware State Expansion</strong>: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></figcaption>
@@ -965,7 +965,7 @@ Figure&nbsp;3.4: Mamba: Selective SSM Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./linear_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-36" data-glightbox="description: .lightbox-desc-36" title="Visualisation of Linear Scan"><img src="./linear_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./linear_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-36" title="Visualisation of Linear Scan"><img src="./linear_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Visualisation of Linear Scan</figcaption>
@@ -977,7 +977,7 @@ Figure&nbsp;3.4: Mamba: Selective SSM Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./blelloch_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-37" data-glightbox="description: .lightbox-desc-37" title="Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)"><img src="./blelloch_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./blelloch_scan.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-37" title="Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)"><img src="./blelloch_scan.gif" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)</figcaption>
@@ -995,14 +995,14 @@ Figure&nbsp;3.5: Visualising the Linear vs Parallel Associative Scan Operation <
 <section id="kernel-fusion" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="kernel-fusion"><span class="header-section-number">3.2.2</span> Kernel Fusion</h3>
 <p>One of the biggest efficiency gains is from implementing the parallel associative scan as a single GPU kernel operation through GPU kernel fusion. The discretisation, parallel associative scan operation and multiplication with <span class="math inline">\(\mathbf{C}\)</span> are performed in the SRAM before writing results back to HBM. Therefore, a lot of time is saved by creating a custom kernel to fuse the operations required to perform the scan operation into a single layer to reduce the IO between SRAM and HBM by factor of <span class="math inline">\(O(D)\)</span> - the state dimension <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span>. When the sequence length <span class="math inline">\(T\)</span> is too long to fit the full sequence into SRAM which is much smaller than HBM, the sequences are split into chunks where the fused scan is performed on each chunk.</p>
-<div id="fig-flash-attention" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-flash-attention" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-flash-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./flash_attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-38" data-glightbox="description: .lightbox-desc-38" title="(Left): FlashAttention: The \mathbf{(QK)V} matrix of size N^2 is computed in SRAM using tiling before being written to HBM. (Right): Speedup of Attention on GPT-2"><img src="./flash_attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./flash_attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-38" title="(Left): FlashAttention: The \mathbf{(QK)V} matrix of size N^2 is computed in SRAM using tiling before being written to HBM. (Right): Speedup of Attention on GPT-2"><img src="./flash_attention.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N^2\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</figcaption>
@@ -1027,7 +1027,7 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_graph.png" class="lightbox" data-gallery="quarto-lightbox-gallery-39" data-glightbox="description: .lightbox-desc-39" title="Neural Network Computation Graph Source"><img src="./recomputation_graph.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_graph.png" class="lightbox" data-gallery="quarto-lightbox-gallery-39" title="Neural Network Computation Graph Source"><img src="./recomputation_graph.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption>Neural Network Computation Graph <a href="https://stats.stackexchange.com/questions/377427/storage-and-re-computation-of-intermediate-weight-back-propagated-gradients">Source</a></figcaption>
@@ -1041,7 +1041,7 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_operation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-40" data-glightbox="description: .lightbox-desc-40" title="Recomputing of Activations on Backward Pass: Blue = forward, Red = backward Source"><img src="./recomputation_operation.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_operation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-40" title="Recomputing of Activations on Backward Pass: Blue = forward, Red = backward Source"><img src="./recomputation_operation.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption>Recomputing of Activations on Backward Pass: Blue = forward, Red = backward <a href="https://docs.graphcore.ai/projects/memory-performance-optimisation/en/latest/common-mry-optimisations.html#activations-recomputation-and-memory-use">Source</a></figcaption>
@@ -1055,7 +1055,7 @@ Figure&nbsp;3.6: Example of Kernel Fusion Enabling Efficient Operations in Flash
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./recomputation_memory.png" class="lightbox" data-gallery="quarto-lightbox-gallery-41" data-glightbox="description: .lightbox-desc-41" title="Saving GPU Memory with Re-computation [@korthikanti2022reducing]"><img src="./recomputation_memory.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
+<p><a href="./recomputation_memory.png" class="lightbox" data-gallery="quarto-lightbox-gallery-41" title="Saving GPU Memory with Re-computation [@korthikanti2022reducing]"><img src="./recomputation_memory.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></a></p>
 </figure>
 </div>
 <figcaption>Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[24]</a></span></figcaption>
@@ -1084,7 +1084,7 @@ Figure&nbsp;3.7: Example of Recomputing Intermediate States for Backward Pass
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./h3_mamba_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-42" data-glightbox="description: .lightbox-desc-42" title="From H3 to the Mamba Block [@fu2023hungry]"><img src="./h3_mamba_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./h3_mamba_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-42" title="From H3 to the Mamba Block [@fu2023hungry]"><img src="./h3_mamba_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[25]</a></span></figcaption>
@@ -1096,7 +1096,7 @@ Figure&nbsp;3.7: Example of Recomputing Intermediate States for Backward Pass
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./mamba_block_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-43" data-glightbox="description: .lightbox-desc-43" title="Mamba Block Decoder Architecture [@grootendorst2024mamba]"><img src="./mamba_block_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./mamba_block_arch.png" class="lightbox" data-gallery="quarto-lightbox-gallery-43" title="Mamba Block Decoder Architecture [@grootendorst2024mamba]"><img src="./mamba_block_arch.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Mamba Block Decoder Architecture <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></figcaption>
@@ -1123,7 +1123,7 @@ Figure&nbsp;3.8: Mamba Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./commonsense_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-44" data-glightbox="description: .lightbox-desc-44" title="Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag Source"><img src="./commonsense_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./commonsense_benchmark.png" class="lightbox" data-gallery="quarto-lightbox-gallery-44" title="Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag Source"><img src="./commonsense_benchmark.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag <a href="https://hub.zenoml.com/report/2443/Mamba%20vs%207B?">Source</a></figcaption>
@@ -1135,7 +1135,7 @@ Figure&nbsp;3.8: Mamba Architecture
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./commonsense_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-45" data-glightbox="description: .lightbox-desc-45" title="Evaluation Comparison of Mamba variants with several similar-sized LLMs [@gu2023mamba]"><img src="./commonsense_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./commonsense_results.png" class="lightbox" data-gallery="quarto-lightbox-gallery-45" title="Evaluation Comparison of Mamba variants with several similar-sized LLMs [@gu2023mamba]"><img src="./commonsense_results.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Evaluation Comparison of Mamba variants with several similar-sized LLMs <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></figcaption>
@@ -1164,7 +1164,7 @@ Figure&nbsp;3.9: Mamba vs LLMs Performance on Commonsense Reasoning Benchmarks
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_timeline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-46" data-glightbox="description: .lightbox-desc-46" title="Timeline of SSM based Models [@wang2024state]"><img src="./ssm_timeline.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
+<p><a href="./ssm_timeline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-46" title="Timeline of SSM based Models [@wang2024state]"><img src="./ssm_timeline.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></a></p>
 </figure>
 </div>
 <figcaption>Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[27]</a></span></figcaption>
@@ -1176,7 +1176,7 @@ Figure&nbsp;3.9: Mamba vs LLMs Performance on Commonsense Reasoning Benchmarks
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./ssm_applications.png" class="lightbox" data-gallery="quarto-lightbox-gallery-47" data-glightbox="description: .lightbox-desc-47" title="SSM Model Landscape Over Various Domains [@patro2024mamba360]"><img src="./ssm_applications.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./ssm_applications.png" class="lightbox" data-gallery="quarto-lightbox-gallery-47" title="SSM Model Landscape Over Various Domains [@patro2024mamba360]"><img src="./ssm_applications.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[28]</a></span></figcaption>
@@ -1205,7 +1205,7 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./vmamba_scan_techniques.png" class="lightbox" data-gallery="quarto-lightbox-gallery-48" data-glightbox="description: .lightbox-desc-48" title="Vision Mamba Scan Techniques"><img src="./vmamba_scan_techniques.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./vmamba_scan_techniques.png" class="lightbox" data-gallery="quarto-lightbox-gallery-48" title="Vision Mamba Scan Techniques"><img src="./vmamba_scan_techniques.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Vision Mamba Scan Techniques</figcaption>
@@ -1217,7 +1217,7 @@ Figure&nbsp;4.1: The SSM Model Landscape and Timeline
 <figure class="figure">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="./mamba_vision.png" class="lightbox" data-gallery="quarto-lightbox-gallery-49" data-glightbox="description: .lightbox-desc-49" title="Vision Mamba Model Landscape"><img src="./mamba_vision.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
+<p><a href="./mamba_vision.png" class="lightbox" data-gallery="quarto-lightbox-gallery-49" title="Vision Mamba Model Landscape"><img src="./mamba_vision.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></a></p>
 </figure>
 </div>
 <figcaption>Vision Mamba Model Landscape</figcaption>
@@ -1335,97 +1335,62 @@ Figure&nbsp;4.2: Vision Mamba Survey <span class="citation" data-cites="xu2024su
 </div>
 
 
-<div class="hidden" aria-hidden="true">
-<span class="glightbox-desc lightbox-desc-2">Figure&nbsp;1.1: Spectrum of Efficiency vs Effectiveness of State Representation in Different Model Architecture Families <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-3">Figure&nbsp;1.2: Discrete - Continuous Spectrum of Data Sources and Examples <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-4">Figure&nbsp;1.3: <strong>Long Range Arena</strong>: Benchmark Spanning Text Images, Symbolic Reasoning (1K-16K token length) <span class="citation" data-cites="gu2022efficiently"><a href="#ref-gu2022efficiently" role="doc-biblioref">[6]</a></span></span>
-<span class="glightbox-desc lightbox-desc-5">Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-6">Figure&nbsp;1.4: <strong>Mamba</strong>: Matching Transformer Performance with Efficiency in Training and Inference <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-7"><strong>Head View</strong>: Visualising attention head activations between different layers. Connecting lines are weighted based on the attention score between respective words.</span>
-<span class="glightbox-desc lightbox-desc-8"><strong>Neuron View</strong>: Visualising query, key and value embeddings when computing attention between each token and other tokens within the sequence. Positive values are colored as blue and negative values as orange.</span>
-<span class="glightbox-desc lightbox-desc-9">OpenAI’s GPT-4-128K Long Context Performance</span>
-<span class="glightbox-desc lightbox-desc-10">Anthropic’s Claude 2.1 Long Context Performance</span>
-<span class="glightbox-desc lightbox-desc-11">Figure&nbsp;1.7: <strong>Lost in the Middle</strong>: Performance Degrades When Information Access is in the Middle of Document <span class="citation" data-cites="liu2023lost"><a href="#ref-liu2023lost" role="doc-biblioref">[10]</a></span></span>
-<span class="glightbox-desc lightbox-desc-12">Figure&nbsp;1.8: Comparison of scaled dot-product attention with and without KV caching <span class="citation" data-cites="joaolages2023kvcache"><a href="#ref-joaolages2023kvcache" role="doc-biblioref">[12]</a></span></span>
-<span class="glightbox-desc lightbox-desc-13">Figure&nbsp;1.9: Unrolling Recurrent Neural Network Architecture Over Time</span>
-<span class="glightbox-desc lightbox-desc-14">Figure&nbsp;2.1: <strong>The Three Representations of Linear State Space Layers in S4</strong>: (<strong>Left</strong>) State space models allow us to model continuous-time systems .(<strong>Center</strong>) The discretised recurrent format can be used for fast autoregressive inference. Recent theory on continuous-time memorisation of the hidden state transition matrix <span class="math inline">\(\mathbf{\bar{A}}\)</span> enables us to capture LRDs mathematically and empirically. (<strong>Right</strong>) Unrolling the RNN into a global convolutional representation allows for efficient training by computing the layer depthwise in parallel <span class="citation" data-cites="gu2021combining"><a href="#ref-gu2021combining" role="doc-biblioref">[15]</a></span>.</span>
-<span class="glightbox-desc lightbox-desc-15">Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-16">Figure&nbsp;2.2: Visualising State Space Models <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-17">Zero Order Hold Sampling Function</span>
-<span class="glightbox-desc lightbox-desc-18">Discrete SSM Diagram <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-19">Figure&nbsp;2.4: Visualising 1D Convolution with 1x3 Kernel <span class="citation" data-cites="king2020conv"><a href="#ref-king2020conv" role="doc-biblioref">[16]</a></span></span>
-<span class="glightbox-desc lightbox-desc-20">Signal in Time and Frequency Domain <span class="citation" data-cites="fftbasicnti"><a href="#ref-fftbasicnti" role="doc-biblioref">[17]</a></span></span>
-<span class="glightbox-desc lightbox-desc-21">Legendre Polynomials <span class="citation" data-cites="wiki24legendre"><a href="#ref-wiki24legendre" role="doc-biblioref">[18]</a></span></span>
-<span class="glightbox-desc lightbox-desc-22">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-23">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-24">Figure&nbsp;2.6: Generalised HIPPO Operator Performing Approximations Over Uniform and Time Varying Measures <span class="citation" data-cites="stanfordmedaialbertgus4"><a href="#ref-stanfordmedaialbertgus4" role="doc-biblioref">[4]</a></span></span>
-<span class="glightbox-desc lightbox-desc-25">Diagonal Plus Low-rank Approximation</span>
-<span class="glightbox-desc lightbox-desc-26"><strong>S4D Recurrent and Convolutional View</strong>: Colors denote independent 1D SSMs; purple denotes trainable parameters <span class="citation" data-cites="gu2022parameterization"><a href="#ref-gu2022parameterization" role="doc-biblioref">[20]</a></span></span>
-<span class="glightbox-desc lightbox-desc-27">Visualising S4 vs S4D Results</span>
-<span class="glightbox-desc lightbox-desc-28">S4 vs S4D Long Range Arena Results</span>
-<span class="glightbox-desc lightbox-desc-29">Figure&nbsp;3.1: Differences between S4 and Mamba (S6) <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-30"><strong>Selective Copying</strong>: This requires time-varying models that can selectively remember or ignore inputs depending on their content.</span>
-<span class="glightbox-desc lightbox-desc-31"><strong>Induction Heads</strong>: This is an associative recall task which requires retrieving an answer based on context, a key ability of LLMs.</span>
-<span class="glightbox-desc lightbox-desc-32"><strong>Selective Copying Results</strong>: Accuracy for combinations of architectures</span>
-<span class="glightbox-desc lightbox-desc-33"><strong>Induction Heads Extrapolation</strong>: Mamba has ability to maintain high induction test accuracy for sequence length up to 1 million tokens</span>
-<span class="glightbox-desc lightbox-desc-34"><strong>(Left)</strong>: Average Memory Bandwidth for <a href="https://www.nvidia.com/en-us/data-center/a100/">A100</a> <strong>(Right)</strong>: Selective SSM Architecture Simplified: The select state layer is kept and computed in SRAM. <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-35"><strong>State Selection with Hardware-Aware State Expansion</strong>: The selection mechanism ensures the expanded matrix states only materialise in SRAM to reduce data transfer and computation between SRAM&lt;&gt;HBM. <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-36">Visualisation of Linear Scan</span>
-<span class="glightbox-desc lightbox-desc-37">Visualisation of Blelloch Algorithm (Work-Efficient Parallel Prefix Scan)</span>
-<span class="glightbox-desc lightbox-desc-38"><strong>(Left)</strong>: FlashAttention: The <span class="math inline">\(\mathbf{(QK)V}\)</span> matrix of size <span class="math inline">\(N^2\)</span> is computed in SRAM using tiling before being written to HBM. <strong>(Right)</strong>: Speedup of Attention on GPT-2</span>
-<span class="glightbox-desc lightbox-desc-39">Neural Network Computation Graph <a href="https://stats.stackexchange.com/questions/377427/storage-and-re-computation-of-intermediate-weight-back-propagated-gradients">Source</a></span>
-<span class="glightbox-desc lightbox-desc-40">Recomputing of Activations on Backward Pass: Blue = forward, Red = backward <a href="https://docs.graphcore.ai/projects/memory-performance-optimisation/en/latest/common-mry-optimisations.html#activations-recomputation-and-memory-use">Source</a></span>
-<span class="glightbox-desc lightbox-desc-41">Saving GPU Memory with Re-computation <span class="citation" data-cites="korthikanti2022reducing"><a href="#ref-korthikanti2022reducing" role="doc-biblioref">[24]</a></span></span>
-<span class="glightbox-desc lightbox-desc-42">From H3 to the Mamba Block <span class="citation" data-cites="fu2023hungry"><a href="#ref-fu2023hungry" role="doc-biblioref">[25]</a></span></span>
-<span class="glightbox-desc lightbox-desc-43">Mamba Block Decoder Architecture <span class="citation" data-cites="grootendorst2024mamba"><a href="#ref-grootendorst2024mamba" role="doc-biblioref">[1]</a></span></span>
-<span class="glightbox-desc lightbox-desc-44">Comparison of Mamba variants with different popular 7B LLMs on Piqa, Winogrande, Lambada, and Hellaswag <a href="https://hub.zenoml.com/report/2443/Mamba%20vs%207B?">Source</a></span>
-<span class="glightbox-desc lightbox-desc-45">Evaluation Comparison of Mamba variants with several similar-sized LLMs <span class="citation" data-cites="gu2023mamba"><a href="#ref-gu2023mamba" role="doc-biblioref">[3]</a></span></span>
-<span class="glightbox-desc lightbox-desc-46">Timeline of SSM based Models <span class="citation" data-cites="wang2024state"><a href="#ref-wang2024state" role="doc-biblioref">[27]</a></span></span>
-<span class="glightbox-desc lightbox-desc-47">SSM Model Landscape Over Various Domains <span class="citation" data-cites="patro2024mamba360"><a href="#ref-patro2024mamba360" role="doc-biblioref">[28]</a></span></span>
-<span class="glightbox-desc lightbox-desc-48">Vision Mamba Scan Techniques</span>
-<span class="glightbox-desc lightbox-desc-49">Vision Mamba Model Landscape</span>
-</div>
 </section>
 
 <script async="" defer="" src="https://scripts.simpleanalyticscdn.com/latest.js"></script><script defer="" src="https://cloud.umami.is/script.js" data-website-id="07090575-f991-48f7-91da-2346a7d041ff"></script></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
@@ -1433,191 +1398,191 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
       return codeEl.innerText;
     }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/www\.ai-intuition\.com");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          if (link.getAttribute("rel") === null) {
-            link.setAttribute("rel", "noopener");
-          }
-          // default icon
-          link.classList.add("external");
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/www\.ai-intuition\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
         }
       }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
         }
-        return container.innerHTML
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1625,253 +1590,261 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
-      for (let i=0; i<annoteTargets.length; i++) {
-        const annoteTarget = annoteTargets[i];
-        const targetCell = annoteTarget.getAttribute("data-target-cell");
-        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
-        const contentFn = () => {
-          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          if (content) {
-            const tipContent = content.cloneNode(true);
-            tipContent.classList.add("code-annotation-tip-content");
-            return tipContent.outerHTML;
-          }
-        }
-        const config = {
-          allowHTML: true,
-          content: contentFn,
-          onShow: (instance) => {
-            selectCodeLines(instance.reference);
-            instance.reference.classList.add('code-annotation-active');
-            window.tippy.hideAll();
-          },
-          onHide: (instance) => {
-            unselectCodeLines();
-            instance.reference.classList.remove('code-annotation-active');
-          },
-          maxWidth: 300,
-          delay: [50, 0],
-          duration: [200, 0],
-          offset: [5, 10],
-          arrow: true,
-          appendTo: function(el) {
-            return el.parentElement.parentElement.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'quarto',
-          placement: 'right',
-          popperOptions: {
-            modifiers: [
-            {
-              name: 'flip',
-              options: {
-                flipVariations: false, // true by default
-                allowedAutoPlacements: ['right'],
-                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                mainAxis: false,
-                altAxis: false
-              }
-            }
-            ]        
-          }      
-        };
-        window.tippy(annoteTarget, config); 
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
-<script src="https://giscus.app/client.js" data-repo="charleneleong-ai/ai-intuition" data-repo-id="R_kgDOL8P5yg" data-category="Blog" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light_high_contrast" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
-</script>
-<input type="hidden" id="giscus-base-theme" value="light_high_contrast">
-<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
-</div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":false,"selector":".lightbox","descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom"});
-window.onload = () => {
-  lightboxQuarto.on('slide_before_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    const href = trigger.getAttribute('href');
-    if (href !== null) {
-      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-      if (imgEl !== null) {
-        const srcAttr = imgEl.getAttribute("src");
-        if (srcAttr && srcAttr.startsWith("data:")) {
-          slideConfig.href = srcAttr;
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
         }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
       }
-    } 
-  });
-
-  lightboxQuarto.on('slide_after_load', (data) => {
-    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-    if (window.Quarto?.typesetMath) {
-      window.Quarto.typesetMath(slideNode);
+        const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+        for (let i=0; i<annoteTargets.length; i++) {
+          const annoteTarget = annoteTargets[i];
+          const targetCell = annoteTarget.getAttribute("data-target-cell");
+          const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+          const contentFn = () => {
+            const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+            if (content) {
+              const tipContent = content.cloneNode(true);
+              tipContent.classList.add("code-annotation-tip-content");
+              return tipContent.outerHTML;
+            }
+          }
+          const config = {
+            allowHTML: true,
+            content: contentFn,
+            onShow: (instance) => {
+              selectCodeLines(instance.reference);
+              instance.reference.classList.add('code-annotation-active');
+              window.tippy.hideAll();
+            },
+            onHide: (instance) => {
+              unselectCodeLines();
+              instance.reference.classList.remove('code-annotation-active');
+            },
+            maxWidth: 300,
+            delay: [50, 0],
+            duration: [200, 0],
+            offset: [5, 10],
+            arrow: true,
+            appendTo: function(el) {
+              return el.parentElement.parentElement.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'quarto',
+            placement: 'right',
+            popperOptions: {
+              modifiers: [
+              {
+                name: 'flip',
+                options: {
+                  flipVariations: false, // true by default
+                  allowedAutoPlacements: ['right'],
+                  fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  mainAxis: false,
+                  altAxis: false
+                }
+              }
+              ]        
+            }      
+          };
+          window.tippy(annoteTarget, config); 
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
     }
   });
-
-};
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light_high_contrast">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "charleneleong-ai/ai-intuition";
+    script.dataset.repoId = "R_kgDOL8P5yg";
+    script.dataset.category = "Blog";
+    script.dataset.categoryId = "";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
           </script>
 
 

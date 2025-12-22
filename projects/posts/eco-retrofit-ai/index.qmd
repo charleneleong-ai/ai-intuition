@@ -1,0 +1,75 @@
+---
+title: "Eco Retrofit AI"
+date: "2025-12-15"
+categories: [vibe-coding, product, eco-retrofit, gemini, google]
+description: "Multi-modal home energy assistant"
+# bibliography: references.bib
+image: "eco-retrofit.gif"
+filters:
+   - add-code-files
+---
+
+[Try it out here](https://ecoretrofit-ai-789191346693.us-west1.run.app/)
+
+![](./eco-retrofit.gif)
+
+I've been exploring vibe coding with [Google AI Studio](https://aistudio.google.com/apps) of late and have built **EcoRetrofit AI**, a multi-modal home energy assistant to enable you to do energy audits and optimise energy usage and efficiency based on energy and structural data compared to other home profiles.
+
+Built with [**React**](https://react.dev/), [**Vite**](https://github.com/vitejs/vite), and [**Gemini Pro 3**](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-pro), it empowers you to easily perform a comprehensive assessment of your home, receiving personalised recommendations on how to reduce or optimise usage, improve energy efficiency, and ultimately reduce your carbon footprint.
+
+# Reason & Motivation
+
+Navigating the world of energy retrofits can be incredibly confusing and intimidating, especially for homeowners without an engineering background. The process is often opaque: every building is unique, and the financial payback of any upgrade hinges on a complex web of variables including local climate data, contractor availability, and ever-changing government incentives.
+
+I designed Eco Retrofit AI to help one analyse pdf bills, multi-modal home walkthrough videos, images, and documents—and frame technical upgrades in plain, accessible language. My goal is to make climate action feel actionable and personal, rather than overwhelming and abstract.
+
+# How it Works
+
+I designed the user journey to be as frictionless as possible. You start by uploading your historical energy bills (PDFs), a quick walkthrough video of your home, and any specific pictures of interest (like a draughty window, old furnace, boiler installation or smart meter installation).
+
+Under the hood, I use [**Gemini 2.5 Flash**](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash) for the core "Energy Auditor" logic due to its speed and reasoning capabilities. It intelligently distinguishes between **Renters** and **Homeowners**, dynamically adjusting its system prompts to ensure recommendations are appropriate (e.g., suggesting non-structural fixes like draught excluders for renters vs. heat pumps for owners).
+
+Once the data is ingested, the system presents a dashboard of recommended actions, ranked by potential impact. You can see:
+
+-   **Projected Annual Savings**: Estimates based on your specific consumption patterns.
+-   **Upfront Investment & Payback Period**: Clear financial metrics to help you prioritise.
+-   **Visual Analysis**: Insights derived directly from the video walkthrough. To handle large video files efficiently on the client side, I extract representative frames using a canvas element with a safety timeout to prevent browser hangs.
+-   **Comparative Predictions**: Benchmarks against other homes with similar profiles to contextualise your usage.
+
+The system also estimates your home's current energy efficiency rating. If you have an official Energy Performance Certificate (EPC), the system extracts the data; otherwise, it estimates the rating based on visual evidence (like glazing type and insulation thickness) found in your photos.
+
+I also added a **Chat Interface** (EcoRetrofit Copilot) that allows you to ask follow-up questions about your analysis. It uses the full context of the audit—including your usage data, identified inefficiencies, and recommended upgrades—to provide specific answers, acting as an on-demand energy consultant.
+
+One of the most powerful features is the **Generative 3D Visualisation**. The app uses **Gemini 3 Pro** (`gemini-3-pro-image-preview`) to "dream" up 3D cutaways of your home in various styles (Realistic, Clay, Blueprint). For the interactive demo, I even built a custom "Mini 3D Engine" using **Three.js** and HTML5 Canvas, where I manually "vibe-coded" elements—even using cosine functions to mathematically drape fairy lights (`y = height + Math.cos(i * 0.5) * 8`) to make the space feel warm and lived-in.
+
+The analysis is dynamic and stored locally using **IndexedDB**. If you feel something is missing, you can simply add new information—for example, uploading a new video of the attic—and the system will update its recommendations and save a new version of the audit.
+
+# Potential Features
+
+I have an exciting roadmap for future development:
+
+-   **Advanced Multi-modal Ingestion**: Expanding support to include thermal imaging scans, architectural floor plans, and unstructured occupant notes to build a richer context.
+-   **Financial Projection Module**: A robust financial layer integrated with real-time rebate APIs (e.g., Rewiring America, local utility databases) to provide accurate, location-specific cost-benefit analyses.
+-   **Seasonal Simulation Snapshots**: Using typical meteorological year data to simulate how the home performs across different seasons, helping users prepare for peak energy loads.
+-   **"Retrofit Bundle" Templates**: Pre-packaged sets of upgrades (e.g., "Weatherisation Starter Pack", "Solar & Battery Combo") to streamline the quoting and decision-making process.
+
+# Challenges
+
+Building this system wasn't without its hurdles:
+
+-   **Multimodal Hallucinations**: Early prototypes occasionally "invented" rebates or technologies that didn't exist. To fix this, I implemented strict grounding techniques by injecting a **Verified Sources Library** (containing URLs from the Energy Saving Trust) directly into the system prompt. The model is strictly instructed to cite *only* these sources, effectively clamping its outputs to a curated fact bank.
+-   **Privacy & Security**: Utility bills and home interiors are sensitive data. I prioritised privacy by making the hosted version invite-only with Google Auth, and the open-source documentation strongly emphasises the use of local environment variables (`.env.local`) to keep secrets safe.
+-   **Performance Optimisation**: While Vertex AI and Gemini streaming are fast, analysing high-resolution images and videos can spike cold start times. I implemented a fallback mechanism where if the high-fidelity **Gemini 3 Pro** fails to generate a visualisation, the system automatically retries with the faster **Gemini 2.5 Flash Image** model to ensure the user flow isn't interrupted.
+
+# Learnings
+
+-   **AI Studio Iteration Speed**: Google AI Studio proved to be a game-changer for "vibe coding." The ability to rapidly swap prompts, verify JSON schemas, and see the flow live significantly accelerated the development cycle.
+-   **Role-Playing Prompts**: I found that defining specific personas in the prompt—such as *"You are a world-class AI Architect"* or *"You are an expert Home Energy Auditor"*—significantly improved the quality and tone of the output.
+-   **Guardrails for Multimodal Prompts**: I learned that multimodal models need explicit instructions to handle uncertainty. It's crucial to instruct the model to acknowledge when data is insufficient and to nudge the user to gather more inputs, rather than guessing.
+-   **Transparency Builds Trust**: Users are more likely to act on advice they understand. Pairing each recommendation with a confidence score, a clear payback range, and links to reputable sources was essential for building trust in the AI's suggestions.
+
+# Summary
+
+**Eco Retrofit AI** brings together the power of Google AI Studio, Gemini's multimodal APIs, and a comprehensive dataset of building envelopes. It bridges the gap between complex building analysis and homeowner action, helping users reason over photos, floor plans, and utility bills.
+
+[Open in Github](https://github.com/charleneleong-ai/eco-retrofit-ai)
