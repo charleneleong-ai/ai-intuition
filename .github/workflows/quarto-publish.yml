@@ -24,7 +24,7 @@ jobs:
             with:
                 # To install LaTeX to build PDF book
                 tinytex: true
-                version: 1.4.554
+                version: 1.8.26
 
         -   name: Setup Python
             uses: actions/setup-python@v3
