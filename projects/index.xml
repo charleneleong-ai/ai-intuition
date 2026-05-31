@@ -9,7 +9,7 @@
 <link>https://www.ai-intuition.com/projects/</link>
 <atom:link href="https://www.ai-intuition.com/projects/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.554</generator>
+<generator>quarto-1.8.26</generator>
 <lastBuildDate>Mon, 15 Dec 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Eco Retrofit AI</title>
@@ -178,7 +178,7 @@
 </ul>
 <p>We then declare our ROS publishers <code>motor_control_pub</code> to publish the motor control signal to the wheels and <code>imu_pub</code> to publish and update the robot’s orientation.</p>
 <div data-add-from="control.cpp" data-start-line="1" data-end-line="18" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb1" data-startfrom="1" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><span class="pp" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" data-startfrom="1" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">#include </span><span class="im" style="color: #00769E;
 background-color: null;
@@ -293,7 +293,7 @@ background-color: null;
 font-style: inherit;">::</span>Publisher imu_pub<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span>
-<span id="cb1-18"></span></code></pre></div>
+<span id="cb1-18"></span></code></pre></div></div>
 </div>
 </section>
 <section id="main-loop" class="level2" data-number="4.2">
@@ -309,7 +309,7 @@ font-style: inherit;">;</span></span>
 <li>Enters infinite event loop with <code>ros::spin()</code> to continuously process incoming messages on all topics to which the node is subscribed (eg. <code>imu</code> and <code>cmd_vel</code>), call the appropriate callback functions (eg. <code>imu_callback</code> and <code>cmd_vel_callback</code>) and publish messages to the advertised topics (eg. <code>motor_control_data</code> and <code>orientation</code>). It blocks the main thread and ensures the <code>triangle_control</code> node runs for as long as the ROS system is active.</li>
 </ol>
 <div data-add-from="control.cpp" data-start-line="71" data-end-line="89" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb2" data-startfrom="71" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 70;"><span id="cb2-71"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" data-startfrom="71" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 70;"><span id="cb2-71"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">int</span> main<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -433,6 +433,7 @@ font-style: inherit;">();</span></span>
 <span id="cb2-86"></span>
 <span id="cb2-87">	<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
@@ -441,14 +442,14 @@ font-style: inherit;">;</span></span>
 <span id="cb2-88"></span>
 <span id="cb2-89"><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="converting-sensor-input-to-angular-velocities" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="converting-sensor-input-to-angular-velocities"><span class="header-section-number">4.3</span> Converting Sensor Input to Angular Velocities</h2>
 <p>The main callback function that updates the robot’s direction is <code>cmd_vel_callback</code> which is subscribed to the <code>cmd_vel</code> topic of a data type of <code>geometry_msgs::Twist</code> which expresses velocity in it’s angular and linear parts. This function translates the desired linear and angular velocities of the robot into individual wheel speeds, converts those speeds to PWM signals, and determines the direction for each wheel. It then publishes these control signals to the <code>motor_control_pub</code> topic to update the robot direction .</p>
 <div data-add-from="control.cpp" data-start-line="40" data-end-line="68" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb3" data-startfrom="40" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 39;"><span id="cb3-40"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" data-startfrom="40" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 39;"><span id="cb3-40"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">void</span> cmd_vel_callback<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -794,7 +795,7 @@ background-color: null;
 font-style: inherit;">);</span></span>
 <span id="cb3-68"><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 </div>
 <p>See the following sections below for more details.</p>
 </section>
@@ -883,8 +884,9 @@ font-style: inherit;">}</span></span></code></pre></div>
 <p><strong>3. Handling Very Small Angular Velocities</strong></p>
 <p>Small angular velocities <code>&lt;=0.05</code> are ignored, to smooth noise in the signal and avoid unnecessary motor activation.</p>
 <div data-add-from="control.cpp" data-start-line="26" data-end-line="26" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb4" data-startfrom="26" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 25;"><span id="cb4-26">	<span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" data-startfrom="26" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 25;"><span id="cb4-26">	<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span>fabs<span class="op" style="color: #5E5E5E;
@@ -899,18 +901,19 @@ font-style: inherit;">0.05</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">;</span></span></code></pre></div>
+font-style: inherit;">;</span></span></code></pre></div></div>
 </div>
 <p><strong>4. Linear Equation of Angular velocity to PWM</strong></p>
 <p>Through substituting and simplifying the equations above, we can derive the following linear relationship for converting angular velocity to PWM.</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0APWM%20=%202.4307%20%5Ctimes%20RPM%20+%2036.2178%20=%20%202.43%20%5Ctimes%20(%5Comega%5Ctimes%209.55)%20+%2036.22%0A"></p>
 <p>The result is then returned as an integer PWM value which can be used to control motor speed. We later apply this to each wheel when we calculate the new angular velocities from sensor feedback. We make <img src="https://latex.codecogs.com/png.latex?%5Comega"> absolute <img src="https://latex.codecogs.com/png.latex?%7C%5Comega_%7B%5Ctext%7Bwheel%7D%7D%7C"> in order to ensure the angular velocity is never non-negative.</p>
 <div data-add-from="control.cpp" data-start-line="20" data-end-line="29" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb5" data-startfrom="20" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 19;"><span id="cb5-20"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" data-startfrom="20" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 19;"><span id="cb5-20"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">int</span>	omega2pwm<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -938,6 +941,7 @@ background-color: null;
 font-style: inherit;">	*/</span></span>
 <span id="cb5-26">	<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span>fabs<span class="op" style="color: #5E5E5E;
@@ -952,6 +956,7 @@ font-style: inherit;">0.05</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
@@ -960,6 +965,7 @@ font-style: inherit;">;</span></span>
 <span id="cb5-27"></span>
 <span id="cb5-28">	<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span><span class="dt" style="color: #AD0000;
@@ -987,12 +993,12 @@ background-color: null;
 font-style: inherit;">);</span></span>
 <span id="cb5-29"><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 </div>
 <p><strong>5. Setting Direction Bit of Motor</strong></p>
 <p>The direction bit of the motor is set based on the sign of the angular velocity <img src="https://latex.codecogs.com/png.latex?%5Comega_%7B%5Ctext%7Bwheel%7D%7D">.</p>
 <div data-add-from="control.cpp" data-start-line="31" data-end-line="33" data-code-line-numbers="true">
-<div class="sourceCode cell-code" id="cb6" data-startfrom="31" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 30;"><span id="cb6-31"><span class="dt" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" data-startfrom="31" style="background: #f1f3f5;"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp" style="counter-reset: source-line 30;"><span id="cb6-31"><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">int</span> sign<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -1003,6 +1009,7 @@ background-color: null;
 font-style: inherit;">){</span></span>
 <span id="cb6-32">	<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span>number<span class="op" style="color: #5E5E5E;
@@ -1013,14 +1020,17 @@ font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">)</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span><span class="op" style="color: #5E5E5E;
@@ -1028,7 +1038,7 @@ background-color: null;
 font-style: inherit;">;</span></span>
 <span id="cb6-33"><span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">}</span></span></code></pre></div>
+font-style: inherit;">}</span></span></code></pre></div></div>
 </div>
 <hr>
 <p>This project was executed as part of the course - ECEN430: Advanced Mechatronic Engineering 2: Intelligence and Design at Victoria University of Wellington 2018.</p>
